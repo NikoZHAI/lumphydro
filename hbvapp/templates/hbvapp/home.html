@@ -1,0 +1,122 @@
+{% extends 'hbvapp/layout.html' %}
+
+{% block body %}
+
+	<div class="jumbotron text-center">
+		<h1>Welcome to Lumped Hydrological Models</h1>
+		<p class="lead">Lumped hydrological models for sreamflow simulation and forecasting. This is a beta version of a larger package on hydrological modelling, which is yet to be developed.</p>
+	</div>
+
+	<script type="text/javascript">
+		var render_text = function(csvFile, onLoadCallback){
+			var reader = new FileReader();
+			reader.onload = onLoadCallback;
+			reader.readAsText(csvFile);
+		}
+
+		$(document).ready(function(){
+
+			$("#id_csvFileInput").on("change", function(e){
+				render_text(this.files[0], function(e){
+					var text = e.target.result;
+					$.ajax({
+						url: "",
+						type: 'POST',
+						async: true,
+						data: {'text': text},
+						success: function(data){
+							$("#id_sizeDFTitle").text('Size of the file:')
+							$("#id_sizeDF").text(data.size + " lines");
+							$("#id_outDFHeadTitle").text("Test Output");
+							$("#id_outDFHead").text(data.res_head);
+						}
+					});
+				});
+			});
+		});
+
+	</script>
+
+	<div>
+		<p>
+			<input type="file" name="csvFileInput" id="id_csvFileInput" accept=".csv">
+		</p>
+	</div>
+
+	<div>
+		<p id="id_sizeDFTitle">Waiting for response....</p>
+		<span id="id_sizeDF"></span>
+		<h3 id="id_outDFHeadTitle"></h3>
+		<p id="id_outDFHead"></p>
+	</div>
+
+	<!-- Next step will be to create a 'Form', not an http one, to submit parameters -->
+	<div class="container" id="id_div_configs">
+		<p id="id_parag_configs">
+			<h3>Model Configurator</h3>
+			
+			CSV Hearder: <input type="number" name="csvHeaderInput" id="id_csvHeaderInput" value=0><br>
+			
+			CSV Separator: <input type="text" name="csvSeparatorInput" id="id_csvSeparatorInput" value=","><br>
+			
+			Warm up Period: <input type="number" name="warmUpInput" id="id_warmUpInput" value=10><br>
+			
+			Objective Function: <input type="text" name="objFunctionInput" id="id_objFunctionInput" list="id_obj_funs">
+			<datalist id="id_obj_funs">
+				<option value="self._rmse">RMSE</option>
+				<option value="self._nse">NSE</option>
+			</datalist><br>
+
+			Computation Tolerance: <input type="number" name="tolInput" id="id_tolInput" value="0.001"><br>
+
+			Minimize Residus <input type="checkbox" name="minimize" id="id_minimize" value="true" checked><br>
+
+			Verbose Display <input type="checkbox" name="verbose" id="id_verbose" value="true"><br>
+		</p>
+	</div>
+
+	<div class="container" id="id_div_pars">
+		<p id='id_parag_pars'>
+			<h3>Model Parameters</h3>
+
+			LTT = <input type="number" name="ltt" id="id_ltt" value=0.1><br>
+
+			UTT = <input type="number" name="utt" id="id_utt" value=0.1><br>
+
+			TTM = <input type="number" name="ttm" id="id_ttm" value=0.1><br>
+
+			CFMAX = <input type="number" name="cfmax" id="id_cfmax" value=0.1><br>
+
+			FC = <input type="number" name="fc" id="id_fc" value=250><br>
+
+			ECORR = <input type="number" name="ecorr" id="id_ecorr" value=1.0><br>
+
+			ETF = <input type="number" name="etf" id="id_etf" value=2.5><br>
+
+			LP = <input type="number" name="lp" id="id_lp" value=0.35><br>
+
+			K = <input type="number" name="k" id="id_k" value=0.01><br>
+
+			K1 = <input type="number" name="k1" id="id_k1" value=0.00005><br>
+
+			ALPHA = <input type="number" name="alpha" id="id_alpha" value=0.5><br>
+
+			BETA = <input type="number" name="beta" id="id_beta" value=3.5><br>
+
+			CWH = <input type="number" name="cwh" id="id_cwh" value=0.02><br>
+
+			CFR = <input type="number" name="cfr" id="id_cfr" value=0.5><br>
+
+			C-FLUX = <input type="number" name="c_flux" id="id_c_flux" value=0.05><br>
+
+			PERC = <input type="number" name="perc" id="id_perc" value=0.1><br>
+
+			RFCF = <input type="number" name="rfcf" id="id_rfcf" value=1.0><br>
+
+			SFCF = <input type="number" name="sfcf" id="id_sfcf" value="1.0"><br>
+		</p>
+		
+	</div>
+
+
+{% endblock %}

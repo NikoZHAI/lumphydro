@@ -1,0 +1,4 @@
+# OS Junks: databases, compiled .pyc files
+db.sqlite3
+0001_initial.py
+*.pyc
