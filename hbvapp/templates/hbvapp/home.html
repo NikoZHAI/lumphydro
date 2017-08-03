@@ -16,23 +16,61 @@
 
 		$(document).ready(function(){
 
+			// Reading file jQuery ...
 			$("#id_csvFileInput").on("change", function(e){
 				render_text(this.files[0], function(e){
 					var text = e.target.result;
 					$.ajax({
 						url: "",
-						type: 'POST',
+						type: "POST",
 						async: true,
-						data: {'text': text},
+						data: {'text': text, 'action': 'load_file'},
 						success: function(data){
-							$("#id_sizeDFTitle").text('Size of the file:')
+							$("#id_loadStatus").text('  Succeed !  ');
+							$("#id_summary").show(1000);
+						}
+					});
+				});
+			});
+			// Reading file jQuery END
+
+			// Summarizing file jQuery ...
+			$("#id_summary").on("click", function(e){
+					$.ajax({
+						url: "",
+						type: "POST",
+						async: true,
+						data: {'action': 'summarize'},
+						success: function(data){
+							$("#id_sizeDFTitle").text('Size of the file:');
 							$("#id_sizeDF").text(data.size + " lines");
 							$("#id_outDFHeadTitle").text("Test Output");
 							$("#id_outDFHead").text(data.res_head);
 						}
 					});
+			});
+			// Summarizing file END
+
+			// Calibration jQuery ...
+			$("#id_calibrate").on("click", function(){
+				var config = generate_config_dict();
+				// AJAX wrapped by jQuery needs to be written in a closure
+				$.ajax({
+					url: "",
+					type: "POST",
+					async: true,
+					data: {'config': JSON.stringify(config),
+						'action': 'calibrate'},
+					success: function(data){
+						show_calibrated_par(data.par);
+						$("#id_sizeDFTitle").text('Size of the file:');
+						$("#id_sizeDF").text(data.size + " lines");
+						$("#id_outDFHeadTitle").text("Test Output");
+						$("#id_outDFHead").text(data.res_head);
+					}
 				});
 			});
+			// Calibration jQuery END
 		});
 
 	</script>
@@ -40,44 +78,19 @@
 	<div>
 		<p>
 			<input type="file" name="csvFileInput" id="id_csvFileInput" accept=".csv">
+			<span name="loadStatus" id="id_loadStatus"></span>
+			<button name="summary" id="id_summary" hidden="hidden">SUMMARY</button>
 		</p>
-	</div>
 
-	<div>
-		<p id="id_sizeDFTitle">Waiting for response....</p>
-		<span id="id_sizeDF"></span>
-		<h3 id="id_outDFHeadTitle"></h3>
-		<p id="id_outDFHead"></p>
+		<button class="btn btn-primary" name="simulate" id="id_simulate"><strong>SIMULATE</strong></button>
+		<button class="btn btn-primary" name="calibrate" id="id_calibrate"><strong>CALIBRATE</strong></button>
 	</div>
 
 	<!-- Next step will be to create a 'Form', not an http one, to submit parameters -->
-	<div class="container" id="id_div_configs">
-		<p id="id_parag_configs">
-			<h3>Model Configurator</h3>
-			
-			CSV Hearder: <input type="number" name="csvHeaderInput" id="id_csvHeaderInput" value=0><br>
-			
-			CSV Separator: <input type="text" name="csvSeparatorInput" id="id_csvSeparatorInput" value=","><br>
-			
-			Warm up Period: <input type="number" name="warmUpInput" id="id_warmUpInput" value=10><br>
-			
-			Objective Function: <input type="text" name="objFunctionInput" id="id_objFunctionInput" list="id_obj_funs">
-			<datalist id="id_obj_funs">
-				<option value="self._rmse">RMSE</option>
-				<option value="self._nse">NSE</option>
-			</datalist><br>
-
-			Computation Tolerance: <input type="number" name="tolInput" id="id_tolInput" value="0.001"><br>
-
-			Minimize Residus <input type="checkbox" name="minimize" id="id_minimize" value="true" checked><br>
-
-			Verbose Display <input type="checkbox" name="verbose" id="id_verbose" value="true"><br>
-		</p>
-	</div>
 
 	<div class="container" id="id_div_pars">
-		<p id='id_parag_pars'>
-			<h3>Model Parameters</h3>
+		<h3>Model Parameters</h3>
+		<p id="id_parag_pars">
 
 			LTT = <input type="number" name="ltt" id="id_ltt" value=0.1><br>
 
@@ -114,8 +127,39 @@
 			RFCF = <input type="number" name="rfcf" id="id_rfcf" value=1.0><br>
 
 			SFCF = <input type="number" name="sfcf" id="id_sfcf" value="1.0"><br>
+
 		</p>
-		
+	</div>
+
+	<div class="container" id="id_div_configs">
+		<h3>Model Configurator</h3>
+		<p id="id_parag_configs">
+			
+			CSV Hearder: <input type="number" name="csvHeaderInput" id="id_csvHeaderInput" value=0><br>
+			
+			CSV Separator: <input type="text" name="csvSeparatorInput" id="id_csvSeparatorInput" value=","><br>
+			
+			Warm up Period: <input type="number" name="warmUpInput" id="id_warmUpInput" value=10><br>
+			
+			Objective Function: <input type="text" name="objFunctionInput" id="id_objFunctionInput" list="id_obj_funs">
+			<datalist id="id_obj_funs">
+				<option value="self._rmse">RMSE</option>
+				<option value="self._nse">NSE</option>
+			</datalist><br>
+
+			Computation Tolerance: <input type="number" name="tolInput" id="id_tolInput" value="0.001"><br>
+
+			Minimize Residus <input type="checkbox" name="minimise" id="id_minimise" value="true" checked><br>
+
+			Verbose Display <input type="checkbox" name="verbose" id="id_verbose" value="true"><br>
+		</p>
+	</div>
+
+	<div>
+		<p id="id_sizeDFTitle">Waiting for operation....</p>
+		<span id="id_sizeDF"></span>
+		<h3 id="id_outDFHeadTitle"></h3>
+		<p id="id_outDFHead"></p>
 	</div>
 
 
