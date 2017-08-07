@@ -1,0 +1,42 @@
+<div name="mainTabs" id="id_mainTabs">
+
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Home</a></li>
+    <li role="presentation"><a href="#id_plots" aria-controls="id_plots" role="tab" data-toggle="tab">Plots</a></li>
+    <li role="presentation"><a href="#id_history" aria-controls="id_history" role="tab" data-toggle="tab">History</a></li>
+    <li role="presentation"><a href="#id_config_panel" aria-controls="id_config_panel" role="tab" data-toggle="tab">Configurations</a></li>
+  </ul>
+
+  <!-- Tab panes -->
+	<div class="tab-content">
+	  <div role="tabpanel" class="tab-pane fade in active" id="home">...</div>
+	  <div role="tabpanel" class="tab-pane fade" id="id_plots">...</div>
+	  <div role="tabpanel" class="tab-pane fade" id="id_history">...</div>
+	  
+	  <div role="tabpanel" class="tab-pane fade" id="id_config_panel">
+			<h3>Model Configurator</h3>
+			<hr>
+			<form id="id_form_configs" class="form-group">
+				
+				CSV Hearder: <input class="form-control" type="number" name="csvHeaderInput" id="id_csvHeaderInput" value=0><br>
+				
+				CSV Separator: <input class="form-control" type="text" name="csvSeparatorInput" id="id_csvSeparatorInput" value=","><br>
+				
+				Warm up Period: <input class="form-control" type="number" name="warmUpInput" id="id_warmUpInput" value=10><br>
+				
+				Objective Function: <input class="form-control" type="text" name="objFunctionInput" id="id_objFunctionInput" list="id_obj_funs">
+				<datalist id="id_obj_funs">
+					<option value="self._rmse">RMSE</option>
+					<option value="self._nse">NSE</option>
+				</datalist><br>
+
+				Computation Tolerance: <input class="form-control" type="number" name="tolInput" id="id_tolInput" value="0.001"><br>
+
+				Minimize Residus <input class="form-control" type="checkbox" name="minimise" id="id_minimise" value="true" checked><br>
+
+				Verbose Display <input class="form-control" type="checkbox" name="verbose" id="id_verbose" value="true"><br>
+			</form>
+	  </div>
+	</div>
+</div>

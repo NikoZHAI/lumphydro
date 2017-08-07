@@ -38,6 +38,7 @@ function generate_config_dict(){
   config['tol'] = parseFloat(tol.value);
   (minimise.value == "true") ? config['minimise'] = "True" : config['minimise'] = "False";
   (verbose.value == "true") ? config['verbose'] = "True" : config['verbose'] = "False";
+  (config['obj_fun'] == "self._rmse") ? config['fun_name'] = "RMSE" : config['fun_name'] = "NSE";
 
   return config;
 }
@@ -47,31 +48,17 @@ function show_calibrated_par(par) {
     Show calibrated parameters on the parameter input panel
   */
 
-  var index = ['ltt',
-      'utt',
-      'ttm',
-      'cfmax',
-      'fc',
-      'e_corr',
-      'etf',
-      'lp',
-      'k',
-      'k1',
-      'alpha',
-      'beta',
-      'cwh',
-      'cfr',
-      'c_flux',
-      'perc',
-      'rfcf',
-      'sfcf',
-      'tfac',
-      'area'
-      ];
-
+  var par_obj = new Object();
   var par_elems = $("#id_parag_pars input");
 
+  // Create an object {ElementID: Element}
   for (var i = par_elems.length - 1; i >= 0; i--) {
-    par_elems[i].value = par[index[i]];
+    par_obj[par_elems[i].id] = par_elems[i];
+  }
+
+  for (var this_par in par) {
+    if (this_par!='area'&&this_par!='tfac') {
+      par_obj['id_'+this_par].value = par[this_par];
+    } else {}
   }
 }

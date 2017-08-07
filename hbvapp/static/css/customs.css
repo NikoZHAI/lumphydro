@@ -1,0 +1,16 @@
+.file {
+  visibility: hidden;
+  position: absolute;
+}
+.navbar-inverse .navbar-brand {
+  color: #fff;
+}
+.navbar-inverse .navbar-text {
+  color: #fff;
+}
+.navbar-inverse .navbar-nav > li > a {
+  color: #fff;
+}
+#id_summary {
+  display: none;
+}

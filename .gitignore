@@ -2,3 +2,5 @@
 db.sqlite3
 0001_initial.py
 *.pyc
+manage.py
+.directory

@@ -17,8 +17,6 @@ mcd.par['tfac'] = 24
 
 mcd.config['init_guess'] = None
 
-mcd.config['fun_name'] = 'RMSE'
-
 mcd.DEF_q0 = 0.183
 
 # Home page.
@@ -54,3 +52,4 @@ def home(request):
 			return JsonResponse(context)
 	else:
 		return render(request, template)
+
