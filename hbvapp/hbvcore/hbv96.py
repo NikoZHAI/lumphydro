@@ -173,9 +173,9 @@ class HBV96(HydroModel):
 					outab['sp'] = intab['sp'] + _sf + _refr
 					outab['wc'] = intab['wc'] - _refr + _rf
 
-				if intab['wc'] > self.par['cwh']*intab['sp']:
-					_inf = outab['wc']-self.par['cwh']*intab['sp']
-					outab['wc'] = self.par['cwh']*intab['sp']
+				if intab['wc'] > self.par['cwh']*outab['sp']:
+					_inf = outab['wc']-self.par['cwh']*outab['sp']
+					outab['wc'] = self.par['cwh']*outab['sp']
 				else:
 					_inf = 0.0
 

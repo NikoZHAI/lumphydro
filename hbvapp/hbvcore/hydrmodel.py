@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 # HBV-96 model class
 from __future__ import division, print_function
-import csv
 import numpy as np
 import scipy.optimize as opt
 import pandas as pd
@@ -122,18 +121,6 @@ class HydroModel(object):
 								header=self.config['header'])
 		self.config['miles'] = (len(self.data)-1)
 
-	# Generate csv output
-	def generate_csv(self):
-		with open('results.csv', 'wb') as f:
-			w = csv.DictWriter(f, self.data[0].keys())
-			w.writeheader()
-			w.writerows(self.data)
-			f.close()
-
 	# Data checker/validator
 	def data_checker(self):
-		pass
-
-	# Model configurator
-	def configurate_model(self):
 		pass

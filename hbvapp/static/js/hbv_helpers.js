@@ -49,7 +49,7 @@ function show_calibrated_par(par) {
   */
 
   var par_obj = new Object();
-  var par_elems = $("#id_parag_pars input");
+  var par_elems = $("#id_div_pars input");
 
   // Create an object {ElementID: Element}
   for (var i = par_elems.length - 1; i >= 0; i--) {

@@ -12,20 +12,16 @@
 		$(document).ready(function(){
 
 			/* File input helper */
-			$(document).on('click', '.browse', function(){
+			$("#id_browse").on('click', function(){
 				$("#id_loadStatus").html('');
 				$("#id_summary").fadeOut(600);
-			  var file = $(this).parent().parent().parent().find('.file');
-			  file.trigger('click');
-			  $("#id_csvFileInput").trigger('change');
-			});
-			$(document).on('change', '.file', function(){
-			  $(this).parent().find('.form-control').val($(this).val().replace(/C:\\fakepath\\/i, ''));
+			  $("#id_csvFileInput").trigger('click');
 			});
 			/* File input helper END */
 
 			/* Reading file jQuery */
 			$("#id_csvFileInput").on("change", function(e){
+				$("#id_fileNamePlaceHolder").val($(this).val().replace(/C:\\fakepath\\/i, ''));
 				render_text(this.files[0], function(e){
 					var text = e.target.result;
 					$.ajax({
@@ -76,6 +72,8 @@
 						$("#id_sizeDF").text(data.size + " lines");
 						$("#id_outDFHeadTitle").text("Test Output");
 						$("#id_outDFHead").text(data.res_head);
+						$(".divSimuPlot").replaceWith(data.div_plot_simulation);
+						$(".scriptSimuPlot").replaceWith(data.script_plot_simulation);
 					}
 				});
 			});
@@ -92,7 +90,7 @@
 
 	<div class="row" name="main" id="id_main">
 
-		<div class="col-md-3" name="panelLeft" id="id_panelLeft">
+		<div class="col-md-4" name="panelLeft" id="id_panelLeft">
 			<div class="panel panel-primary">
   			<div class="panel-body">
   				{% include 'hbvapp/includes/_panelLeft.html' %}
@@ -100,18 +98,18 @@
   		</div>
 		</div>
 
-		<div class="col-md-9" name="panelRight" id="id_panelRight">
+		<div class="col-md-8" name="panelRight" id="id_panelRight">
 			
 			<div class="row" name="operations" id="operations">
 
 				<!-- File input group -->
 				<div class="form-group col-md-4">
-					<input type="file" class="file" name="csvFileInput" id="id_csvFileInput" accept="text/csv, .csv"/>
+					<input type="file" name="csvFileInput" id="id_csvFileInput" accept="text/csv, .csv"/>
 					<div class="input-group col-xs-12">
 						<span class="input-group-addon"><i class="glyphicon glyphicon-file"></i></span>
-						<input type="text" class="form-control" disabled placeholder="Select .csv file">
+						<input type="text" class="form-control" disabled placeholder="Select .csv file" id="id_fileNamePlaceHolder">
 						<span class="input-group-btn">
-							<button class="browse btn input" type="button"><i class="glyphicon glyphicon-search"></i> Browse</button>
+							<button class="btn input" type="button" id="id_browse"><i class="glyphicon glyphicon-search"></i> Browse</button>
 						</span>
 					</div>
 				</div>
@@ -131,7 +129,7 @@
 				<!-- Simulate button END -->
 				
 				<!-- Calibrate button -->
-				<div class="col-md-2 text-right">
+				<div class="col-md-1 text-right">
 					<button class="btn btn-primary btn-sm" name="calibrate" id="id_calibrate"><strong>CALIBRATE</strong></button>
 				</div>
 				<!-- Calibrate button END -->
