@@ -1,46 +1,155 @@
 <div name="mainTabs" id="id_mainTabs">
 
   <!-- Nav tabs -->
-  <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Home</a></li>
-    <li role="presentation"><a href="#id_plots" aria-controls="id_plots" role="tab" data-toggle="tab">Plots</a></li>
-    <li role="presentation"><a href="#id_history" aria-controls="id_history" role="tab" data-toggle="tab">History</a></li>
-    <li role="presentation"><a href="#id_config_panel" aria-controls="id_config_panel" role="tab" data-toggle="tab">Configurations</a></li>
+  <ul class="nav nav-tabs nav-tabs-responsive" role="tablist">
+    <li role="presentation" class="active">
+			<a href="#home" aria-controls="home" role="tab" data-toggle="tab">Home</a>
+    </li>
+
+    <!-- Plots dropdown menu -->
+    <li role="presentation" class="dropdown">
+
+			<a href="#" id="plotsDropDown" aria-controls="plotsDropDownContent" class="dropdown-toggle" data-toggle="dropdown">Plots
+				<span class="caret"></span>
+			</a>
+
+			<ul class="dropdown-menu" role="menu" aria-labelledby="plotsDropDown" id="plotsDropDownContent">
+				<li>
+					<a href="#id_pane_plot_q" tabindex="-1" role="tab" id="id_dropdown_plot_q" data-toggle="tab" aria-controls="id_pane_plot_q">DISCHARGE</a>
+				</li>
+				<li>
+					<a href="#id_pane_plot_p" tabindex="-1" role="tab" id="id_dropdown_plot_p" data-toggle="tab" aria-controls="id_pane_plot_p">PRECIPITATION</a>
+				</li>
+				<li>
+					<a href="#id_pane_plot_t" tabindex="-1" role="tab" id="id_dropdown_plot_t" data-toggle="tab" aria-controls="id_pane_plot_t">AIR TEMPERATURE</a>
+				</li>
+				<li>
+					<a href="#id_pane_plot_etp" tabindex="-1" role="tab" id="id_dropdown_plot_etp" data-toggle="tab" aria-controls="id_pane_plot_etp">EVAPORATION</a>
+				</li>
+				<li>
+					<a href="#id_pane_plot_gw" tabindex="-1" role="tab" id="id_dropdown_plot_gw" data-toggle="tab" aria-controls="id_pane_plot_gw">GROUNDWATER</a>
+				</li>
+				<li>
+					<a href="#id_pane_plot_st" tabindex="-1" role="tab" id="id_dropdown_plot_st" data-toggle="tab" aria-controls="id_pane_plot_st">STATES</a>
+				</li>
+				<li>
+					<a href="#id_pane_plot_tanks" tabindex="-1" role="tab" id="id_dropdown_plot_tanks" data-toggle="tab" aria-controls="id_pane_plot_tanks">TANKS</a>
+				</li>
+				<li>
+					<a href="#id_pane_plot_perf" tabindex="-1" role="tab" id="id_dropdown_plot_perf" data-toggle="tab" aria-controls="id_pane_plot_perf">PERFORMANCE</a>
+				</li>
+				<li>
+					<a href="#" id="id_plot_all">ALL</a>
+				</li>
+			</ul>
+   	</li>
+   	<!-- Plots dropdown menu END-->
+
+
+    <li role="presentation">
+			<a href="#id_history" aria-controls="id_history" role="tab" data-toggle="tab">History</a>
+    </li>
+
+    <li role="presentation">
+			<a href="#id_config_panel" aria-controls="id_config_panel" role="tab" data-toggle="tab">Configurations</a>
+    </li>
   </ul>
 
   <!-- Tab panes -->
 	<div class="tab-content">
+
+
 	  <div role="tabpanel" class="tab-pane fade in active" id="home">...</div>
-	  <div role="tabpanel" class="tab-pane fade" id="id_plots">
-	  	<div class="divSimuPlot">
-	  		<h3><small>No plot generated yet...</small></h3>
-	  	</div>
+	
+
+	  <!-- Plots begin -->
+	  <div role="tabpanel" class="tab-pane fade" id="id_pane_plot_q" aria-labelledby="id_dropdown_plot_q">
+	  	<h3><small>No plot generated yet...</small></h3>
 	  </div>
+	  
+	  <div role="tabpanel" class="tab-pane fade" id="id_pane_plot_p" aria-labelledby="id_dropdown_plot_p">
+	  	<h3><small>No plot generated yet...</small></h3>
+	  </div>
+
+	  <div role="tabpanel" class="tab-pane fade" id="id_pane_plot_t" aria-labelledby="id_dropdown_plot_t">
+	  	<h3><small>No plot generated yet...</small></h3>
+	  </div>
+
+	  <div role="tabpanel" class="tab-pane fade" id="id_pane_plot_etp" aria-labelledby="id_dropdown_plot_etp">
+	  	<h3><small>No plot generated yet...</small></h3>
+	  </div>
+
+	  <div role="tabpanel" class="tab-pane fade" id="id_pane_plot_gw" aria-labelledby="id_dropdown_plot_gw">
+	  	<h3><small>No plot generated yet...</small></h3>
+	  </div>
+
+	  <div role="tabpanel" class="tab-pane fade" id="id_pane_plot_st" aria-labelledby="id_dropdown_plot_st">
+	  	<h3><small>No plot generated yet...</small></h3>
+	  </div>
+
+	  <div role="tabpanel" class="tab-pane fade" id="id_pane_plot_tanks" aria-labelledby="id_dropdown_plot_tanks">
+	  	<h3><small>No plot generated yet...</small></h3>
+	  </div>
+
+	  <div role="tabpanel" class="tab-pane fade" id="id_pane_plot_perf" aria-labelledby="id_dropdown_plot_perf">
+	  	<h3><small>No plot generated yet...</small></h3>
+	  </div>
+	  <!-- Plots end -->
+
 	  <div role="tabpanel" class="tab-pane fade" id="id_history">...</div>
+	  
 	  
 	  <div role="tabpanel" class="tab-pane fade" id="id_config_panel">
 			<h3>Model Configurator</h3>
 			<hr>
 			<form id="id_form_configs" class="form-group">
 				
-				CSV Hearder: <input class="form-control" type="number" name="csvHeaderInput" id="id_csvHeaderInput" value=0><br>
+				CSV Header: <input class="form-control" type="number" name="csvHeaderInput" id="id_csvHeaderInput" value=0><br>
 				
 				CSV Separator: <input class="form-control" type="text" name="csvSeparatorInput" id="id_csvSeparatorInput" value=","><br>
 				
 				Warm up Period: <input class="form-control" type="number" name="warmUpInput" id="id_warmUpInput" value=10><br>
 				
-				Objective Function: <input class="form-control" type="text" name="objFunctionInput" id="id_objFunctionInput" list="id_obj_funs">
-				<datalist id="id_obj_funs">
-					<option value="self._rmse">RMSE</option>
-					<option value="self._nse">NSE</option>
-				</datalist><br>
-
 				Computation Tolerance: <input class="form-control" type="number" name="tolInput" id="id_tolInput" value="0.001"><br>
 
-				Minimize Residus <input class="form-control" type="checkbox" name="minimise" id="id_minimise" value="true" checked><br>
+				
+				<div class="row">
+					<div class="col-sm-2"><label>Objective Function: </label></div>
+					<div class="col-sm-1">
+						<label class="radio-inline"><input type="radio" name="objFunctionInput" id="id_RMSE" value="self._rmse" checked> RMSE 
+						</label>
+					</div>
+					
+					<div class="col-sm-1">
+						<label class="radio-inline"><input type="radio" name="objFunctionInput" value="self._nse" id="id_NSE"> NSE 
+						</label>
+					</div>
 
-				Verbose Display <input class="form-control" type="checkbox" name="verbose" id="id_verbose" value="true"><br>
+					<div class="col-sm-2 col-sm-offset-1 text-right">
+						<label>Minimize Residus</label>
+					</div>
+					<div class="col-sm-1">
+						<label class="switch">
+						  <input type="checkbox" name="minimise" id="id_minimise" value="true" checked>
+						  <span class="slider round"></span>
+						</label>
+					</div>
+
+
+					<div class="col-sm-2 text-right">
+						<label>Verbose Display</label>
+					</div>
+					<div class="col-sm-1">
+						<label class="switch">
+						  <input type="checkbox" name="verbose" id="id_verbose" value="true">
+						  <span class="slider round"></span>
+						</label>
+					</div>
+
+
+				</div>
 			</form>
+
 	  </div>
 	</div>
 </div>

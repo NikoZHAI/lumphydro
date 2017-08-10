@@ -41,18 +41,18 @@
 
 			/* Summarizing file jQuery */
 			$("#id_summary").on("click", function(e){
-					$.ajax({
-						url: "",
-						type: "POST",
-						async: true,
-						data: {'action': 'summarize'},
-						success: function(data){
-							$("#id_sizeDFTitle").text('Size of the file:');
-							$("#id_sizeDF").text(data.size + " lines");
-							$("#id_outDFHeadTitle").text("Test Output");
-							$("#id_outDFHead").text(data.res_head);
-						}
-					});
+				$.ajax({
+					url: "",
+					type: "POST",
+					async: true,
+					data: {'action': 'summarize'},
+					success: function(data){
+						$("#id_sizeDFTitle").text('Size of the file:');
+						$("#id_sizeDF").text(data.size + " lines");
+						$("#id_outDFHeadTitle").text("Test Output");
+						$("#id_outDFHead").text(data.res_head);
+					}
+				});
 			});
 			/* Summarizing file END */
 
@@ -72,8 +72,7 @@
 						$("#id_sizeDF").text(data.size + " lines");
 						$("#id_outDFHeadTitle").text("Test Output");
 						$("#id_outDFHead").text(data.res_head);
-						$(".divSimuPlot").replaceWith(data.div_plot_simulation);
-						$(".scriptSimuPlot").replaceWith(data.script_plot_simulation);
+						deploy_plots(data.plots);
 					}
 				});
 			});

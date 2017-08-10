@@ -109,10 +109,13 @@ class HydroModel(object):
 
 	# Extract data to an array-like dict from csv file uploaded
 	def extract_to_dict(self):
-		self.data = pd.read_csv(StringIO(self.data),
-								sep=self.config['separator'],
-								header=self.config['header']).to_dict(orient='records')
-		self.config['miles'] = (len(self.data)-1)
+		if type(self.data) is list:
+			pass
+		else:
+			self.data = pd.read_csv(StringIO(self.data),
+									sep=self.config['separator'],
+									header=self.config['header']).to_dict(orient='records')
+			self.config['miles'] = (len(self.data)-1)
 
 	# Extract data to a pandas dataframe from csv file uploaded
 	def extract_to_dataframe(self):
