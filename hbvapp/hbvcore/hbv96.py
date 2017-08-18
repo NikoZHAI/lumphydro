@@ -173,7 +173,7 @@ class HBV96(HydroModel):
 					outab['sp'] = intab['sp'] + _sf + _refr
 					outab['wc'] = intab['wc'] - _refr + _rf
 
-				if intab['wc'] > self.par['cwh']*outab['sp']:
+				if outab['wc'] > self.par['cwh']*outab['sp']:
 					_inf = outab['wc']-self.par['cwh']*outab['sp']
 					outab['wc'] = self.par['cwh']*outab['sp']
 				else:
@@ -219,9 +219,9 @@ class HBV96(HydroModel):
 					actual infiltration
 					intab['ep'] : float 
 					actual evapotranspiration
-					intab['sm'] : float 
+					intab['sm'] : float
 					Previous soil moisture value
-					intab['uz'] : float 
+					intab['uz'] : float
 					Previous Upper zone value
 
 					Returns
@@ -233,8 +233,8 @@ class HBV96(HydroModel):
 					'''
 
 					qdr = max(intab['sm'] + _inf - self.par['fc'], 0)
-					_act_inf = _inf - qdr
-					_r = ((intab['sm']/self.par['fc'])**self.par['beta']) * _act_inf
+					_act_inf = max(_inf - qdr, 0)
+					_r = ((intab['sm']/self.par['fc'])** self.par['beta']) * _act_inf
 					_ep_int = (1.0 + self.par['etf']*(intab['temp'] - intab['tm']))*self.par['e_corr']*intab['ep']
 					_ea = max(_ep_int, (intab['sm']/(self.par['lp']*self.par['fc']))*_ep_int)
 
@@ -476,7 +476,7 @@ class HBV96(HydroModel):
 		_q_rec = [self.data[0]['q_rec'],] # _q_sim and q_rec will only live inside simulation
 
 		for i in xrange(self.config['miles']):
-			self._step_run(intab = self.data[i], outab = self.data[i+1])()()()()() # Consider sub-hashtable i as input and (i+1) as output table			
+			self._step_run(intab=self.data[i], outab=self.data[i+1])()()()()() # Consider sub-hashtable i as input and (i+1) as output table			
 			_q_sim.append(self.data[i+1]['q_sim'])
 			_q_rec.append(self.data[i+1]['q_rec'])
 		return _q_sim, _q_rec
@@ -484,8 +484,9 @@ class HBV96(HydroModel):
 	def _simulate_without_calibration(self):
 		self._init_simu()
 
-		for i in xrange(0, self.config['miles']):
-			self._step_run(intab = self.data[i], outab = self.data[i+1])
+		for i in xrange(self.config['miles']):
+			self._step_run(intab=self.data[i], outab=self.data[i+1])()()()()()
+		return None
 
 	def _init_simu(self):
 		self.data[0].update(self.DEF_ST)

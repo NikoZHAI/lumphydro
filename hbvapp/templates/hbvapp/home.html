@@ -11,6 +11,11 @@
 
 		$(document).ready(function(){
 
+			/* Initialize svg */
+			schema = create_schema();
+			/* Each tank is 2-3rd filled when initialized */
+			schema.tanks = schema.init_animation( value=(2.0/3.0) );
+
 			/* File input helper */
 			$("#id_browse").on('click', function(){
 				$("#id_loadStatus").html('');
@@ -59,7 +64,6 @@
 			/* Calibration jQuery ... */
 			$("#id_calibrate").on("click", function(){
 				var config = generate_config_dict();
-				// AJAX wrapped by jQuery needs to be written in a closure
 				$.ajax({
 					url: "",
 					type: "POST",
@@ -73,10 +77,36 @@
 						$("#id_outDFHeadTitle").text("Test Output");
 						$("#id_outDFHead").text(data.res_head);
 						deploy_plots(data.plots);
+						schema.data = data.data;
+						init_slider();
 					}
 				});
 			});
 			/* Calibration jQuery END */
+
+			/* Simulation jQuery ... */
+			$("#id_simulate").on("click", function(){
+				var config = generate_config_dict();
+				var par = generate_par_dict();
+				$.ajax({
+					url: "",
+					type: "POST",
+					async: true,
+					data: {'config': JSON.stringify(config),
+						'par': JSON.stringify(par),
+						'action': 'simulate'},
+					success: function(data){
+						$("#id_sizeDFTitle").text('Size of the file:');
+						$("#id_sizeDF").text(data.size + " lines");
+						$("#id_outDFHeadTitle").text("Test Output");
+						$("#id_outDFHead").text(data.res_head);
+						deploy_plots(data.plots);
+						schema.data = data.data;
+						init_slider();
+					}
+				});
+			});
+			/* Simulation jQUery END */
 		});
 
 	</script>

@@ -40,6 +40,25 @@
   display: none;
 }
 
+
+/* Date slider */
+#id_date_slider {
+  position: absolute;
+  width: 75%;
+  height: auto;
+  background: #3071A9;
+}
+#id_date_slider:focus {
+  outline: none;
+}
+
+/* Serve as background of the date slider*/
+#id_greybarslider {
+  background: white;
+}
+/* Date slider END */
+
+
 /* The switch - the box around the slider */
 .switch {
   position: relative;
@@ -52,7 +71,7 @@
 .switch input {display:none;}
 
 /* The slider */
-.slider {
+.btnslider {
   position: absolute;
   cursor: pointer;
   top: 0;
@@ -64,7 +83,7 @@
   transition: .4s;
 }
 
-.slider:before {
+.btnslider:before {
   position: absolute;
   content: "";
   height: 15px;
@@ -76,26 +95,31 @@
   transition: .4s;
 }
 
-input:checked + .slider {
+input:checked + .btnslider {
   background-color: #2196F3;
 }
 
-input:focus + .slider {
+input:focus + .btnslider {
   box-shadow: 0 0 3px #2196F3;
 }
 
-input:checked + .slider:before {
+input:checked + .btnslider:before {
   -webkit-transform: translateX(28px);
   -ms-transform: translateX(28px);
   transform: translateX(28px);
 }
 
 /* Rounded sliders */
-.slider.round {
+.btnslider.round {
   border-radius: 21px;
 }
 
-.slider.round:before {
+.btnslider.round:before {
   border-radius: 50%;
 }
 /* Switcher END */
+
+/* Slide bar schema */
+
+
+/* Slide bar schema END */

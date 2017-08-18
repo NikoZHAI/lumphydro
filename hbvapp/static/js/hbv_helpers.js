@@ -9,10 +9,24 @@ Including:
 	...
 */
 
+String.prototype.toFloat = function() {
+  var int = parseFloat(this).toFixed(2);
+  return parseFloat(int);
+};
+
+function isEmpty(obj) {
+  for(var prop in obj) {
+    if(obj.hasOwnProperty(prop))
+        return false;
+  }
+  var deepchecker = JSON.stringify(obj);
+  deepchecker === JSON.stringify({}) || deepchecker === JSON.stringify([]);
+  return true;
+}
 
 function generate_config_dict(){
 	/*
-		Generating a json or json-like object
+		Generate a json or json-like object
 		to serve as configuration input in AJAX
 	*/
 
@@ -36,12 +50,31 @@ function generate_config_dict(){
   config['warm_up'] = parseInt(warm_up.value);
   config['obj_fun'] = obj_fun.val();
   config['tol'] = parseFloat(tol.value);
-  (minimise.value == "true") ? config['minimise'] = "True" : config['minimise'] = "False";
-  (verbose.value == "true") ? config['verbose'] = "True" : config['verbose'] = "False";
+  (minimise.checked) ? config['minimise'] = "True" : config['minimise'] = "False";
+  (verbose.checked) ? config['verbose'] = "True" : config['verbose'] = "False";
   (config['obj_fun'] == "self._rmse") ? config['fun_name'] = "RMSE" : config['fun_name'] = "NSE";
 
   return config;
 }
+
+
+function generate_par_dict() {
+  /*
+    Generate a json or json-like object
+    to serve as model params input in AJAX
+  */
+
+  var par_obj = new Object();
+  var par_elems = $("#id_div_pars input");
+
+  // Create an object {ElementID: Element}
+  for (var i = par_elems.length - 1; i >= 0; i--) {
+    par_obj[par_elems[i].id.slice(3)] = parseFloat(par_elems[i].value);
+  }
+
+  return par_obj;
+}
+
 
 function show_calibrated_par(par) {
   /*
@@ -49,7 +82,7 @@ function show_calibrated_par(par) {
   */
 
   var par_obj = new Object();
-  var par_elems = $("#id_div_pars input");
+  var par_elems = $("#id_parList input");
 
   // Create an object {ElementID: Element}
   for (var i = par_elems.length - 1; i >= 0; i--) {
@@ -62,6 +95,7 @@ function show_calibrated_par(par) {
     } else {}
   }
 }
+
 
 function deploy_plots(plots) {
   /*
@@ -79,4 +113,12 @@ function deploy_plots(plots) {
 
   $("#id_pane_plot_etp").html(plots.div.etp);
   $(".jslocator_etp").next().replaceWith(plots.script.etp);
+
+  /* Spared for Ground Water Plots */
+
+  $("#id_pane_plot_st").html(plots.div.st);
+  $(".jslocator_st").next().replaceWith(plots.script.st);
+
+  $("#id_pane_plot_perf").html(plots.div.perf);
+  $(".jslocator_perf").next().replaceWith(plots.script.perf);
 }
