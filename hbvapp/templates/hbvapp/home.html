@@ -14,7 +14,13 @@
 			/* Initialize svg */
 			schema = create_schema();
 			/* Each tank is 2-3rd filled when initialized */
-			schema.tanks = schema.init_animation( value=(2.0/3.0) );
+			schema.tanks = schema.init_animation();
+
+			d3.select("#id_date_slider")
+				.on("input", function(){
+		    	var index = parseInt(this.value);
+		    	schema.point_to(index);
+			  });
 
 			/* File input helper */
 			$("#id_browse").on('click', function(){
@@ -78,6 +84,7 @@
 						$("#id_outDFHead").text(data.res_head);
 						deploy_plots(data.plots);
 						schema.data = data.data;
+						schema.bounds = data.extremes;
 						init_slider();
 					}
 				});
@@ -102,6 +109,7 @@
 						$("#id_outDFHead").text(data.res_head);
 						deploy_plots(data.plots);
 						schema.data = data.data;
+						schema.bounds = data.extremes;
 						init_slider();
 					}
 				});

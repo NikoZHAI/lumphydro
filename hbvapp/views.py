@@ -54,6 +54,7 @@ def home(request):
 			context['par'] = mcd.par
 			context['plots'] = plot_simulation(mcd.data)
 			context['data'] = mcd.data
+			context['extremes'] = mcd.extremes
 			return JsonResponse(context)
 
 		elif action=='calibrate':
@@ -65,6 +66,7 @@ def home(request):
 			context['par'] = mcd.par
 			context['plots'] = plot_simulation(mcd.data)
 			context['data'] = mcd.data
+			context['extremes'] = mcd.extremes
 			return JsonResponse(context)
 		
 		elif action=='summarize':
@@ -366,6 +368,18 @@ def plot_all(source):
 
 def synthesize_data(simulation_result):
 	data = pd.DataFrame(simulation_result)
+	sts = ['sp','wc', 'sm', 'lz', 'uz']
+	extremes = dict()
+
+	for name in sts:
+		maxi = name+'_max'
+		mini = name+'_min'
+		extremes[maxi] = np.max(data[name])
+		extremes[mini] = np.min(data[name])
+
+	extremes['soil_max'] = extremes['sm_max']
+	extremes['soil_min'] = extremes['sm_min']
+	mcd.extremes = extremes
 
 	''' ------- Calculate Residus ------- '''
 	# Range for processing residus
