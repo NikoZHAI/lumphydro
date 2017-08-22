@@ -203,7 +203,6 @@ function create_schema() {
                     var y0 = ys.toFloat();
                     var x1 = x0 - heights.toFloat();
                     var y1 = ys.toFloat() + heights.toFloat();
-                    console.log(`M ${x0} ${y0} L ${x1} ${y1}`);
                     return `M ${x0} ${y0} L ${x1} ${y1}`;
                   });
 

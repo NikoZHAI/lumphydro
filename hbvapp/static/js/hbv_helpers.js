@@ -65,7 +65,7 @@ function generate_par_dict() {
   */
 
   var par_obj = new Object();
-  var par_elems = $("#id_div_pars input");
+  var par_elems = $("#id_parList input");
 
   // Create an object {ElementID: Element}
   for (var i = par_elems.length - 1; i >= 0; i--) {

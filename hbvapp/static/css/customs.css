@@ -41,25 +41,7 @@
 }
 
 
-/* Date slider */
-#id_date_slider {
-  position: absolute;
-  width: 75%;
-  height: auto;
-  background: #3071A9;
-}
-#id_date_slider:focus {
-  outline: none;
-}
-
-/* Serve as background of the date slider*/
-#id_greybarslider {
-  background: white;
-}
-/* Date slider END */
-
-
-/* The switch - the box around the slider */
+/********** The switch - the box around the slider **********/
 .switch {
   position: relative;
   display: inline-block;
@@ -117,9 +99,178 @@ input:checked + .btnslider:before {
 .btnslider.round:before {
   border-radius: 50%;
 }
-/* Switcher END */
-
-/* Slide bar schema */
+/********** Switcher END **********/
 
 
-/* Slide bar schema END */
+/********** Date slider **********/
+#id_date_slider {
+  position: absolute;
+  width: 75%;
+  height: auto;
+  background: #3071A9;
+}
+#id_date_slider:focus {
+  outline: none;
+}
+
+/* Serve as background of the date slider*/
+#id_greybarslider {
+  background: white;
+}
+/********** Date slider END **********/
+
+
+/********** Schema svg (after transformation) **********/
+#id_schema {
+  display: block;
+  margin: 0 0 0 0;
+}
+#id_tab_schema {
+  position: relative;
+}
+#id_schema_overlay {
+  width: 100%;
+  height: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+#id_schema_overlay input {
+  width: 10%;
+  visibility: hidden;
+  transition: all 0.5s ease-in-out 0.2s;
+}
+
+#id_schema_overlay span:hover + input {
+  width: 40%;
+  visibility: visible;
+  transition: all 0.5s ease-in-out 0s;
+}
+#id_schema_overlay input:hover {
+  width: 40%;
+  visibility: visible;
+  transition: all 0.5s ease-in-out 0s;
+}
+#id_schema_overlay input:focus {
+  width: 40%;
+  visibility: visible;
+  transition: all 0.5s ease-in-out 0s;
+}
+
+/*  ****** chores ****** */
+#id_schema_innerdiv {
+  position: relative;
+}
+
+#id_schema_innerdiv .input-group {
+  height: 22px;
+  line-height: 22px;
+  font-size: 12px;
+}
+#id_schema_innerdiv .input-group .form-control {
+  height: 24px;
+  line-height: 24px;
+  font-size: 14px;
+}
+#id_schema_innerdiv .input-group-addon {
+  width: 20%;
+  padding: 3px 6px;
+  font-size: 12px;
+  font-weight: normal;
+  line-height: 1;
+  color: #555;
+  text-align: center;
+  background-color: #eee;
+  border: 0.16em dotted #0e9;
+  border-radius: 0.32em;
+}
+#id_schema_innerdiv div {
+  position: absolute;
+}
+
+#id_div_sfcf {
+  margin-top: 21%;
+  left: 18%;
+}
+#id_div_rfcf {
+  margin-top: 21%;
+  left: 38.7%;
+  z-index: 1;
+}
+#id_div_utt {
+  margin-top: 2.2%;
+  left: 86%;
+}
+#id_div_ltt {
+  margin-top: 8.2%;
+  left: 86%;
+}
+#id_div_etf {
+  margin-top: 18.8%;
+  left: 80%;
+  z-index: 2;
+}
+#id_div_e_corr {
+  margin-top: 24.8%;
+  left: 80%;
+}
+#id_div_cfr {
+  margin-top: 39%;
+  left: 29%;
+}
+#id_div_cwh {
+  margin-top: 39%;
+  left: 15%;
+}
+#id_div_cfmax {
+  margin-top: 30%;
+  left: 27%;
+}
+#id_div_ttm {
+  margin-top: 36%;
+  left: 0%;
+}
+
+#id_div_fc {
+  margin-top: 45%;
+  left: 0%;
+}
+#id_div_lp {
+  margin-top: 58%;
+  left: 0%;
+}
+
+#id_div_beta {
+  margin-top: 74%;
+  left: 0%;
+}
+
+#id_div_c_flux {
+  margin-top: 85%;
+  left: 60%;
+}
+#id_div_alpha {
+  margin-top: 124.5%;
+  left: 72%;
+}
+#id_div_k {
+  margin-top: 132%;
+  left: 73.5%;
+}
+#id_div_perc {
+  margin-top: 127%;
+  left: 32.5%;
+}
+#id_div_k1 {
+  margin-top: 152%;
+  left: 67%;
+}
+#id_div_mbas {
+  margin-top: 153.8%;
+  left: 90%;
+}
+/*  ****** chores ****** */
+
+/********** Schema svg (after transformation) END **********/

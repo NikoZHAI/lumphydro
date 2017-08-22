@@ -17,29 +17,123 @@
 	<div class="tab-content">
 	  
 	  <div role="tabpanel" class="tab-pane fade in active" id="id_tab_schema">
+  		
+  		<div id="id_schema_overlay">
+	  		<div id="id_schema_innerdiv">
+			  	<div class="input-group" id="id_div_ltt">
+					  <span class="input-group-addon" id="addon-ltt">LTT</span>
+					  <input type="text" name="ltt" id="id_ltt" value=-0.1 class="form-control" aria-describedby="addon-ltt">
+					</div>
+
+					<div class="input-group" id="id_div_utt">
+					  <span class="input-group-addon" id="addon-utt">UTT</span>
+					  <input type="text" name="utt" id="id_utt" value=0.1 class="form-control" aria-describedby="addon-utt">
+					</div>
+
+					<div class="input-group" id="id_div_ttm">
+					  <span class="input-group-addon" id="addon-ttm">TTM</span>
+					  <input type="text" name="ttm" id="id_ttm" value=0.1 class="form-control" aria-describedby="addon-ttm">
+					</div>
+
+					<div class="input-group" id="id_div_cfmax">
+					  <span class="input-group-addon" id="addon-cfmax">CFMAX</span>
+					  <input type="text" name="cfmax" id="id_cfmax" value=0.1 class="form-control" aria-describedby="addon-cfmax">
+					</div>
+
+					<div class="input-group" id="id_div_fc">
+					  <span class="input-group-addon" id="addon-fc">FC</span>
+					  <input type="text" name="fc" id="id_fc" value=250 class="form-control" aria-describedby="addon-fc">
+					</div>
+
+					<div class="input-group" id="id_div_e_corr">
+					  <span class="input-group-addon" id="addon-e_corr">ECORR</span>
+					  <input type="text" name="e_corr" id="id_e_corr" value=1.0 class="form-control" aria-describedby="addon-e_corr">
+					</div>
+
+					<div class="input-group" id="id_div_etf">
+					  <span class="input-group-addon" id="addon-etf">ETF</span>
+					  <input type="text" name="etf" id="id_etf" value=2.5 class="form-control" aria-describedby="addon-etf">
+					</div>
+
+					<div class="input-group" id="id_div_lp">
+					  <span class="input-group-addon" id="addon-lp">LP</span>
+					  <input type="text" name="lp" id="id_lp" value=0.35 class="form-control" aria-describedby="addon-lp">
+					</div>
+
+					<div class="input-group" id="id_div_k">
+					  <span class="input-group-addon" id="addon-k">K</span>
+					  <input type="text" name="k" id="id_k" value=0.01 class="form-control" aria-describedby="addon-k">
+					</div>
+
+					<div class="input-group" id="id_div_k1">
+					  <span class="input-group-addon" id="addon-k1">K1</span>
+					  <input type="text" name="k1" id="id_k1" value=0.00005 class="form-control" aria-describedby="addon-k1">
+					</div>
+
+					<div class="input-group" id="id_div_alpha">
+					  <span class="input-group-addon" id="addon-alpha">ALPHA</span>
+					  <input type="text" name="alpha" id="id_alpha" value=0.5 class="form-control" aria-describedby="addon-alpha">
+					</div>
+
+					<div class="input-group" id="id_div_beta">
+					  <span class="input-group-addon" id="addon-beta">BETA</span>
+					  <input type="text" name="beta" id="id_beta" value=3.5 class="form-control" aria-describedby="addon-beta">
+					</div>
+
+					<div class="input-group" id="id_div_cwh">
+					  <span class="input-group-addon" id="addon-cwh">CWH</span>
+					  <input type="text" name="cwh" id="id_cwh" value=0.02 class="form-control" aria-describedby="addon-cwh">
+					</div>
+
+					<div class="input-group" id="id_div_cfr">
+					  <span class="input-group-addon" id="addon-cfr">CFR</span>
+					  <input type="text" name="cfr" id="id_cfr" value=0.5 class="form-control" aria-describedby="addon-cfr">
+					</div>
+
+					<div class="input-group" id="id_div_c_flux">
+					  <span class="input-group-addon" id="addon-c_flux">C-FLUX</span>
+					  <input type="text" name="c_flux" id="id_c_flux" value=0.05 class="form-control" aria-describedby="addon-c_flux">
+					</div>
+
+					<div class="input-group" id="id_div_perc">
+					  <span class="input-group-addon" id="addon-perc">PERC</span>
+					  <input type="text" name="perc" id="id_perc" value=0.1 class="form-control" aria-describedby="addon-perc">
+					</div>
+
+					<div class="input-group" id="id_div_rfcf">
+					  <span class="input-group-addon" id="addon-rfcf">RFCF</span>
+					  <input type="text" name="rfcf" id="id_rfcf" value=1.0 class="form-control" aria-describedby="addon-rfcf">
+					</div>
+
+					<div class="input-group" id="id_div_sfcf">
+					  <span class="input-group-addon" id="addon-sfcf">SFCF</span>
+					  <input type="text" name="sfcf" id="id_sfcf" value=1.0 class="form-control" aria-describedby="addon-sfcf">
+			  	</div>
+
+					<div class="input-group" id="id_div_mbas">
+					  <span class="input-group-addon" id="addon-mbas">MBAS</span>
+					  <input type="text" name="bmax" id="id_mbas" value=1 class="form-control" aria-describedby="addon-mbas">
+			  	</div>
+			  </div>
+			</div>
+
+  		<div id="id_schema_schema">
+  			<div class="col-sm-11 col-sm-offset-1 col-md-11 col-md-offset-1 col-lg-11 col-lg-offset-1" id="id_div_schema">
+  				<img src="/static/img/tanks.svg" class="svg" id="id_schema" alt="Schematic HBV" style="display: block; margin: auto; width: 100%; height: auto;">
+  			</div>
+  		</div>
 
 	  	<div class="row">
-	  		<div class="col-sm-8 col-sm-offset-2 col-md-8 col-md-offset-2 col-lg-8 col-lg-offset-2" id="id_div_schema">
-	  		<!-- <div id="id_div_schema" class="col-sm-12 col-md-12 col-lg-12"> -->
-	  			<img src="/static/img/tanks.svg" class="svg" id="id_schema" alt="Schematic HBV" style="width: 100%; height: auto;">
-	  		</div>
-	  	</div>
-	  	
-	  	<hr>
+	  		<div id="id_schema_scroll" class="form-group col-sm-12 col-md-12 col-lg-12">
 
-	  	<div class="row">
-	  		<div id="id_schema_scroll" class="form-group col-sm-10 col-sm-offset-1 col-md-10 col-md-offset-1 col-lg-10 col-lg-offset-1">
+	  			<hr id="id_hr_before_dateSlider">
 
-	  			<div class="input-group col-xs-12">
+	  			<div class="input-group col-xs-10 col-xs-offset-1">
 						<span class="input-group-addon dateSliderValue" id="id_date_slider_span">Date Slider</span>
 						<input type="text" class="form-control" readonly="readonly" id="id_greybarslider" aria-discribedby="id_date_slider_span">
 						<input class="form-control" type="range" value="0" min="0" max="500" step="1" id="id_date_slider" disabled>
 	  			</div>
 	  		</div>
-	  	</div>
-
-	  	<div class="row">
-	  		
 	  	</div>
 
 	  </div>
@@ -48,93 +142,98 @@
 
 			<div class="input-group">
 			  <span class="input-group-addon" id="addon-ltt">LTT = </span>
-			  <input type="number" name="ltt" id="id_ltt" value=-0.1 class="form-control" aria-describedby="addon-ltt">
+			  <input type="text" name="ltt" id="id_ltt" value=-0.1 class="form-control" aria-describedby="addon-ltt">
 			</div><br>
 
 			<div class="input-group">
 			  <span class="input-group-addon" id="addon-utt">UTT = </span>
-			  <input type="number" name="utt" id="id_utt" value=0.1 class="form-control" aria-describedby="addon-utt">
+			  <input type="text" name="utt" id="id_utt" value=0.1 class="form-control" aria-describedby="addon-utt">
 			</div><br>
 
 			<div class="input-group">
 			  <span class="input-group-addon" id="addon-ttm">TTM = </span>
-			  <input type="number" name="ttm" id="id_ttm" value=0.1 class="form-control" aria-describedby="addon-ttm">
+			  <input type="text" name="ttm" id="id_ttm" value=0.1 class="form-control" aria-describedby="addon-ttm">
 			</div><br>
 
 			<div class="input-group">
 			  <span class="input-group-addon" id="addon-cfmax">CFMAX = </span>
-			  <input type="number" name="cfmax" id="id_cfmax" value=0.1 class="form-control" aria-describedby="addon-cfmax">
+			  <input type="text" name="cfmax" id="id_cfmax" value=0.1 class="form-control" aria-describedby="addon-cfmax">
 			</div><br>
 
 			<div class="input-group">
 			  <span class="input-group-addon" id="addon-fc">FC = </span>
-			  <input type="number" name="fc" id="id_fc" value=250 class="form-control" aria-describedby="addon-fc">
+			  <input type="text" name="fc" id="id_fc" value=250 class="form-control" aria-describedby="addon-fc">
 			</div><br>
 
 			<div class="input-group">
 			  <span class="input-group-addon" id="addon-e_corr">ECORR = </span>
-			  <input type="number" name="e_corr" id="id_e_corr" value=1.0 class="form-control" aria-describedby="addon-e_corr">
+			  <input type="text" name="e_corr" id="id_e_corr" value=1.0 class="form-control" aria-describedby="addon-e_corr">
 			</div><br>
 
 			<div class="input-group">
 			  <span class="input-group-addon" id="addon-etf">ETF = </span>
-			  <input type="number" name="etf" id="id_etf" value=2.5 class="form-control" aria-describedby="addon-etf">
+			  <input type="text" name="etf" id="id_etf" value=2.5 class="form-control" aria-describedby="addon-etf">
 			</div><br>
 
 			<div class="input-group">
-			  <span class="input-group-addon" id="addon-ltt">LP = </span>
-			  <input type="number" name="lp" id="id_lp" value=0.35 class="form-control" aria-describedby="addon-lp">
+			  <span class="input-group-addon" id="addon-lp">LP = </span>
+			  <input type="text" name="lp" id="id_lp" value=0.35 class="form-control" aria-describedby="addon-lp">
 			</div><br>
 
 			<div class="input-group">
-			  <span class="input-group-addon" id="addon-ltt">K = </span>
-			  <input type="number" name="k" id="id_k" value=0.01 class="form-control" aria-describedby="addon-k">
+			  <span class="input-group-addon" id="addon-k">K = </span>
+			  <input type="text" name="k" id="id_k" value=0.01 class="form-control" aria-describedby="addon-k">
 			</div><br>
 
 			<div class="input-group">
 			  <span class="input-group-addon" id="addon-k1">K1 = </span>
-			  <input type="number" name="k1" id="id_k1" value=0.00005 class="form-control" aria-describedby="addon-k1">
+			  <input type="text" name="k1" id="id_k1" value=0.00005 class="form-control" aria-describedby="addon-k1">
 			</div><br>
 
 			<div class="input-group">
 			  <span class="input-group-addon" id="addon-alpha">ALPHA = </span>
-			  <input type="number" name="alpha" id="id_alpha" value=0.5 class="form-control" aria-describedby="addon-alpha">
+			  <input type="text" name="alpha" id="id_alpha" value=0.5 class="form-control" aria-describedby="addon-alpha">
 			</div><br>
 
 			<div class="input-group">
 			  <span class="input-group-addon" id="addon-beta">BETA = </span>
-			  <input type="number" name="beta" id="id_beta" value=3.5 class="form-control" aria-describedby="addon-beta">
+			  <input type="text" name="beta" id="id_beta" value=3.5 class="form-control" aria-describedby="addon-beta">
 			</div><br>
 
 			<div class="input-group">
 			  <span class="input-group-addon" id="addon-cwh">CWH = </span>
-			  <input type="number" name="cwh" id="id_cwh" value=0.02 class="form-control" aria-describedby="addon-cwh">
+			  <input type="text" name="cwh" id="id_cwh" value=0.02 class="form-control" aria-describedby="addon-cwh">
 			</div><br>
 
 			<div class="input-group">
 			  <span class="input-group-addon" id="addon-cfr">CFR = </span>
-			  <input type="number" name="cfr" id="id_cfr" value=0.5 class="form-control" aria-describedby="addon-cfr">
+			  <input type="text" name="cfr" id="id_cfr" value=0.5 class="form-control" aria-describedby="addon-cfr">
 			</div><br>
 
 			<div class="input-group">
 			  <span class="input-group-addon" id="addon-c_flux">C-FLUX = </span>
-			  <input type="number" name="c_flux" id="id_c_flux" value=0.05 class="form-control" aria-describedby="addon-c_flux">
+			  <input type="text" name="c_flux" id="id_c_flux" value=0.05 class="form-control" aria-describedby="addon-c_flux">
 			</div><br>
 
 			<div class="input-group">
 			  <span class="input-group-addon" id="addon-perc">PERC = </span>
-			  <input type="number" name="perc" id="id_perc" value=0.1 class="form-control" aria-describedby="addon-perc">
+			  <input type="text" name="perc" id="id_perc" value=0.1 class="form-control" aria-describedby="addon-perc">
 			</div><br>
 
 			<div class="input-group">
 			  <span class="input-group-addon" id="addon-rfcf">RFCF = </span>
-			  <input type="number" name="rfcf" id="id_rfcf" value=1.0 class="form-control" aria-describedby="addon-rfcf">
+			  <input type="text" name="rfcf" id="id_rfcf" value=1.0 class="form-control" aria-describedby="addon-rfcf">
 			</div><br>
 
 			<div class="input-group">
 			  <span class="input-group-addon" id="addon-sfcf">SFCF = </span>
-			  <input type="number" name="sfcf" id="id_sfcf" value=1.0 class="form-control" aria-describedby="addon-sfcf">
+			  <input type="text" name="sfcf" id="id_sfcf" value=1.0 class="form-control" aria-describedby="addon-sfcf">
 			</div><br>
+
+			<div class="input-group">
+			  <span class="input-group-addon" id="addon-bmax">BMAX</span>
+			  <input type="text" name="bmax" id="id_bmax" value=1 class="form-control" aria-describedby="addon-bmax">
+	  	</div><br>
 		</div>
 		<!-- Tab Panel END -->
 	</div>

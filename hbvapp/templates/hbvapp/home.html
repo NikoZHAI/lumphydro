@@ -75,7 +75,7 @@
 					type: "POST",
 					async: true,
 					data: {'config': JSON.stringify(config),
-						'action': 'calibrate'},
+								'action': 'calibrate'},
 					success: function(data){
 						show_calibrated_par(data.par);
 						$("#id_sizeDFTitle").text('Size of the file:');
@@ -100,8 +100,8 @@
 					type: "POST",
 					async: true,
 					data: {'config': JSON.stringify(config),
-						'par': JSON.stringify(par),
-						'action': 'simulate'},
+								'par': JSON.stringify(par),
+								'action': 'simulate'},
 					success: function(data){
 						$("#id_sizeDFTitle").text('Size of the file:');
 						$("#id_sizeDF").text(data.size + " lines");
@@ -114,6 +114,25 @@
 					}
 				});
 			});
+
+			// $("#id_schema_overlay span").hover(
+			// 	function() {
+			// 		var onHover = {
+			// 					width: "40%",
+  	// 						visibility: "visible",
+  	// 						transition: "all 0.5s ease-in-out 0s",
+			// 					};
+			// 		$( this ).siblings()
+			// 					.css(onHover);
+			// },function() {
+			// 	var onLeave = {
+			// 					width: "10%",
+  	// 						visibility: "hidden",
+  	// 						transition: "all 0.5s ease-in-out 0s",
+			// 					};
+			// 	$( this ).siblings()
+			// 					.css(onLeave);
+			// });
 			/* Simulation jQUery END */
 		});
 
