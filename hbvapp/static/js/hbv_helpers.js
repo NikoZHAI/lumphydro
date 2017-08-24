@@ -14,6 +14,7 @@ String.prototype.toFloat = function() {
   return parseFloat(int);
 };
 
+// Helper function to detect empty object and array
 function isEmpty(obj) {
   for(var prop in obj) {
     if(obj.hasOwnProperty(prop))
@@ -50,13 +51,42 @@ function generate_config_dict(){
   config['warm_up'] = parseInt(warm_up.value);
   config['obj_fun'] = obj_fun.val();
   config['tol'] = parseFloat(tol.value);
-  (minimise.checked) ? config['minimise'] = "True" : config['minimise'] = "False";
-  (verbose.checked) ? config['verbose'] = "True" : config['verbose'] = "False";
+  (minimise.checked) ? config['minimise'] = true : config['minimise'] = false;
+  (verbose.checked) ? config['verbose'] = true : config['verbose'] = false;
   (config['obj_fun'] == "self._rmse") ? config['fun_name'] = "RMSE" : config['fun_name'] = "NSE";
 
   return config;
 }
 
+
+function check_float() {
+  var p1 = /^\+?\d+(\.\d+)?$/g;
+  var p2 = /^\-?\d+(\.\d+)?$/g;
+  var value = this.value;
+  var name = this.name.toUpperCase();
+  var deja_invalid = this.hasAttribute("invalid");
+
+  var alert = `\
+    <div class="alert alert-warning fade in" role="alert" style="padding: 5px 15px; margin-bottom: 12px;">\
+      ${name} must be a <strong>REAL</strong> number ! \
+    </div>\
+    `;
+
+  var valid = (p1.test(value)) || (p2.test(value));
+
+  if (valid) {
+    if(deja_invalid){
+      this.removeAttribute("invalid");
+      $(this.parentNode).next().remove();
+    }
+  }
+  else {
+    if(!deja_invalid) {
+      this.setAttribute("invalid", "");
+      $(alert).insertAfter(this.parentNode);
+    }
+  }
+}
 
 function generate_par_dict() {
   /*
@@ -66,10 +96,18 @@ function generate_par_dict() {
 
   var par_obj = new Object();
   var par_elems = $("#id_parList input");
+  var patrn = /[-+]?[0-9]*\.?[0-9]+/g;
 
   // Create an object {ElementID: Element}
   for (var i = par_elems.length - 1; i >= 0; i--) {
-    par_obj[par_elems[i].id.slice(3)] = parseFloat(par_elems[i].value);
+    var value = par_elems[i].val();
+
+    if (patrn.test(value)) {
+      par_obj[par_elems[i].id.slice(3)] = parseFloat(value);
+    }
+    else {
+
+    }
   }
 
   return par_obj;

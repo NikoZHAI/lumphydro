@@ -1,12 +1,3 @@
-.navbar-inverse .navbar-brand {
-  color: #fff;
-}
-.navbar-inverse .navbar-text {
-  color: #fff;
-}
-.navbar-inverse .navbar-nav > li > a {
-  color: #fff;
-}
 @media (min-width: 768px) {
     .container{
         width:750px;
@@ -31,6 +22,38 @@
     .container{
         width:1600px;
     }
+}
+input[invalid] {
+    border-color: orangered;
+    border-style: solid;
+    border-width: thin;
+    color: orangered;
+}
+input[invalid]:focus {
+    border-color: orangered;
+    border-style: solid;
+    border-width: thin;
+    color: orangered;
+    box-shadow: 0 0 6px darkred;
+}
+#id_parList .input-group {
+  margin-bottom: 12px;
+}
+#id_parList .input-group-addon {
+  width: 30%;
+  padding: 3px 6px;
+}
+.navbar-inverse .navbar-brand {
+  color: #fff;
+}
+.navbar-inverse .navbar-text {
+  color: #fff;
+}
+.navbar-inverse .navbar-nav > li > a {
+  color: #fff;
+}
+.transparent {
+  color: transparent;
 }
 #id_csvFileInput {
   visibility: hidden;
@@ -121,10 +144,6 @@ input:checked + .btnslider:before {
 
 
 /********** Schema svg (after transformation) **********/
-#id_schema {
-  display: block;
-  margin: 0 0 0 0;
-}
 #id_tab_schema {
   position: relative;
 }
@@ -142,7 +161,6 @@ input:checked + .btnslider:before {
   visibility: hidden;
   transition: all 0.5s ease-in-out 0.2s;
 }
-
 #id_schema_overlay span:hover + input {
   width: 40%;
   visibility: visible;
@@ -159,32 +177,49 @@ input:checked + .btnslider:before {
   transition: all 0.5s ease-in-out 0s;
 }
 
+#id_schema_overlay input[invalid] {
+  width: 40%;
+  visibility: visible;
+}
+
 /*  ****** chores ****** */
 #id_schema_innerdiv {
   position: relative;
 }
 
 #id_schema_innerdiv .input-group {
-  height: 22px;
-  line-height: 22px;
-  font-size: 12px;
+  height: 1.1vw;
+  line-height: 1.1vw;
+  font-size: 0.7vw;
 }
 #id_schema_innerdiv .input-group .form-control {
-  height: 24px;
-  line-height: 24px;
-  font-size: 14px;
+  height: 1.25vw;
+  line-height: 1vw;
+  font-size: 0.75vw;
 }
 #id_schema_innerdiv .input-group-addon {
   width: 20%;
-  padding: 3px 6px;
-  font-size: 12px;
+  padding: 0.133vw 0.133vw;
+  font-size: 0.8vw;
   font-weight: normal;
   line-height: 1;
   color: #555;
   text-align: center;
   background-color: #eee;
-  border: 0.16em dotted #0e9;
-  border-radius: 0.32em;
+  border: 0.125vw dotted #0e9;
+  border-radius: 0.25vw;
+}
+#id_schema_innerdiv .input-group-addon.st{
+  width: 20%;
+  padding: 0.133vw 0.133vw;
+  font-size: 0.8vw;
+  font-weight: normal;
+  line-height: 1;
+  color: #555;
+  text-align: center;
+  background-color: #eee;
+  border: 0.125vw dotted #ef6128;
+  border-radius: 0.25vw;
 }
 #id_schema_innerdiv div {
   position: absolute;
@@ -196,7 +231,7 @@ input:checked + .btnslider:before {
 }
 #id_div_rfcf {
   margin-top: 21%;
-  left: 38.7%;
+  left: 39.2%;
   z-index: 1;
 }
 #id_div_utt {
@@ -219,32 +254,34 @@ input:checked + .btnslider:before {
 #id_div_cfr {
   margin-top: 39%;
   left: 29%;
+  z-index: 2;
 }
 #id_div_cwh {
   margin-top: 39%;
   left: 15%;
+  z-index: 1;
 }
 #id_div_cfmax {
   margin-top: 30%;
   left: 27%;
 }
 #id_div_ttm {
-  margin-top: 36%;
-  left: 0%;
+  margin-top: 33%;
+  left: 49%;
+  z-index: 2;
 }
-
 #id_div_fc {
   margin-top: 45%;
-  left: 0%;
+  left: 87%;
 }
 #id_div_lp {
   margin-top: 58%;
-  left: 0%;
+  left: 87%;
 }
 
 #id_div_beta {
   margin-top: 74%;
-  left: 0%;
+  left: 87%;
 }
 
 #id_div_c_flux {
@@ -253,7 +290,7 @@ input:checked + .btnslider:before {
 }
 #id_div_alpha {
   margin-top: 124.5%;
-  left: 72%;
+  left: 72.5%;
 }
 #id_div_k {
   margin-top: 132%;
@@ -271,6 +308,41 @@ input:checked + .btnslider:before {
   margin-top: 153.8%;
   left: 90%;
 }
+
+/***** states *****/
+#id_div_wc {
+  margin-top: 32%;
+  left: 0;
+  z-index: -1;
+}
+#id_div_sp {
+  margin-top: 39%;
+  left: 0;
+}
+#id_div_sm {
+  margin-top: 66%;
+  left: 0;
+  z-index: -1;
+}
+#id_div_uz {
+  margin-top: 105%;
+  left: 0;
+  z-index: -1;
+}
+#id_div_lz {
+  margin-top: 148%;
+  left: 0;
+  z-index: -1;
+}
+#id_div_area {
+  margin-top: 100%;
+  left: 87%;
+}
+#id_div_tfac {
+  margin-top: 108%;
+  left: 87%;
+}
+/***** states END*****/
 /*  ****** chores ****** */
 
 /********** Schema svg (after transformation) END **********/

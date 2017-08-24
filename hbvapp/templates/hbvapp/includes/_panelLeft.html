@@ -7,7 +7,7 @@
     </li>
 
     <li role="presentation">
-			<a href="#id_parList" aria-controls="id_parList" role="tab" data-toggle="tab">List</a>
+			<a href="#id_parList_tab" aria-controls="id_parList_tab" role="tab" data-toggle="tab">List</a>
     </li>
 	</ul>
 	<h4><strong>Model Parameters</strong></h4>
@@ -17,109 +17,144 @@
 	<div class="tab-content">
 	  
 	  <div role="tabpanel" class="tab-pane fade in active" id="id_tab_schema">
-  		
   		<div id="id_schema_overlay">
 	  		<div id="id_schema_innerdiv">
+
 			  	<div class="input-group" id="id_div_ltt">
 					  <span class="input-group-addon" id="addon-ltt">LTT</span>
-					  <input type="text" name="ltt" id="id_ltt" value=-0.1 class="form-control" aria-describedby="addon-ltt">
+					  <input type="text" name="ltt" id="id_ltt" value=-0.1 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-ltt">
 					</div>
 
 					<div class="input-group" id="id_div_utt">
 					  <span class="input-group-addon" id="addon-utt">UTT</span>
-					  <input type="text" name="utt" id="id_utt" value=0.1 class="form-control" aria-describedby="addon-utt">
+					  <input type="text" name="utt" id="id_utt" value=0.1 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-utt">
 					</div>
 
 					<div class="input-group" id="id_div_ttm">
 					  <span class="input-group-addon" id="addon-ttm">TTM</span>
-					  <input type="text" name="ttm" id="id_ttm" value=0.1 class="form-control" aria-describedby="addon-ttm">
+					  <input type="text" name="ttm" id="id_ttm" value=0.1 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-ttm">
 					</div>
 
 					<div class="input-group" id="id_div_cfmax">
 					  <span class="input-group-addon" id="addon-cfmax">CFMAX</span>
-					  <input type="text" name="cfmax" id="id_cfmax" value=0.1 class="form-control" aria-describedby="addon-cfmax">
+					  <input type="text" name="cfmax" id="id_cfmax" value=0.1 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-cfmax">
 					</div>
 
 					<div class="input-group" id="id_div_fc">
 					  <span class="input-group-addon" id="addon-fc">FC</span>
-					  <input type="text" name="fc" id="id_fc" value=250 class="form-control" aria-describedby="addon-fc">
+					  <input type="text" name="fc" id="id_fc" value=250 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-fc">
 					</div>
 
 					<div class="input-group" id="id_div_e_corr">
 					  <span class="input-group-addon" id="addon-e_corr">ECORR</span>
-					  <input type="text" name="e_corr" id="id_e_corr" value=1.0 class="form-control" aria-describedby="addon-e_corr">
+					  <input type="text" name="e_corr" id="id_e_corr" value=1.0 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-e_corr">
 					</div>
 
 					<div class="input-group" id="id_div_etf">
 					  <span class="input-group-addon" id="addon-etf">ETF</span>
-					  <input type="text" name="etf" id="id_etf" value=2.5 class="form-control" aria-describedby="addon-etf">
+					  <input type="text" name="etf" id="id_etf" value=2.5 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-etf">
 					</div>
 
 					<div class="input-group" id="id_div_lp">
 					  <span class="input-group-addon" id="addon-lp">LP</span>
-					  <input type="text" name="lp" id="id_lp" value=0.35 class="form-control" aria-describedby="addon-lp">
+					  <input type="text" name="lp" id="id_lp" value=0.35 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-lp">
 					</div>
 
 					<div class="input-group" id="id_div_k">
 					  <span class="input-group-addon" id="addon-k">K</span>
-					  <input type="text" name="k" id="id_k" value=0.01 class="form-control" aria-describedby="addon-k">
+					  <input type="text" name="k" id="id_k" value=0.01 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-k">
 					</div>
 
 					<div class="input-group" id="id_div_k1">
 					  <span class="input-group-addon" id="addon-k1">K1</span>
-					  <input type="text" name="k1" id="id_k1" value=0.00005 class="form-control" aria-describedby="addon-k1">
+					  <input type="text" name="k1" id="id_k1" value=0.00005 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-k1">
 					</div>
 
 					<div class="input-group" id="id_div_alpha">
 					  <span class="input-group-addon" id="addon-alpha">ALPHA</span>
-					  <input type="text" name="alpha" id="id_alpha" value=0.5 class="form-control" aria-describedby="addon-alpha">
+					  <input type="text" name="alpha" id="id_alpha" value=0.5 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-alpha">
 					</div>
 
 					<div class="input-group" id="id_div_beta">
 					  <span class="input-group-addon" id="addon-beta">BETA</span>
-					  <input type="text" name="beta" id="id_beta" value=3.5 class="form-control" aria-describedby="addon-beta">
+					  <input type="text" name="beta" id="id_beta" value=3.5 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-beta">
 					</div>
 
 					<div class="input-group" id="id_div_cwh">
 					  <span class="input-group-addon" id="addon-cwh">CWH</span>
-					  <input type="text" name="cwh" id="id_cwh" value=0.02 class="form-control" aria-describedby="addon-cwh">
+					  <input type="text" name="cwh" id="id_cwh" value=0.02 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-cwh">
 					</div>
 
 					<div class="input-group" id="id_div_cfr">
 					  <span class="input-group-addon" id="addon-cfr">CFR</span>
-					  <input type="text" name="cfr" id="id_cfr" value=0.5 class="form-control" aria-describedby="addon-cfr">
+					  <input type="text" name="cfr" id="id_cfr" value=0.5 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-cfr">
 					</div>
 
 					<div class="input-group" id="id_div_c_flux">
 					  <span class="input-group-addon" id="addon-c_flux">C-FLUX</span>
-					  <input type="text" name="c_flux" id="id_c_flux" value=0.05 class="form-control" aria-describedby="addon-c_flux">
+					  <input type="text" name="c_flux" id="id_c_flux" value=0.05 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-c_flux">
 					</div>
 
 					<div class="input-group" id="id_div_perc">
 					  <span class="input-group-addon" id="addon-perc">PERC</span>
-					  <input type="text" name="perc" id="id_perc" value=0.1 class="form-control" aria-describedby="addon-perc">
+					  <input type="text" name="perc" id="id_perc" value=0.1 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-perc">
 					</div>
 
 					<div class="input-group" id="id_div_rfcf">
 					  <span class="input-group-addon" id="addon-rfcf">RFCF</span>
-					  <input type="text" name="rfcf" id="id_rfcf" value=1.0 class="form-control" aria-describedby="addon-rfcf">
+					  <input type="text" name="rfcf" id="id_rfcf" value=1.0 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-rfcf">
 					</div>
 
 					<div class="input-group" id="id_div_sfcf">
 					  <span class="input-group-addon" id="addon-sfcf">SFCF</span>
-					  <input type="text" name="sfcf" id="id_sfcf" value=1.0 class="form-control" aria-describedby="addon-sfcf">
+					  <input type="text" name="sfcf" id="id_sfcf" value=1.0 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-sfcf">
 			  	</div>
 
 					<div class="input-group" id="id_div_mbas">
 					  <span class="input-group-addon" id="addon-mbas">MBAS</span>
-					  <input type="text" name="bmax" id="id_mbas" value=1 class="form-control" aria-describedby="addon-mbas">
+					  <input type="text" name="bmax" id="id_mbas" value=1 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-mbas">
+			  	</div>
+
+					<div class="input-group" id="id_div_sp">
+					  <span class="input-group-addon st" id="addon-sp">SP</span>
+					  <input type="text" name="sp" id="id_sp" value=0 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-sp">
+			  	</div>
+
+					<div class="input-group" id="id_div_wc">
+					  <span class="input-group-addon st" id="addon-wc">WC</span>
+					  <input type="text" name="wc" id="id_wc" value=0 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-wc">
+			  	</div>
+			  	
+					<div class="input-group" id="id_div_sm">
+					  <span class="input-group-addon st" id="addon-sm">SM</span>
+					  <input type="text" name="sm" id="id_sm" value=0 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-sm">
+			  	</div>
+
+					<div class="input-group" id="id_div_uz">
+					  <span class="input-group-addon st" id="addon-uz">UZ</span>
+					  <input type="text" name="uz" id="id_uz" value=0 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-uz">
+			  	</div>
+
+					<div class="input-group" id="id_div_lz">
+					  <span class="input-group-addon st" id="addon-lz">LZ</span>
+					  <input type="text" name="lz" id="id_lz" value=0 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-lz">
+			  	</div>
+
+					<div class="input-group" id="id_div_area">
+					  <span class="input-group-addon st" id="addon-area">Area</span>
+					  <input type="text" name="area" id="id_area" value="NA" class="form-control" onchange="check_float.call(this);" aria-describedby="addon-area">
+			  	</div>
+
+					<div class="input-group" id="id_div_tfac">
+					  <span class="input-group-addon st" id="addon-tfac">TFAC</span>
+					  <input type="text" name="tfac" id="id_tfac" value=24 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-tfac">
 			  	</div>
 			  </div>
 			</div>
 
   		<div id="id_schema_schema">
   			<div class="col-sm-11 col-sm-offset-1 col-md-11 col-md-offset-1 col-lg-11 col-lg-offset-1" id="id_div_schema">
-  				<img src="/static/img/tanks.svg" class="svg" id="id_schema" alt="Schematic HBV" style="display: block; margin: auto; width: 100%; height: auto;">
+  				<img src="/static/img/tanks.svg" class="svg" id="id_schema" alt="Schematic HBV" style="width: 100%; height: auto;">
   			</div>
   		</div>
 
@@ -138,104 +173,226 @@
 
 	  </div>
 
-	  <div role="tabpanel" class="tab-pane fade" id="id_parList">
+	  <div role="tabpanel" class="tab-pane fade" id="id_parList_tab">
 
-			<div class="input-group">
-			  <span class="input-group-addon" id="addon-ltt">LTT = </span>
-			  <input type="text" name="ltt" id="id_ltt" value=-0.1 class="form-control" aria-describedby="addon-ltt">
-			</div><br>
+	  <!-- ************************************************************** -->
+			<div class="panel-group" id="id_parList" role="tablist" aria-multiselectable="true">
 
-			<div class="input-group">
-			  <span class="input-group-addon" id="addon-utt">UTT = </span>
-			  <input type="text" name="utt" id="id_utt" value=0.1 class="form-control" aria-describedby="addon-utt">
-			</div><br>
+		  	<div class="panel panel-primary">
+			  	<div class="panel-heading" role="tab" id="headingCommon">
+			      <h4 class="panel-title">
+			        <a role="button" data-toggle="collapse" data-parent="#id_parList" href="#collapseCommon" aria-expanded="true" aria-controls="collapseCommon">
+	          		<strong> # Common Parameters</strong>
+			        </a>
+			      </h4>
+			    </div>
+			    <div id="collapseCommon" class="panel-collapse collapse in active" role="tabpanel" aria-labelledby="headingCommon">
+						<div class="panel-body">
+						  <div class="row">
 
-			<div class="input-group">
-			  <span class="input-group-addon" id="addon-ttm">TTM = </span>
-			  <input type="text" name="ttm" id="id_ttm" value=0.1 class="form-control" aria-describedby="addon-ttm">
-			</div><br>
+								<div class="col-md-6">
+									<div class="input-group" id="id_area">
+									  <span class="input-group-addon" id="addon-area">Area =</span>
+									  <input type="text" name="area" id="id_area" value="NA" class="form-control" onchange="check_float.call(this);" aria-describedby="addon-area">
+							  	</div>
+							  </div>
+							  <div class="col-md-6">
+									<div class="input-group" id="id_tfac">
+									  <span class="input-group-addon" id="addon-tfac">TFAC =</span>
+									  <input type="text" name="tfac" id="id_tfac" value=24 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-tfac">
+							  	</div>
+						  	</div>
 
-			<div class="input-group">
-			  <span class="input-group-addon" id="addon-cfmax">CFMAX = </span>
-			  <input type="text" name="cfmax" id="id_cfmax" value=0.1 class="form-control" aria-describedby="addon-cfmax">
-			</div><br>
+						  </div>
+					  </div>
+				  </div>
+				</div>
 
-			<div class="input-group">
-			  <span class="input-group-addon" id="addon-fc">FC = </span>
-			  <input type="text" name="fc" id="id_fc" value=250 class="form-control" aria-describedby="addon-fc">
-			</div><br>
+		  	<div class="panel panel-primary">
+			  	<div class="panel-heading" role="tab" id="headingPrec">
+			      <h4 class="panel-title">
+			        <a role="button" data-toggle="collapse" data-parent="#id_parList" href="#collapsePrec" aria-expanded="true" aria-controls="collapsePrec">
+	          		<strong> # Precipitation &amp; Snow Routine</strong>
+			        </a>
+			      </h4>
+			    </div>
+			    <div id="collapsePrec" class="panel-collapse collapse in active" role="tabpanel" aria-labelledby="headingPrec">
+					  <div class="panel-body">
+						  <div class="row">
+							  <div class="col-md-6">
 
-			<div class="input-group">
-			  <span class="input-group-addon" id="addon-e_corr">ECORR = </span>
-			  <input type="text" name="e_corr" id="id_e_corr" value=1.0 class="form-control" aria-describedby="addon-e_corr">
-			</div><br>
+							    <div class="input-group" id="id_sp">
+									  <span class="input-group-addon" id="addon-sp">SP =</span>
+									  <input type="text" name="sp" id="id_sp" value=0 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-sp">
+							  	</div>
 
-			<div class="input-group">
-			  <span class="input-group-addon" id="addon-etf">ETF = </span>
-			  <input type="text" name="etf" id="id_etf" value=2.5 class="form-control" aria-describedby="addon-etf">
-			</div><br>
+									<div class="input-group" id="id_wc">
+									  <span class="input-group-addon" id="addon-wc">WC =</span>
+									  <input type="text" name="wc" id="id_wc" value=0 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-wc">
+							  	</div>
 
-			<div class="input-group">
-			  <span class="input-group-addon" id="addon-lp">LP = </span>
-			  <input type="text" name="lp" id="id_lp" value=0.35 class="form-control" aria-describedby="addon-lp">
-			</div><br>
+									<div class="input-group">
+									  <span class="input-group-addon" id="addon-rfcf">RFCF = </span>
+									  <input type="text" name="rfcf" id="id_rfcf" value=1.0 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-rfcf">
+									</div>
 
-			<div class="input-group">
-			  <span class="input-group-addon" id="addon-k">K = </span>
-			  <input type="text" name="k" id="id_k" value=0.01 class="form-control" aria-describedby="addon-k">
-			</div><br>
+									<div class="input-group">
+									  <span class="input-group-addon" id="addon-sfcf">SFCF = </span>
+									  <input type="text" name="sfcf" id="id_sfcf" value=1.0 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-sfcf">
+									</div>
 
-			<div class="input-group">
-			  <span class="input-group-addon" id="addon-k1">K1 = </span>
-			  <input type="text" name="k1" id="id_k1" value=0.00005 class="form-control" aria-describedby="addon-k1">
-			</div><br>
+									<div class="input-group">
+									  <span class="input-group-addon" id="addon-ltt">LTT = </span>
+									  <input type="text" name="ltt" id="id_ltt" value=-0.1 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-ltt">
+									</div>
 
-			<div class="input-group">
-			  <span class="input-group-addon" id="addon-alpha">ALPHA = </span>
-			  <input type="text" name="alpha" id="id_alpha" value=0.5 class="form-control" aria-describedby="addon-alpha">
-			</div><br>
+							  </div>
+								<div class="col-md-6">
+									<div class="input-group">
+									  <span class="input-group-addon" id="addon-utt">UTT = </span>
+									  <input type="text" name="utt" id="id_utt" value=0.1 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-utt">
+									</div>
 
-			<div class="input-group">
-			  <span class="input-group-addon" id="addon-beta">BETA = </span>
-			  <input type="text" name="beta" id="id_beta" value=3.5 class="form-control" aria-describedby="addon-beta">
-			</div><br>
+									<div class="input-group">
+									  <span class="input-group-addon" id="addon-ttm">TTM = </span>
+									  <input type="text" name="ttm" id="id_ttm" value=0.1 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-ttm">
+									</div>
 
-			<div class="input-group">
-			  <span class="input-group-addon" id="addon-cwh">CWH = </span>
-			  <input type="text" name="cwh" id="id_cwh" value=0.02 class="form-control" aria-describedby="addon-cwh">
-			</div><br>
+									<div class="input-group">
+									  <span class="input-group-addon" id="addon-cfmax">CFMAX = </span>
+									  <input type="text" name="cfmax" id="id_cfmax" value=0.1 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-cfmax">
+									</div>
 
-			<div class="input-group">
-			  <span class="input-group-addon" id="addon-cfr">CFR = </span>
-			  <input type="text" name="cfr" id="id_cfr" value=0.5 class="form-control" aria-describedby="addon-cfr">
-			</div><br>
+									<div class="input-group">
+									  <span class="input-group-addon" id="addon-cwh">CWH = </span>
+									  <input type="text" name="cwh" id="id_cwh" value=0.02 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-cwh">
+									</div>
 
-			<div class="input-group">
-			  <span class="input-group-addon" id="addon-c_flux">C-FLUX = </span>
-			  <input type="text" name="c_flux" id="id_c_flux" value=0.05 class="form-control" aria-describedby="addon-c_flux">
-			</div><br>
+									<div class="input-group">
+									  <span class="input-group-addon" id="addon-cfr">CFR = </span>
+									  <input type="text" name="cfr" id="id_cfr" value=0.5 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-cfr">
+									</div>
+							  </div>
+						  </div>
+					  </div>
+				  </div>
+				</div>
 
-			<div class="input-group">
-			  <span class="input-group-addon" id="addon-perc">PERC = </span>
-			  <input type="text" name="perc" id="id_perc" value=0.1 class="form-control" aria-describedby="addon-perc">
-			</div><br>
+		  	<div class="panel panel-primary">
+			  	<div class="panel-heading" role="tab" id="headingSoil">
+			      <h4 class="panel-title">
+			        <a role="button" data-toggle="collapse" data-parent="#id_parList" href="#collapseSoil" aria-expanded="true" aria-controls="collapseSoil">
+	          		<strong> # Soil Routine</strong>
+			        </a>
+			      </h4>
+			    </div>
+			    <div id="collapseSoil" class="panel-collapse collapse in active" role="tabpanel" aria-labelledby="headingSoil">
+					  <div class="panel-body">
+						  <div class="row">
+							  <div class="col-md-6">
+									<div class="input-group" id="id_sm">
+										<span class="input-group-addon" id="addon-sm">SM =</span>
+									  <input type="text" name="sm" id="id_sm" value=0 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-sm">
+							  	</div>
+							  	<hr>
 
-			<div class="input-group">
-			  <span class="input-group-addon" id="addon-rfcf">RFCF = </span>
-			  <input type="text" name="rfcf" id="id_rfcf" value=1.0 class="form-control" aria-describedby="addon-rfcf">
-			</div><br>
+									<div class="input-group">
+									  <span class="input-group-addon" id="addon-fc">FC = </span>
+									  <input type="text" name="fc" id="id_fc" value=250 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-fc">
+									</div>
 
-			<div class="input-group">
-			  <span class="input-group-addon" id="addon-sfcf">SFCF = </span>
-			  <input type="text" name="sfcf" id="id_sfcf" value=1.0 class="form-control" aria-describedby="addon-sfcf">
-			</div><br>
+									<div class="input-group">
+									  <span class="input-group-addon" id="addon-e_corr">ECORR = </span>
+									  <input type="text" name="e_corr" id="id_e_corr" value=1.0 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-e_corr">
+									</div>
 
-			<div class="input-group">
-			  <span class="input-group-addon" id="addon-bmax">BMAX</span>
-			  <input type="text" name="bmax" id="id_bmax" value=1 class="form-control" aria-describedby="addon-bmax">
-	  	</div><br>
+								</div>
+
+								<div class="col-md-6">
+									<div class="input-group">
+									  <span class="input-group-addon" id="addon-etf">ETF = </span>
+									  <input type="text" name="etf" id="id_etf" value=2.5 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-etf">
+									</div>
+
+									<div class="input-group">
+									  <span class="input-group-addon" id="addon-lp">LP = </span>
+									  <input type="text" name="lp" id="id_lp" value=0.35 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-lp">
+									</div>
+
+									<div class="input-group">
+									  <span class="input-group-addon" id="addon-beta">BETA = </span>
+									  <input type="text" name="beta" id="id_beta" value=3.5 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-beta">
+									</div>
+
+									<div class="input-group">
+									  <span class="input-group-addon" id="addon-c_flux">C-FLUX = </span>
+									  <input type="text" name="c_flux" id="id_c_flux" value=0.05 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-c_flux">
+									</div>
+
+							  </div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+		  	<div class="panel panel-primary">
+			  	<div class="panel-heading" role="tab" id="headingResponse">
+			      <h4 class="panel-title">
+			        <a role="button" data-toggle="collapse" data-parent="#id_parList" href="#collapseResponse" aria-expanded="true" aria-controls="collapseResponse">
+	          		<strong> # Response Routine</strong>
+			        </a>
+			      </h4>
+			    </div>
+			    <div id="collapseResponse" class="panel-collapse collapse in active" role="tabpanel" aria-labelledby="headingResponse">
+					  <div class="panel-body">
+						  <div class="row">
+							  <div class="col-md-6">
+
+									<div class="input-group">
+									  <span class="input-group-addon" id="addon-k">K = </span>
+									  <input type="text" name="k" id="id_k" value=0.01 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-k">
+									</div>
+
+									<div class="input-group">
+									  <span class="input-group-addon" id="addon-k1">K1 = </span>
+									  <input type="text" name="k1" id="id_k1" value=0.00005 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-k1">
+									</div>
+
+									<div class="input-group">
+									  <span class="input-group-addon" id="addon-alpha">ALPHA = </span>
+									  <input type="text" name="alpha" id="id_alpha" value=0.5 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-alpha">
+									</div>
+
+									<div class="input-group">
+									  <span class="input-group-addon" id="addon-perc">PERC = </span>
+									  <input type="text" name="perc" id="id_perc" value=0.1 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-perc">
+									</div>
+								</div>
+
+								<div class="col-md-6">
+									<div class="input-group">
+									  <span class="input-group-addon" id="addon-bmax">BMAX</span>
+									  <input type="text" name="bmax" id="id_bmax" value=1 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-bmax">
+							  	</div>
+
+									<div class="input-group" id="id_uz">
+									  <span class="input-group-addon" id="addon-uz">UZ =</span>
+									  <input type="text" name="uz" id="id_uz" value=0 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-uz">
+							  	</div>
+
+									<div class="input-group" id="id_lz">
+									  <span class="input-group-addon" id="addon-lz">LZ =</span>
+									  <input type="text" name="lz" id="id_lz" value=0 class="form-control" onchange="check_float.call(this);" aria-describedby="addon-lz">
+							  	</div>
+							  </div>
+							
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Tab Panel END -->
 		</div>
-		<!-- Tab Panel END -->
 	</div>
 	<!-- Tab Content END -->
 </div>

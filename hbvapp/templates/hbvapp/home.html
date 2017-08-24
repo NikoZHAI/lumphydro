@@ -26,9 +26,18 @@
 			$("#id_browse").on('click', function(){
 				$("#id_loadStatus").html('');
 				$("#id_summary").fadeOut(600);
+				$("#id_csvFileInput").val("");
 			  $("#id_csvFileInput").trigger('click');
 			});
 			/* File input helper END */
+
+			/* Collapse helper */
+			$('#id_parList .panel-primary').on('click', function () {
+				var thisdiv = ($(this).find(":nth-child(2)"));
+				var thiselm = thisdiv[0];
+			  $(thiselm).collapse('show');
+			});
+			/* Collapse helper END */
 
 			/* Reading file jQuery */
 			$("#id_csvFileInput").on("change", function(e){
@@ -40,9 +49,8 @@
 						type: "POST",
 						async: true,
 						data: {'text': text, 'action': 'load_file'},
-						success: function(data){
-							$("#id_loadStatus").html('<i class="glyphicon glyphicon-ok"></i>');
-							$("#id_loadStatus i").css("color", "green");
+						success: function(){
+							$("#id_loadStatus").html('<span class="text-success"><i class="glyphicon glyphicon-ok"></i></span>');
 							$("#id_summary").fadeIn(600);
 						}
 					});
