@@ -595,9 +595,13 @@ class HBV96(HydroModel):
 		def _cal_fun_minimize(par_to_optimize):
 			self.par.update(dict(zip(self._ind[:18], par_to_optimize))) # Update the parameter dictionary
 			_q_sim, _q_rec = self._simulate_for_calibration()
+
+			# Index for calibration
+			_begin = self.config['warm_up']+self.config['calibrate_from'].get('index')
+			_end = self.config['calibrate_to'].get('index')+1
 			
-			perf = self.obj_fun(_q_rec[self.config['warm_up']:],
-							_q_sim[self.config['warm_up']:])
+			perf = self.obj_fun(_q_rec[_begin:_end],
+							_q_sim[_begin:_end])
 
 			if self.config['verbose']:
 				print('{0}: {1}'.format(self.config['fun_name'], perf))
@@ -608,8 +612,12 @@ class HBV96(HydroModel):
 			self.par.update(dict(zip(self._ind[:18], par_to_optimize))) # Update the parameter dictionary
 			_q_sim, _q_rec = self._simulate_for_calibration()
 			
-			perf = -self.obj_fun(_q_rec[self.config['warm_up']:],
-							_q_sim[self.config['warm_up']:])
+		# Index for calibration
+			_begin = self.config['warm_up']+self.config['calibrate_from'].get('index')
+			_end = self.config['calibrate_to'].get('index')+1
+			
+			perf = -self.obj_fun(_q_rec[_begin:_end],
+							_q_sim[_begin:_end])
 
 			if self.config['verbose']:
 				print('{0}: {1}'.format(self.config['fun_name'], perf))

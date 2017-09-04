@@ -36,32 +36,29 @@ function assert(condition, message) {
 function initialize_data (text, context) {
   var delimiter = context.id_csvSeparatorInput,
       header = parseInt(context.id_csvHeaderInput);
-  var success = false;
-  try {
-    var data = d3.dsvFormat(delimiter).parse(text, function(d, i) {
-      return {
-        date: new Date(d.date),
-        prec: +d.prec,     // Precipitation
-        q_rec: +d.q_rec,   // Recorded discharge
-        temp: +d.temp,     // Air temperature
-        tm: +d.tm,         // Monthly mean air temperature
-        ep: +d.ep,         // Evaporation
-      };
-    });
-    success = true;
-  }
-  catch (ex) {
-    alert(ex.message);
-    throw(ex); // Re-throw the exception to outer scope
-  }
-  finally {
-    enable_datepickers(data, success);
-  }
+
+  var data = d3.dsvFormat(delimiter).parse(text, function(d, i) {
+    return {
+      date: moment(d.date).format("YYYY-MM-DD"),  // Date
+      prec: +d.prec,     // Precipitation
+      q_rec: +d.q_rec,   // Recorded discharge
+      temp: +d.temp,     // Air temperature
+      tm: +d.tm,         // Monthly mean air temperature
+      ep: +d.ep,         // Evaporation
+    };
+  });
+  success = true;
 
   function data_validator() {
     return undefined;
   }
   return data;
+}
+
+function indexof_date (date) {
+  for (var i = init_data.length - 1; i >= 0; i--) {
+    if(init_data[i].date == date){  return i;}
+  }
 }
 
 function generate_config_dict (){
@@ -87,6 +84,8 @@ function generate_config_dict (){
   config['verbose'] = c.id_verbose;
   config['fun_name'] = config['obj_fun'];
   config['kill_snow'] = !c.id_snow;
+  config['calibrate_from'] = c.calibrate_from;
+  config['calibrate_to'] = c.calibrate_to;
 
   return config;
 }

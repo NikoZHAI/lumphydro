@@ -44,20 +44,25 @@
 				$("#id_fileNamePlaceHolder").val($(this).val().replace(/C:\\fakepath\\/i, ''));
 				render_text(this.files[0], function(e){
 					var text = e.target.result;
-					window.init_data = initialize_data(text, client_context);
+					var success = false;
+					try{
+						window.init_data = initialize_data(text, client_context);
+						success = true;
+					}
+				  catch (ex) {
+				    alert(ex.message);
+				  }
+				  finally {
+				    enable_datepickers(init_data, success);
+				  }
 					$.ajax({
 						url: "",
 						type: "POST",
 						async: true,
 						data: {'data': JSON.stringify(init_data), 'action': 'load_file'},
 						success: function(data){
-							if (isEmpty(data.error)) {
-								$("#id_loadStatus").html('<span class="text-success"><i class="glyphicon glyphicon-ok"></i></span>');
-								$("#id_summary").fadeIn(600);
-							}
-							else {
-
-							}
+							$("#id_loadStatus").html('<span class="text-success"><i class="glyphicon glyphicon-ok"></i></span>');
+							$("#id_summary").fadeIn(600);
 						}
 					});
 				});
@@ -144,7 +149,7 @@
 			});
 			/* Change Context jQuery END */
 
-			/**/
+			/* ----- Date picker for calibration ----- */
 			$(function () {
         $('#calibrate_from').datetimepicker({
         	format: "YYYY-MM-DD"
@@ -157,12 +162,12 @@
         /* Date picker event handeler */
         $("#calibrate_from").on("dp.change", function (e) {
         	var begin = e.date.format("YYYY-MM-DD");
-        	client_context.calibrate_from = {date: begin, index: ""};
+        	client_context.calibrate_from = {date: begin, index: indexof_date(begin)};
           $('#calibrate_to').data("DateTimePicker").minDate(begin);
         });
         $("#calibrate_to").on("dp.change", function (e) {
         	var end = e.date.format("YYYY-MM-DD");
-        	client_context.calibrate_to = {date: end, index: ""};
+        	client_context.calibrate_to = {date: end, index: indexof_date(end)};
           $('#calibrate_from').data("DateTimePicker").maxDate(end);
         });
         /* Date picker event handeler END*/
@@ -178,7 +183,7 @@
 					$("#datepicker_calibration").toggle(600);
 				}
 			});
-			/**/
+			/* ----- Date picker for calibration END ----- */
 		});
 
 	</script>
