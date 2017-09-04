@@ -24,7 +24,7 @@
 
 			/* File input helper */
 			$("#id_browse").on('click', function(){
-				$("#id_loadStatus").html('');
+				$("#id_loadStatus").html("");
 				$("#id_summary").fadeOut(600);
 				$("#id_csvFileInput").val("");
 			  $("#id_csvFileInput").trigger('click');
@@ -44,14 +44,20 @@
 				$("#id_fileNamePlaceHolder").val($(this).val().replace(/C:\\fakepath\\/i, ''));
 				render_text(this.files[0], function(e){
 					var text = e.target.result;
+					window.init_data = initialize_data(text, client_context);
 					$.ajax({
 						url: "",
 						type: "POST",
 						async: true,
-						data: {'text': text, 'action': 'load_file'},
-						success: function(){
-							$("#id_loadStatus").html('<span class="text-success"><i class="glyphicon glyphicon-ok"></i></span>');
-							$("#id_summary").fadeIn(600);
+						data: {'data': JSON.stringify(init_data), 'action': 'load_file'},
+						success: function(data){
+							if (isEmpty(data.error)) {
+								$("#id_loadStatus").html('<span class="text-success"><i class="glyphicon glyphicon-ok"></i></span>');
+								$("#id_summary").fadeIn(600);
+							}
+							else {
+
+							}
 						}
 					});
 				});
@@ -75,15 +81,20 @@
 			});
 			/* Summarizing file END */
 
-			/* Calibration jQuery ... */
+			/* Calibration jQuery */
 			$("#id_calibrate").on("click", function(){
+				var action = 'calibrate';
 				var config = generate_config_dict();
+				var par = generate_par_dict(action);
+				var st = generate_st_dict();
 				$.ajax({
 					url: "",
 					type: "POST",
 					async: true,
 					data: {'config': JSON.stringify(config),
-								'action': 'calibrate'},
+								'par': JSON.stringify(par),
+								'st': JSON.stringify(st),
+								'action': action},
 					success: function(data){
 						show_calibrated_par(data.par);
 						$("#id_sizeDFTitle").text('Size of the file:');
@@ -99,17 +110,20 @@
 			});
 			/* Calibration jQuery END */
 
-			/* Simulation jQuery ... */
+			/* Simulation jQuery */
 			$("#id_simulate").on("click", function(){
+				var action = 'simulate';
 				var config = generate_config_dict();
-				var par = generate_par_dict();
+				var par = generate_par_dict(action);
+				var st = generate_st_dict();
 				$.ajax({
 					url: "",
 					type: "POST",
 					async: true,
 					data: {'config': JSON.stringify(config),
 								'par': JSON.stringify(par),
-								'action': 'simulate'},
+								'st': JSON.stringify(st),
+								'action': action},
 					success: function(data){
 						$("#id_sizeDFTitle").text('Size of the file:');
 						$("#id_sizeDF").text(data.size + " lines");
@@ -122,26 +136,49 @@
 					}
 				});
 			});
-
-			// $("#id_schema_overlay span").hover(
-			// 	function() {
-			// 		var onHover = {
-			// 					width: "40%",
-  	// 						visibility: "visible",
-  	// 						transition: "all 0.5s ease-in-out 0s",
-			// 					};
-			// 		$( this ).siblings()
-			// 					.css(onHover);
-			// },function() {
-			// 	var onLeave = {
-			// 					width: "10%",
-  	// 						visibility: "hidden",
-  	// 						transition: "all 0.5s ease-in-out 0s",
-			// 					};
-			// 	$( this ).siblings()
-			// 					.css(onLeave);
-			// });
 			/* Simulation jQUery END */
+
+			/* Change Context jQuery */
+			$("input").not(":input[type=range], :input[type=file], :input[type=date]").on("change", function(e){
+				changeContextWhenInput(this);
+			});
+			/* Change Context jQuery END */
+
+			/**/
+			$(function () {
+        $('#calibrate_from').datetimepicker({
+        	format: "YYYY-MM-DD"
+        });
+        $('#calibrate_to').datetimepicker({
+        	format: "YYYY-MM-DD",
+          useCurrent: false //Important! See issue #1075
+        });
+
+        /* Date picker event handeler */
+        $("#calibrate_from").on("dp.change", function (e) {
+        	var begin = e.date.format("YYYY-MM-DD");
+        	client_context.calibrate_from = {date: begin, index: ""};
+          $('#calibrate_to').data("DateTimePicker").minDate(begin);
+        });
+        $("#calibrate_to").on("dp.change", function (e) {
+        	var end = e.date.format("YYYY-MM-DD");
+        	client_context.calibrate_to = {date: end, index: ""};
+          $('#calibrate_from').data("DateTimePicker").maxDate(end);
+        });
+        /* Date picker event handeler END*/
+	    });
+
+			$("#id_select_date_range").on("change", function(e){
+				if (e.target.checked == true) {
+					client_context.id_select_date_range = true;
+					$("#datepicker_calibration").toggle(600);
+				}
+				else {
+					client_context.id_select_date_range = false;
+					$("#datepicker_calibration").toggle(600);
+				}
+			});
+			/**/
 		});
 
 	</script>
@@ -204,7 +241,10 @@
   				{% include 'hbvapp/includes/_panelRight.html' %}
   			</div>
   		</div>
-			<div>
+			<div class="row">
+				<div>
+					
+				</div>
 				<p id="id_sizeDFTitle">Waiting for operation....</p>
 				<span id="id_sizeDF"></span>
 				<h3 id="id_outDFHeadTitle"></h3>

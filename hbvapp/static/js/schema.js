@@ -10,9 +10,10 @@
 /* This is a oo version of schema to facilate animation manipulation */
 
 function create_schema() {
+  var svg = d3.select(".schemaSvg");
 
   var Schema = {
-    svg: d3.select(".schemaSvg"),
+    svg: svg,
     p_width: [0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1, 1.125, 1.25],
     tanks: {},
     data: {},

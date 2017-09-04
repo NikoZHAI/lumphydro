@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, JsonResponse
 from django.template import loader, RequestContext
 from django.shortcuts import render, render_to_response
-from .hbvcore import hbv96
+from .hbvcore.hbv96 import HBV96, DivergentError
 import json
 
 import numpy as np
@@ -17,11 +17,7 @@ from bokeh.palettes import magma, plasma, viridis
 from bokeh.plotting import figure, ColumnDataSource
 
 # Create HBV object
-mcd = hbv96.HBV96()
-
-mcd.par['area'] = 135.0
-
-mcd.par['tfac'] = 24
+mcd = HBV96()
 
 mcd.config['init_guess'] = None
 
@@ -41,13 +37,13 @@ def home(request):
 
 		# Use JsonResponse just to interact with JQuery
 		if action=='load_file':
-			mcd.data = post.get('text')
+			mcd.data = json.loads(post.get('data'))
 			return JsonResponse(context)
 
 		elif action=='simulate':
 			mcd.config.update(json.loads(post.get('config')))
 			mcd.par.update(json.loads(post.get('par')))
-			mcd.extract_to_dict()
+			mcd.DEF_ST.update(json.loads(post.get('st')))
 			mcd._simulate_without_calibration()
 			context['res_head'] = json.dumps(mcd.data[:5])
 			context['size'] = len(mcd.data)
@@ -59,7 +55,7 @@ def home(request):
 
 		elif action=='calibrate':
 			mcd.config.update(json.loads(post.get('config')))
-			mcd.extract_to_dict()
+			mcd.par.update(json.loads(post.get('par')))
 			mcd.calibrate()
 			context['res_head'] = json.dumps(mcd.data[:5])
 			context['size'] = len(mcd.data)
@@ -272,6 +268,57 @@ def plot_simu_st(source):
 	
 	return p
 
+
+def plot_simu_st_without_snow(source):
+
+	hover = HoverTool(
+		names=['sm',],
+	    tooltips=[
+	        ( 'date', '@date{%F}' ),
+	        ( 'Soil Moisture', '@sm{0.000 a}' ), 
+	        ( 'Upper Zone', '@uz{0.000 a}' ),
+	        ( 'Lower Zone', '@lz{0.000 a}' ), # use @{ } for field names with spaces
+	    ],
+	    formatters={
+	        'date' : 'datetime', # use 'datetime' formatter for 'date' field
+	    },
+
+	    # display a tooltip whenever the cursor is vertically in line with a glyph
+	    mode='mouse',
+	)
+	tools = [PanTool(), WheelZoomTool(dimensions="width"),
+		BoxZoomTool(dimensions="width"), UndoTool(), RedoTool(),
+		ResetTool(),hover, SaveTool()]
+
+	p = figure(plot_width=800, plot_height=450, tools=tools, 
+		responsive=True, x_axis_type='datetime')
+	p.title.text = "Simulated States"
+
+	renderers = []
+	lines = ['sm', 'uz', 'lz']
+	names =  ['Soil Moisture', 'Upper Zone', 'Lower Zone']
+	colors = plasma(3)
+
+	for series, color in zip(lines, colors):
+		renderers.append([p.line('date', series, source=source, color=color, alpha=0.8, name=series)])
+
+	legend = Legend(
+		items=zip(names, renderers),
+		location="center",
+		orientation="horizontal",
+		click_policy="hide",
+		glyph_width = 40,
+		padding=10,
+		spacing=20,
+		border_line_width=1,
+		border_line_color='navy',
+		margin=20,
+		label_standoff=6
+		)
+	p.add_layout(legend, 'below')
+	
+	return p
+
 def plot_simu_perf(source):
 	_range = len(source.data['cumu_rmse'])-1
 	hover = HoverTool(
@@ -331,7 +378,10 @@ def plot_simulation(simulation_result):
 	script_p, div_p = components(plot_simu_p(source))
 	script_t, div_t = components(plot_simu_t(source))
 	script_etp, div_etp = components(plot_simu_etp(source))
-	script_st, div_st = components(plot_simu_st(source))
+	if mcd.config['kill_snow']:
+		script_st, div_st = components(plot_simu_st_without_snow(source))
+	else:
+		script_st, div_st = components(plot_simu_st(source))
 	script_perf, div_perf = components(plot_simu_perf(source))
 
 	plots = dict(
@@ -368,9 +418,12 @@ def plot_all(source):
 
 def synthesize_data(simulation_result):
 	data = pd.DataFrame(simulation_result)
-	sts = ['sp','wc', 'sm', 'lz', 'uz']
-	extremes = dict()
+	if mcd.config['kill_snow']:
+		sts = ['sm', 'lz', 'uz']
+	else:
+		sts = ['sp','wc', 'sm', 'lz', 'uz']
 
+	extremes = dict()
 	for name in sts:
 		maxi = name+'_max'
 		mini = name+'_min'
@@ -411,28 +464,46 @@ def synthesize_data(simulation_result):
 
 	cumu_sse = [0]
 	for i in xrange(1, (_range-1)):
-		cumu_sse.append(_sse(data.at[i,'q_rec'], data.at[i, 'q_sim']) + cumu_sse[i-1])
+		cumu_sse.append(_sse(data.at[i,'q_rec'], data.at[i,'q_sim']) + cumu_sse[i-1])
 	''' ---------- Calculate cumulative Residus END ---------- '''
 
+	''' ----- Convert all np.nan values into "NaN" for Javascript -----'''
 
-	source = ColumnDataSource(data=dict(
-		date=pd.to_datetime(data['date']),	# Date
-		q_rec=data['q_rec'],				# Measured discharge
-		q_sim=data['q_sim'],				# Simulated discharge
-		bias=(data['q_sim']-data['q_rec']), # Bias of the model, difference between simulated and measured discharge
-		prec=data['prec'],					# Precipitation
-		sp=data['sp'],						# Simulated snow pack
-		diff_temp=data['temp']-data['tm'],	# Difference 
-		t=data['temp'],						# Air temperature
-		tm=data['tm'],						# Long-term averaged air temperature
-		sm=data['sm'],						# Soil moisture
-		ep=data['ep'],						# Recorded evaporation
-		wc=data['wc'],						# Water content
-		uz=data['uz'],						# Upper zone value
-		lz=data['lz'],						# Lower zone value
-		cumu_rmse=cumu_rmse,				# Cumulative Root Mean Square Error
-		cumu_sse=cumu_sse,					# Cumulative Square Standard Error
-	))
-
+	if mcd.config['kill_snow']:
+		source = ColumnDataSource(data=dict(
+			date=pd.to_datetime(data['date']),	# Date
+			q_rec=data['q_rec'],				# Measured discharge
+			q_sim=data['q_sim'],				# Simulated discharge
+			bias=(data['q_sim']-data['q_rec']), # Bias of the model, difference between simulated and measured discharge
+			prec=data['prec'],					# Precipitation
+			diff_temp=data['temp']-data['tm'],	# Difference 
+			sp=data['sp'],						# Simulated snow pack
+			t=data['temp'],						# Air temperature
+			tm=data['tm'],						# Long-term averaged air temperature
+			sm=data['sm'],						# Soil moisture
+			ep=data['ep'],						# Recorded evaporation
+			uz=data['uz'],						# Upper zone value
+			lz=data['lz'],						# Lower zone value
+			cumu_rmse=cumu_rmse,				# Cumulative Root Mean Square Error
+			cumu_sse=cumu_sse,					# Cumulative Square Standard Error
+		))
+	else:
+		source = ColumnDataSource(data=dict(
+			date=pd.to_datetime(data['date']),	# Date
+			q_rec=data['q_rec'],				# Measured discharge
+			q_sim=data['q_sim'],				# Simulated discharge
+			bias=(data['q_sim']-data['q_rec']), # Bias of the model, difference between simulated and measured discharge
+			prec=data['prec'],					# Precipitation
+			sp=data['sp'],						# Simulated snow pack
+			diff_temp=data['temp']-data['tm'],	# Difference 
+			t=data['temp'],						# Air temperature
+			tm=data['tm'],						# Long-term averaged air temperature
+			sm=data['sm'],						# Soil moisture
+			ep=data['ep'],						# Recorded evaporation
+			wc=data['wc'],						# Water content
+			uz=data['uz'],						# Upper zone value
+			lz=data['lz'],						# Lower zone value
+			cumu_rmse=cumu_rmse,				# Cumulative Root Mean Square Error
+			cumu_sse=cumu_sse,					# Cumulative Square Standard Error
+		))
 	return source
-

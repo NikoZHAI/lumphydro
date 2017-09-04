@@ -60,8 +60,94 @@
   <!-- Tab panes -->
 	<div class="tab-content">
 
+	<!-- -->
+	  <div role="tabpanel" class="tab-pane fade in active" id="home">
 
-	  <div role="tabpanel" class="tab-pane fade in active" id="home">...</div>
+	  	<div class="row">
+				<div class="col-sm-3">
+					<label>Snow Routine</label>
+				</div>
+
+				<div class="col-sm-1 text-right">
+					<label class="switch">
+					  <input type="checkbox" name="snow" id="id_snow" value="boolean" checked>
+					  <span class="btnslider round"></span>
+					</label>
+				</div>
+	  	</div>
+
+	  	<div class="row">
+				<div class="col-sm-3">
+					<label>Calibrate all parameters</label>
+				</div>
+
+				<div class="col-sm-1 text-right">
+					<label class="switch">
+					  <input type="checkbox" name="calibrate_all" id="id_calibrate_all_par" value="boolean">
+					  <span class="btnslider round"></span>
+					</label>
+				</div>
+			</div>
+
+	  	<div class="row">
+				
+				<div class="col-sm-3">
+					<label>Select date range for calibtration</label>
+				</div>
+
+				<div class="col-sm-1 text-right">
+					<label class="switch">
+					  <input type="checkbox" name="select_date_range" id="id_select_date_range" value="boolean">
+					  <span class="btnslider round"></span>
+					</label>
+				</div>
+	  	</div>
+			
+			<!-- Date picker for period-selectable calibration -->
+		<div id="datepicker_calibration" style="display: none;">
+			<div class="row">
+				<div class="col-sm-1 text-center">
+					<label style="padding-top: 0.3vw; padding-left: 0.8vw;">From: </label>
+				</div>
+				<div class="col-sm-3">
+					<div class="form-group">
+            <div class='input-group date' id='calibrate_from'>
+              <input type='text' class="form-control" disabled/>
+              <span class="input-group-addon">
+                <span class="glyphicon glyphicon-calendar"></span>
+              </span>
+            </div>
+        	</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-1 text-center">
+					<label style="padding-top: 0.3vw; padding-left: 0.8vw;">To: </label>
+				</div>
+				<div class='col-sm-3'>
+        	<div class="form-group">
+            <div class='input-group date' id='calibrate_to'>
+              <input type='text' class="form-control" disabled/>
+              <span class="input-group-addon">
+                <span class="glyphicon glyphicon-calendar"></span>
+              </span>
+            </div>
+        	</div>
+		    </div>
+		  </div>
+		</div>
+		  <!-- Date picker for period-selectable calibration END-->
+
+
+	  	<div class="row">
+				
+				<div class="col-sm-2">
+					<a role="button" onclick="sample();">Sample Run &#8617;</a>
+				</div>
+			</div>
+
+	  </div>
 	
 
 	  <!-- Plots begin -->
@@ -102,37 +188,43 @@
 	  
 	  
 	  <div role="tabpanel" class="tab-pane fade" id="id_config_panel">
-			<h3>Model Configurator</h3>
-			<hr>
+	  	<br>
 			<form id="id_form_configs" class="form-group">
 				
-				CSV Header: <input class="form-control" type="number" name="csvHeaderInput" id="id_csvHeaderInput" value=0><br>
+				<div textual>
+					CSV Header: <input class="form-control" type="text" name="csvHeaderInput" id="id_csvHeaderInput" value=0 onchange="check_int.call(this);">
+				</div>
 				
-				CSV Separator: <input class="form-control" type="text" name="csvSeparatorInput" id="id_csvSeparatorInput" value=","><br>
-				
-				Warm up Period: <input class="form-control" type="number" name="warmUpInput" id="id_warmUpInput" value=10><br>
-				
-				Computation Tolerance: <input class="form-control" type="number" name="tolInput" id="id_tolInput" value="0.001"><br>
+				<div textual>
+					CSV Separator: <input class="form-control" type="text" name="csvSeparatorInput" id="id_csvSeparatorInput" value=",">
+				</div>
 
+				<div textual>
+					Warm up Period: <input class="form-control" type="text" name="warmUpInput" id="id_warmUpInput" value=10 onchange="check_int.call(this);">
+				</div>
+
+				<div textual>
+					Computation Tolerance: <input class="form-control" type="text" name="tolInput" id="id_tolInput" value="0.001" onchange="check_minimum_float.call(this, mini=0.000001)">
+				</div>
 				
 				<div class="row">
-					<div class="col-sm-2"><label>Objective Function: </label></div>
+					<div class="col-sm-1"><label>Residus: </label></div>
 					<div class="col-sm-1">
-						<label class="radio-inline"><input type="radio" name="objFunctionInput" id="id_RMSE" value="self._rmse" checked> RMSE 
+						<label class="radio-inline"><input type="radio" name="objFunctionInput" id="id_RMSE" value="RMSE" checked> RMSE 
 						</label>
 					</div>
 					
 					<div class="col-sm-1">
-						<label class="radio-inline"><input type="radio" name="objFunctionInput" value="self._nse" id="id_NSE"> NSE 
+						<label class="radio-inline"><input type="radio" name="objFunctionInput" value="NSE" id="id_NSE"> NSE 
 						</label>
 					</div>
 
-					<div class="col-sm-2 col-sm-offset-1 text-right">
+					<div class="col-sm-2 text-right">
 						<label>Minimize Residus</label>
 					</div>
 					<div class="col-sm-1">
 						<label class="switch">
-						  <input type="checkbox" name="minimise" id="id_minimise" value="true" checked>
+						  <input type="checkbox" name="minimise" id="id_minimise" value="boolean" checked>
 						  <span class="btnslider round"></span>
 						</label>
 					</div>
@@ -143,7 +235,17 @@
 					</div>
 					<div class="col-sm-1">
 						<label class="switch">
-						  <input type="checkbox" name="verbose" id="id_verbose" value="true">
+						  <input type="checkbox" name="verbose" id="id_verbose" value="boolean">
+						  <span class="btnslider round"></span>
+						</label>
+					</div>
+
+					<div class="col-sm-2 text-right">
+						<label>Scientific Notation</label>
+					</div>
+					<div class="col-sm-1">
+						<label class="switch">
+						  <input type="checkbox" name="sci_note" id="id_sci_note" value="boolean" checked>
 						  <span class="btnslider round"></span>
 						</label>
 					</div>

@@ -36,6 +36,9 @@ input[invalid]:focus {
     color: orangered;
     box-shadow: 0 0 6px darkred;
 }
+#id_config_panel div[textual] {
+  margin-bottom: 20px;
+}
 #id_parList .input-group {
   margin-bottom: 12px;
 }
@@ -62,7 +65,6 @@ input[invalid]:focus {
 #id_summary {
   display: none;
 }
-
 
 /********** The switch - the box around the slider **********/
 .switch {
@@ -153,7 +155,7 @@ input:checked + .btnslider:before {
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 1;
+  z-index: 99999;
 }
 
 #id_schema_overlay input {
@@ -251,15 +253,13 @@ input:checked + .btnslider:before {
   margin-top: 24.8%;
   left: 80%;
 }
-#id_div_cfr {
-  margin-top: 39%;
-  left: 29%;
-  z-index: 2;
-}
 #id_div_cwh {
   margin-top: 39%;
   left: 15%;
-  z-index: 1;
+}
+#id_div_cfr {
+  margin-top: 39%;
+  left: 29%;
 }
 #id_div_cfmax {
   margin-top: 30%;
@@ -318,6 +318,7 @@ input:checked + .btnslider:before {
 #id_div_sp {
   margin-top: 39%;
   left: 0;
+  z-index: -1;
 }
 #id_div_sm {
   margin-top: 66%;
