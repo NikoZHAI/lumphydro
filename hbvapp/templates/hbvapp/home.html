@@ -144,9 +144,7 @@
 			/* Simulation jQUery END */
 
 			/* Change Context jQuery */
-			$("input").not(":input[type=range], :input[type=file], :input[type=date]").on("change", function(e){
-				changeContextWhenInput(this);
-			});
+			$("input").not(":input[type=range], :input[type=file], :input[type=date], :input[just_a_box]").on("change", changeContextWhenInput);
 			/* Change Context jQuery END */
 
 			/* ----- Date picker for calibration ----- */
@@ -160,12 +158,12 @@
         });
 
         /* Date picker event handeler */
-        $("#calibrate_from").on("dp.change", function (e) {
+        $("#calibrate_from").on("dp.change", function(e){
         	var begin = e.date.format("YYYY-MM-DD");
         	client_context.calibrate_from = {date: begin, index: indexof_date(begin)};
           $('#calibrate_to').data("DateTimePicker").minDate(begin);
         });
-        $("#calibrate_to").on("dp.change", function (e) {
+        $("#calibrate_to").on("dp.change", function(e){
         	var end = e.date.format("YYYY-MM-DD");
         	client_context.calibrate_to = {date: end, index: indexof_date(end)};
           $('#calibrate_from').data("DateTimePicker").maxDate(end);
@@ -174,16 +172,27 @@
 	    });
 
 			$("#id_select_date_range").on("change", function(e){
+				var div_dp = $("#datepicker_calibration");
 				if (e.target.checked == true) {
 					client_context.id_select_date_range = true;
-					$("#datepicker_calibration").toggle(600);
+					if (div_dp.attr("data-toggle")=="toggled") {
+						div_dp.toggle(600);
+						div_dp.attr("data-toggle", "extended");
+					} else {undefined;}
 				}
 				else {
 					client_context.id_select_date_range = false;
-					$("#datepicker_calibration").toggle(600);
+					if (div_dp.attr("data-toggle")=="extended") {
+						div_dp.toggle(600);
+						div_dp.attr("data-toggle", "toggled");
+					} else {undefined;}
 				}
 			});
 			/* ----- Date picker for calibration END ----- */
+
+			/* Checkboxes for calibration eventhandler */
+			$("#id_parList input[type=checkbox]").on("change", check_cali_callback);
+			/* Checkboxes for calibration eventhandler END */
 		});
 
 	</script>

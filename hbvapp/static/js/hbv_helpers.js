@@ -26,10 +26,17 @@ function isEmpty(obj) {
 }
 
 // Customized unit test
-function assert(condition, message) {
+function assert (condition, message) {
   if (!condition) {
     alert(message);
     throw new Error(message);
+  }
+}
+
+// Helper to find corresponding index of a certain date in the time series
+function indexof_date (date) {
+  for (var i = init_data.length - 1; i >= 0; i--) {
+    if(init_data[i].date == date){  return i;}
   }
 }
 
@@ -55,13 +62,7 @@ function initialize_data (text, context) {
   return data;
 }
 
-function indexof_date (date) {
-  for (var i = init_data.length - 1; i >= 0; i--) {
-    if(init_data[i].date == date){  return i;}
-  }
-}
-
-function generate_config_dict (){
+function generate_config_dict () {
 	/*
 		Generate a json or json-like object
 		to serve as configuration input in AJAX
@@ -86,6 +87,16 @@ function generate_config_dict (){
   config['kill_snow'] = !c.id_snow;
   config['calibrate_from'] = c.calibrate_from;
   config['calibrate_to'] = c.calibrate_to;
+  config['calibrate_all_par'] = c.id_calibrate_all_par;
+  config['par_to_calibrate'] = new Array();
+  config['init_guess'] = c.id_init_guess;
+
+  Object.keys(c.par_to_calibrate).forEach(function(k){
+    if (c.par_to_calibrate[k]) {
+      config['par_to_calibrate'].push(k.slice(3));
+    }
+    else{undefined;}
+  });
 
   return config;
 }
@@ -190,7 +201,7 @@ function check_int () {
 
   var alert_html = `\
     <div class="alert alert-warning fade in" role="alert" style="padding: 5px 15px; margin-bottom: 12px;">\
-      ${name} must be a <strong>POSITIVE INTEGER</strong> ! \
+      ${name} must be a <strong>NON-NEGATIVE INTEGER</strong> ! \
     </div>\
     `;
 
@@ -209,6 +220,20 @@ function check_int () {
       $(alert_html).insertAfter(this.parentNode);
     }
     return false;
+  }
+}
+
+function check_cali_callback (e) {
+  var box = e.target;
+  var input = $(box).parent().parent().find("input[type=text]");
+
+  if (box.checked==true) {
+    input.prop("checked", true);
+    client_context.par_to_calibrate[input[0].id] = true;
+  }
+  else {
+    input.prop("checked", false);
+    client_context.par_to_calibrate[input[0].id] = false;
   }
 }
 
@@ -344,7 +369,7 @@ function deploy_plots (plots) {
   $(".jslocator_perf").next().replaceWith(plots.script.perf);
 }
 
-function changeContextWhenInput (elem) {
+function changeContextWhenInput (e) {
   /*
     Function in charge of changing context of the client
   */
@@ -375,7 +400,7 @@ function changeContextWhenInput (elem) {
   "id_sp",
   "id_tfac",
   "id_area"];
-
+  var elem = e.target;
   var id = elem.id;
   var value = elem.value;
 
@@ -438,22 +463,24 @@ function changeContextWhenLoad (context) {
 
     if (typeof(value)=="boolean") {
       (value) ? elem.prop("checked", true) : elem.prop("checked", false);
-      (elem.is("[invalid]")) ? null : client_context[id] = value;
+      (elem.is("[invalid]")) ? undefined : client_context[id] = value;
+      // Trigger period_selector toggle transition
+      (id=="id_select_date_range") ? elem.trigger("change") : undefined;
     }
     else if ( id=="id_residus") {
       (context[id]=="RMSE") ? $("#id_RMSE").prop("checked", true) : $("#id_NSE").prop("checked", false);
-      (elem.is("[invalid]")) ? null : client_context[id] = value;
+      (elem.is("[invalid]")) ? undefined : client_context[id] = value;
     }
     else if (twins.indexOf(id) >= 0) {
       Object.values(elem).slice(0,2).forEach(function (element) {
         element.value = value;
         element.onchange();
-        (element.hasAttribute("invalid")) ? null : client_context[id] = value;
+        (element.hasAttribute("invalid")) ? undefined : client_context[id] = value;
       });
     }
     else {
       elem.value = value;
-      (elem.is("[invalid]")) ? null : client_context[id] = value;
+      (elem.is("[invalid]")) ? undefined : client_context[id] = value;
     }
   }
 }
@@ -470,6 +497,7 @@ function sample() {
     "id_select_date_range":false,
     "id_sci_note":true,
     "id_snow":true,
+    "init_guess":false,
     "id_residus":"RMSE",
     "id_perc":"0.1",
     "id_alpha":"0.5",
@@ -514,6 +542,7 @@ client_context = {
   "id_select_date_range":false,
   "id_sci_note":true,
   "id_snow":true,
+  "id_init_guess":false,
   "id_perc":"",
   "id_alpha":"",
   "id_k1":"",
@@ -539,5 +568,25 @@ client_context = {
   "id_wc":"",
   "id_sp":"",
   "id_tfac":"",
-  "id_area":""
+  "id_area":"",
+  "par_to_calibrate": { // Parameters to calibrate
+    "id_perc":true,
+    "id_alpha":true,
+    "id_k1":true,
+    "id_k":true,
+    "id_c_flux":true,
+    "id_beta":true,
+    "id_lp":true,
+    "id_etf":true,
+    "id_e_corr":true,
+    "id_fc":true,
+    "id_cfr":true,
+    "id_cwh":true,
+    "id_cfmax":true,
+    "id_ttm":true,
+    "id_utt":true,
+    "id_ltt":true,
+    "id_sfcf":true,
+    "id_rfcf":true,
+  },
 };

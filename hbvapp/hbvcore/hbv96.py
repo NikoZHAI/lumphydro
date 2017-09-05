@@ -89,7 +89,7 @@ class HydroModel(object):
 			"up": dict(zip(_ind[:18], P_UB))}
 
 	# Initial flow rate		
-	DEF_q0 = 0.183
+	DEF_q0 = 0.188
 
 	# HBV96 model initializer
 	def __init__(self):
@@ -106,21 +106,46 @@ class HydroModel(object):
 		# A np.array-like df for intermediate values
 		self.int_tab = list()
 
-	# Extract data to an array-like dict from csv file uploaded
-	def extract_to_dict(self):
-		if type(self.data) is list:
-			pass
-		else:
-			self.data = pd.read_csv(StringIO(self.data),
-									sep=self.config['separator'],
-									header=self.config['header']).to_dict(orient='records')
-			
+	def generate_par_to_calibrate(self):
+		# Apply the order of self_ind to self.config['par_to_calibrate']
+		par_to_calibrate = []
+		for key in self._ind[:18]:
+			if key in self.config['par_to_calibrate']:
+				par_to_calibrate.append(key)
+			else:
+				pass
 
-	# Extract data to a pandas dataframe from csv file uploaded
-	def extract_to_dataframe(self):
-		self.data = pd.read_csv(StringIO(self.data),
-								sep=self.config['separator'],
-								header=self.config['header'])
+		# Case in which all params are to calibrate
+		if self.config['calibrate_all_par']:
+			# Boundaries
+			self.x_b = zip(self.P_LB, self.P_UB)
+			# Initial guess
+			if self.config['init_guess']==False:
+				self.x_0 = np.random.uniform(self.P_LB, self.P_UB)
+			else:
+				self.x_0 = [self.par[key] for key in self._ind[:18]]
+		
+		# Case where only selected parameters are to calibrate
+		else:
+			# *b for boundaries, _x0 for initial guess if appicable
+			_lb, _ub, _x0 = [], [], []
+			for key in self._ind[:18]:
+				if key in par_to_calibrate:
+					_lb.append(self.P_LB[self._ind.index(key)])
+					_ub.append(self.P_UB[self._ind.index(key)])
+					_x0.append(self.par[key])
+				else:
+					pass
+			self.x_b = zip(_lb, _ub)
+
+			# Initial guess
+			if self.config['init_guess']==False:
+				self.x_0 = np.random.uniform(_lb, _ub)
+			else:
+				self.x_0 = _x0
+
+		self.config['par_to_calibrate'] = par_to_calibrate
+		return None
 
 
 class HBV96(HydroModel):
@@ -590,18 +615,17 @@ class HBV96(HydroModel):
 		Optimal value of the objective function
 		'''
 		self._init_simu()
-		x_0 = self.config['init_guess']
+		self.generate_par_to_calibrate()
 		
 		def _cal_fun_minimize(par_to_optimize):
-			self.par.update(dict(zip(self._ind[:18], par_to_optimize))) # Update the parameter dictionary
+			self.par.update(dict(zip(self.config['par_to_calibrate'], par_to_optimize))) # Update the parameter dictionary
 			_q_sim, _q_rec = self._simulate_for_calibration()
 
-			# Index for calibration
+			# Index for period-selected calibration
 			_begin = self.config['warm_up']+self.config['calibrate_from'].get('index')
 			_end = self.config['calibrate_to'].get('index')+1
 			
-			perf = self.obj_fun(_q_rec[_begin:_end],
-							_q_sim[_begin:_end])
+			perf = self.obj_fun(_q_rec[_begin:_end], _q_sim[_begin:_end])
 
 			if self.config['verbose']:
 				print('{0}: {1}'.format(self.config['fun_name'], perf))
@@ -609,10 +633,10 @@ class HBV96(HydroModel):
 			return perf
 		
 		def _cal_fun_maximize(par_to_optimize):
-			self.par.update(dict(zip(self._ind[:18], par_to_optimize))) # Update the parameter dictionary
+			self.par.update(dict(zip(self.config['par_to_calibrate'], par_to_optimize))) # Update the parameter dictionary
 			_q_sim, _q_rec = self._simulate_for_calibration()
 			
-		# Index for calibration
+			# Index for period-selected calibration
 			_begin = self.config['warm_up']+self.config['calibrate_from'].get('index')
 			_end = self.config['calibrate_to'].get('index')+1
 			
@@ -624,20 +648,13 @@ class HBV96(HydroModel):
 			
 			return perf
 
-		# Boundaries
-		x_b = zip(self.P_LB, self.P_UB)
-
-		# Initial guess
-		if x_0 is None:
-			x_0 = np.random.uniform(self.P_LB, self.P_UB)
-
 		# Model optimisation
 		if self.config['minimise']:
-			par_cal = opt.minimize(_cal_fun_minimize, x_0, method='L-BFGS-B',
-									bounds=x_b, tol=self.config['tol'])
+			par_cal = opt.minimize(_cal_fun_minimize, self.x_0, method='L-BFGS-B',
+									bounds=self.x_b, tol=self.config['tol'])
 		else:
-			par_cal = opt.minimize(_cal_fun_maximize, x_0, method='L-BFGS-B',
-									bounds=x_b, tol=self.config['tol'])
+			par_cal = opt.minimize(_cal_fun_maximize, self.x_0, method='L-BFGS-B',
+									bounds=self.x_b, tol=self.config['tol'])
 		
 		self._performance = par_cal.fun
 

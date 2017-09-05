@@ -33,9 +33,6 @@
 					<a href="#id_pane_plot_st" tabindex="-1" role="tab" id="id_dropdown_plot_st" data-toggle="tab" aria-controls="id_pane_plot_st">STATES</a>
 				</li>
 				<li>
-					<a href="#id_pane_plot_tanks" tabindex="-1" role="tab" id="id_dropdown_plot_tanks" data-toggle="tab" aria-controls="id_pane_plot_tanks">TANKS</a>
-				</li>
-				<li>
 					<a href="#id_pane_plot_perf" tabindex="-1" role="tab" id="id_dropdown_plot_perf" data-toggle="tab" aria-controls="id_pane_plot_perf">PERFORMANCE</a>
 				</li>
 				<li>
@@ -92,7 +89,7 @@
 	  	<div class="row">
 				
 				<div class="col-sm-3">
-					<label>Select date range for calibtration</label>
+					<label>Choose Specific Period</label>
 				</div>
 
 				<div class="col-sm-1 text-right">
@@ -104,7 +101,7 @@
 	  	</div>
 			
 			<!-- Date picker for period-selectable calibration -->
-		<div id="datepicker_calibration" style="display: none;">
+		<div id="datepicker_calibration" data-toggle="toggled" style="display: none;">
 			<div class="row">
 				<div class="col-sm-1 text-center">
 					<label style="padding-top: 0.3vw; padding-left: 0.8vw;">From: </label>
@@ -175,10 +172,6 @@
 	  	<h3><small>No plot generated yet...</small></h3>
 	  </div>
 
-	  <div role="tabpanel" class="tab-pane fade" id="id_pane_plot_tanks" aria-labelledby="id_dropdown_plot_tanks">
-	  	<h3><small>No plot generated yet...</small></h3>
-	  </div>
-
 	  <div role="tabpanel" class="tab-pane fade" id="id_pane_plot_perf" aria-labelledby="id_dropdown_plot_perf">
 	  	<h3><small>No plot generated yet...</small></h3>
 	  </div>
@@ -190,67 +183,94 @@
 	  <div role="tabpanel" class="tab-pane fade" id="id_config_panel">
 	  	<br>
 			<form id="id_form_configs" class="form-group">
-				
-				<div textual>
-					CSV Header: <input class="form-control" type="text" name="csvHeaderInput" id="id_csvHeaderInput" value=0 onchange="check_int.call(this);">
-				</div>
-				
-				<div textual>
-					CSV Separator: <input class="form-control" type="text" name="csvSeparatorInput" id="id_csvSeparatorInput" value=",">
-				</div>
-
-				<div textual>
-					Warm up Period: <input class="form-control" type="text" name="warmUpInput" id="id_warmUpInput" value=10 onchange="check_int.call(this);">
-				</div>
-
-				<div textual>
-					Computation Tolerance: <input class="form-control" type="text" name="tolInput" id="id_tolInput" value="0.001" onchange="check_minimum_float.call(this, mini=0.000001)">
-				</div>
-				
 				<div class="row">
-					<div class="col-sm-1"><label>Residus: </label></div>
-					<div class="col-sm-1">
-						<label class="radio-inline"><input type="radio" name="objFunctionInput" id="id_RMSE" value="RMSE" checked> RMSE 
-						</label>
+					<div class="col-sm-7">
+
+						<div class="" textual>
+							CSV Header: <input class="form-control" type="text" name="csvHeaderInput" id="id_csvHeaderInput" value=0 onchange="check_int.call(this);">
+						</div>
+					
+						<div textual>
+							CSV Separator: <input class="form-control" type="text" name="csvSeparatorInput" id="id_csvSeparatorInput" value=",">
+						</div>
+
+						<div textual>
+							Warm up Period: <input class="form-control" type="text" name="warmUpInput" id="id_warmUpInput" value=10 onchange="check_int.call(this);">
+						</div>
+
+						<div textual>
+							Computation Tolerance: <input class="form-control" type="text" name="tolInput" id="id_tolInput" value="0.001" onchange="check_minimum_float.call(this, mini=0.000001)">
+						</div>
+
+					</div>
+
+					<div class="col-sm-1" style="height: 15vw; width: min-content; margin-left: 1.3%; margin-right: 2%; border-right: 1.4px solid rgba(0, 0, 139, 0.3);">
 					</div>
 					
-					<div class="col-sm-1">
-						<label class="radio-inline"><input type="radio" name="objFunctionInput" value="NSE" id="id_NSE"> NSE 
-						</label>
-					</div>
+					<div class="col-sm-4 text-right">
+						<h4><strong>Configurations</strong></h4>
+						<div class="row" style="padding-top: 6%;">
+							<div class="col-sm-4 text-left"><label>Residus: </label></div>
+							<div class="col-sm-4">
+								<label class="radio-inline"><input type="radio" name="objFunctionInput" id="id_RMSE" value="RMSE" checked> RMSE 
+								</label>
+							</div>
 
-					<div class="col-sm-2 text-right">
-						<label>Minimize Residus</label>
-					</div>
-					<div class="col-sm-1">
-						<label class="switch">
-						  <input type="checkbox" name="minimise" id="id_minimise" value="boolean" checked>
-						  <span class="btnslider round"></span>
-						</label>
-					</div>
+							<div class="col-sm-4">
+								<label class="radio-inline"><input type="radio" name="objFunctionInput" value="NSE" id="id_NSE"> NSE 
+								</label>
+							</div>
+						</div>
 
+						<div class="row" style="padding-top: 6%;">
+							<div class="col-sm-8 text-left">
+								<label>Minimize Residus</label>
+							</div>
+							<div class="col-sm-4">
+								<label class="switch">
+								  <input type="checkbox" name="minimise" id="id_minimise" value="boolean" checked>
+								  <span class="btnslider round"></span>
+								</label>
+							</div>
+						</div>
 
-					<div class="col-sm-2 text-right">
-						<label>Verbose Display</label>
-					</div>
-					<div class="col-sm-1">
-						<label class="switch">
-						  <input type="checkbox" name="verbose" id="id_verbose" value="boolean">
-						  <span class="btnslider round"></span>
-						</label>
-					</div>
+						<div class="row" style="padding-top: 6%;">
+							<div class="col-sm-8 text-left">
+								<label>Verbose Display</label>
+							</div>
+							<div class="col-sm-4">
+								<label class="switch">
+								  <input type="checkbox" name="verbose" id="id_verbose" value="boolean">
+								  <span class="btnslider round"></span>
+								</label>
+							</div>
+						</div>
 
-					<div class="col-sm-2 text-right">
-						<label>Scientific Notation</label>
-					</div>
-					<div class="col-sm-1">
-						<label class="switch">
-						  <input type="checkbox" name="sci_note" id="id_sci_note" value="boolean" checked>
-						  <span class="btnslider round"></span>
-						</label>
-					</div>
+						<div class="row" style="padding-top: 6%;">
+							<div class="col-sm-8 text-left">
+								<label>Scientific Notation</label>
+							</div>
+							<div class="col-sm-4">
+								<label class="switch">
+								  <input type="checkbox" name="sci_note" id="id_sci_note" value="boolean" checked>
+								  <span class="btnslider round"></span>
+								</label>
+							</div>
+						</div>
 
+						<div class="row" style="padding-top: 6%;">
+							<div class="col-sm-8 text-left">
+								<label>Initial Guess</label>
+							</div>
+							<div class="col-sm-4">
+								<label class="switch">
+								  <input type="checkbox" name="init_guess" id="id_init_guess" value="boolean">
+								  <span class="btnslider round"></span>
+								</label>
+							</div>
+						</div>
 
+					</div>
 				</div>
 			</form>
 

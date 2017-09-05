@@ -19,7 +19,7 @@ from bokeh.plotting import figure, ColumnDataSource
 # Create HBV object
 mcd = HBV96()
 
-mcd.config['init_guess'] = None
+mcd.config['init_guess'] = False
 
 mcd.DEF_q0 = 0.188
 
