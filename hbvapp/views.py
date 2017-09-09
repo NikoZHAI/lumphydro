@@ -41,6 +41,7 @@ def home(request):
 			return JsonResponse(context)
 
 		elif action=='simulate':
+			mcd.data = json.loads(post.get('data'))
 			mcd.config.update(json.loads(post.get('config')))
 			mcd.par.update(json.loads(post.get('par')))
 			mcd.DEF_ST.update(json.loads(post.get('st')))
@@ -54,10 +55,11 @@ def home(request):
 			return JsonResponse(context)
 
 		elif action=='calibrate':
+			mcd.data = json.loads(post.get('data'))
 			mcd.config.update(json.loads(post.get('config')))
 			mcd.par.update(json.loads(post.get('par')))
 			mcd.calibrate()
-			context['res_head'] = json.dumps(mcd.data[:5])
+			context['res_head'] = json.dumps(mcd.summary())
 			context['size'] = len(mcd.data)
 			context['par'] = mcd.par
 			context['plots'] = plot_simulation(mcd.data)
@@ -66,10 +68,14 @@ def home(request):
 			return JsonResponse(context)
 		
 		elif action=='summarize':
-			context['res_head'] = json.dumps(mcd.data[:5])
+			context['summary'] = json.dumps(mcd.summary())
 			context['size'] = len(mcd.data)
 			return JsonResponse(context)
 
+		elif action=='save_bounds':
+			mcd.P_LB = json.loads(post.get('P_LB'))
+			mcd.P_UB = json.loads(post.get('P_UB'))
+			return JsonResponse(context)
 		else:
 			return JsonResponse(context)
 	else:
@@ -320,9 +326,9 @@ def plot_simu_st_without_snow(source):
 	return p
 
 def plot_simu_perf(source):
-	_range = len(source.data['cumu_rmse'])-1
+	_range = len(source.data['cumu_sse'])-1
 	hover = HoverTool(
-		names=['cumu_rmse',],
+		names=['cumu_sse',],
 	    tooltips=[
 	        ( 'date', '@date{%F}' ),
 	        ( 'Bias', '@bias{0.000 a}' ),
@@ -354,7 +360,7 @@ def plot_simu_perf(source):
 	legend = Legend(
 		items=[
 			('Bias', [bias]),
-			('Cumulative RMSE', [rmse_cumu]),
+			('Cumulative SSE', [rmse_cumu]),
 			],
 		location="center",
 		orientation="horizontal",

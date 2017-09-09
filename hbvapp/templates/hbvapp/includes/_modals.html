@@ -1,0 +1,181 @@
+<!-- Modals -->
+<div class="modal fade" tabindex="9999" role="dialog" id="id_bounds" aria-labelledby="boundsInputTitle">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h3 class="modal-title" id="boundsInputTitle">Parameter Boundaries</h3>
+      </div>
+      <div class="modal-body  text-center">
+      	<div class="row" style="margin-bottom: 15px; border-bottom: 1.4px solid grey;">
+      		<div class="col-sm-4"><h5><strong> Parameter </strong></h5></div>
+      		<div class="col-sm-4"><h5><strong> Minimum </strong></h5></div>
+      		<div class="col-sm-4"><h5><strong> Maximum </strong></h5></div>
+      	</div>
+      	<div class="row">
+      		<div class="col-sm-4" id="col_par">
+      			<div><h5><strong> RFCF </strong></h5></div>
+      			<div><h5><strong> SFCF </strong></h5></div>
+      			<div><h5><strong> LTT </strong></h5></div>
+      			<div><h5><strong> UTT </strong></h5></div>
+      			<div><h5><strong> TTM </strong></h5></div>
+      			<div><h5><strong> CFMAX </strong></h5></div>
+      			<div><h5><strong> CWH </strong></h5></div>
+      			<div><h5><strong> CFR </strong></h5></div>
+      			<div><h5><strong> FC </strong></h5></div>
+      			<div><h5><strong> ECORR </strong></h5></div>
+      			<div><h5><strong> ETF </strong></h5></div>
+      			<div><h5><strong> LP </strong></h5></div>
+      			<div><h5><strong> BETA </strong></h5></div>
+      			<div><h5><strong> K </strong></h5></div>
+      			<div><h5><strong> K1 </strong></h5></div>
+      			<div><h5><strong> ALPHA </strong></h5></div>
+      			<div><h5><strong> C-FLUX </strong></h5></div>
+      			<div><h5><strong> PERC </strong></h5></div>
+      		</div>
+      		<div class="col-sm-4" id="col_LB">
+	      		<div>
+		      		<input type="text" id="lb_rfcf" value="0.6" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+	      		<div>
+		      		<input type="text" id="lb_sfcf" value="0.4" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+	      		<div>
+		      		<input type="text" id="lb_ltt" value="-1.5" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+	      		<div>
+		      		<input type="text" id="lb_utt" value="0.001" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+	      		<div>
+		      		<input type="text" id="lb_ttm" value="0.001" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+	      		<div>
+		      		<input type="text" id="lb_cfmax" value="0.04" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+	      		<div>
+		      		<input type="text" id="lb_cwh" value="0.001" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+	      		<div>
+		      		<input type="text" id="lb_cfr" value="0.01" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+	      		<div>
+		      		<input type="text" id="lb_fc" value="50.0" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+	      		<div>
+		      		<input type="text" id="lb_e_ccor" value="0.6" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+	      		<div>
+		      		<input type="text" id="lb_etf" value="0.001" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+	      		<div>
+		      		<input type="text" id="lb_lp" value="0.2" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+	      		<div>
+		      		<input type="text" id="lb_beta" value="1.0" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+	      		<div>
+		      		<input type="text" id="lb_k" value="0.00042" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+	      		<div>
+		      		<input type="text" id="lb_k1" value="0.0000042" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+	      		<div>
+		      		<input type="text" id="lb_alpha" value="0.001" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+	      		<div>
+		      		<input type="text" id="lb_c_flux" value="0.0" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+	      		<div>
+		      		<input type="text" id="lb_perc" value="0.001" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+      		</div>
+
+      		<div class="col-sm-4" id="col_UB">
+	      		<div>
+		      		<input type="text" id="ub_rfcf" value="1.4" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+	      		<div>
+		      		<input type="text" id="ub_sfcf" value="1.4" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+	      		<div>
+		      		<input type="text" id="ub_ltt" value="2.5" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+	      		<div>
+		      		<input type="text" id="ub_utt" value="3.0" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+	      		<div>
+		      		<input type="text" id="ub_ttm" value="2.0" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+	      		<div>
+		      		<input type="text" id="ub_cfmax" value="0.4" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+	      		<div>
+		      		<input type="text" id="ub_cwh" value="0.1" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+	      		<div>
+		      		<input type="text" id="ub_cfr" value="1.0" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+	      		<div>
+		      		<input type="text" id="ub_fc" value="500.0" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+	      		<div>
+		      		<input type="text" id="ub_e_ccor" value="1.4" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+	      		<div>
+		      		<input type="text" id="ub_etf" value="5.0" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+	      		<div>
+		      		<input type="text" id="ub_lp" value="0.5" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+	      		<div>
+		      		<input type="text" id="ub_beta" value="6.0" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+	      		<div>
+		      		<input type="text" id="ub_k" value="0.0167" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+	      		<div>
+		      		<input type="text" id="ub_k1" value="0.00062" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+	      		<div>
+		      		<input type="text" id="ub_alpha" value="1.0" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+	      		<div>
+		      		<input type="text" id="ub_c_flux" value="0.08" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+	      		<div>
+		      		<input type="text" id="ub_perc" value="0.125" class="form-control" onchange="check_not_null_float.call(this);">
+		      	</div>
+      		</div>
+      	</div>
+      </div>
+      <div class="modal-footer">
+      	<div class="row">
+	      	<div class="col-sm-4 col-sm-offset-4"><span class="save_bounds_success"></span></div>
+	        <div class="col-sm-4">
+	        	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		        <button type="button" class="btn btn-primary" id="save_bounds" onclick="save_bounds();">Save</button>
+		      </div>
+		    </div><!-- /.row -->
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<!-- Modals -->
+<div class="modal fade" tabindex="9999" role="dialog" id="summary_modal" aria-labelledby="summaryTitle">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h3 class="modal-title" id="summaryTitle">Data Summary</h3>
+      </div>
+      <div class="modal-body  text-center" id="summary_modal_body"></div>
+      <div class="modal-footer">
+      	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!-- Modals END -->

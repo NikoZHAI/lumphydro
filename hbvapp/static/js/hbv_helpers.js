@@ -14,6 +14,11 @@ String.prototype.toFloat = function() {
   return parseFloat(val);
 };
 
+//
+function output(inp, element) {
+    element.html("<pre>"+inp+"</pre>");
+}
+
 // Helper function to detect empty object and array
 function isEmpty(obj) {
   for(var prop in obj) {
@@ -23,6 +28,13 @@ function isEmpty(obj) {
   var deepchecker = JSON.stringify(obj);
   deepchecker === JSON.stringify({}) || deepchecker === JSON.stringify([]);
   return true;
+}
+
+// Helper function to check if a value is number (float/int/exp)
+function isFloat(value) {
+  var partern = "^(\\+|-|)?((\\d*\\.?\\d+([eE]?(\\+|-|)?\\d+)?)|(\\d+\\.?\\d*([eE]?(\\+|-|)?\\d+)?))$";
+  var number = new RegExp(partern);
+  return number.test(value);
 }
 
 // Customized unit test
@@ -35,31 +47,9 @@ function assert (condition, message) {
 
 // Helper to find corresponding index of a certain date in the time series
 function indexof_date (date) {
-  for (var i = init_data.length - 1; i >= 0; i--) {
-    if(init_data[i].date == date){  return i;}
+  for (var i = hbv.d.init_data.length - 1; i >= 0; i--) {
+    if(hbv.d.init_data[i].date == date){return i;}
   }
-}
-
-function initialize_data (text, context) {
-  var delimiter = context.id_csvSeparatorInput,
-      header = parseInt(context.id_csvHeaderInput);
-
-  var data = d3.dsvFormat(delimiter).parse(text, function(d, i) {
-    return {
-      date: moment(d.date).format("YYYY-MM-DD"),  // Date
-      prec: +d.prec,     // Precipitation
-      q_rec: +d.q_rec,   // Recorded discharge
-      temp: +d.temp,     // Air temperature
-      tm: +d.tm,         // Monthly mean air temperature
-      ep: +d.ep,         // Evaporation
-    };
-  });
-  success = true;
-
-  function data_validator() {
-    return undefined;
-  }
-  return data;
 }
 
 function generate_config_dict () {
@@ -67,7 +57,7 @@ function generate_config_dict () {
 		Generate a json or json-like object
 		to serve as configuration input in AJAX
 	*/
-  var c = client_context;
+  var c = hbv.c.context;
 
   /*
     validators
@@ -102,8 +92,6 @@ function generate_config_dict () {
 }
 
 function check_not_null_float () {
-  var partern = "^(\\+|-|)?((\\d*\\.?\\d+([eE]?(\\+|-|)?\\d+)?)|(\\d+\\.?\\d*([eE]?(\\+|-|)?\\d+)?))$";
-  var number = new RegExp(partern);
   var value = this.value;
   var name = this.name.toUpperCase();
   var deja_invalid = this.hasAttribute("invalid");
@@ -114,7 +102,7 @@ function check_not_null_float () {
     </div>\
     `;
 
-  var valid = number.test(value);
+  var valid = isFloat(value);
 
   if (valid) {
     if(deja_invalid){
@@ -133,7 +121,6 @@ function check_not_null_float () {
 }
 
 function check_minimum_float (mini) {
-  var p1 = /^\+?\d+(\.\d+)?$/g;
   var value = this.value;
   var name = this.name.toUpperCase();
   var deja_invalid = this.hasAttribute("invalid");
@@ -144,7 +131,7 @@ function check_minimum_float (mini) {
     </div>\
     `;
 
-  var valid = ( (p1.test(value))&&(value > mini) );
+  var valid = ( isFloat(value)&&(value > mini) );
 
   if (valid) {
     if(deja_invalid){
@@ -163,8 +150,6 @@ function check_minimum_float (mini) {
 }
 
 function check_float () {
-  var partern = "^(\\+|-|)?((\\d*\\.?\\d+([eE]?(\\+|-|)?\\d+)?)|(\\d+\\.?\\d*([eE]?(\\+|-|)?\\d+)?))$";
-  var number = new RegExp(partern);
   var value = this.value;
   var name = this.name.toUpperCase();
   var deja_invalid = this.hasAttribute("invalid");
@@ -175,7 +160,7 @@ function check_float () {
     </div>\
     `;
 
-  var valid = (number.test(value)) || (isEmpty(value));
+  var valid = isFloat(value) || (isEmpty(value));
 
   if (valid) {
     if(deja_invalid){
@@ -229,12 +214,47 @@ function check_cali_callback (e) {
 
   if (box.checked==true) {
     input.prop("checked", true);
-    client_context.par_to_calibrate[input[0].id] = true;
+    hbv.c.context.par_to_calibrate[input[0].id] = true;
   }
   else {
     input.prop("checked", false);
-    client_context.par_to_calibrate[input[0].id] = false;
+    hbv.c.context.par_to_calibrate[input[0].id] = false;
   }
+}
+
+function save_bounds() {
+
+  var lb_elems = $("#col_LB input"),
+      ub_elems = $("#col_UB input"),
+      P_LB = new Array(),
+      P_UB = new Array();
+
+  var validation_state_0 = lb_elems.map(function (i, element) {
+    P_LB.push(parseFloat(element.value));
+    return check_not_null_float.call(element);
+  });
+  var validation_state_1 = ub_elems.map(function (i, element) {
+    P_UB.push(parseFloat(element.value));
+    return check_not_null_float.call(element);
+  });
+
+  var pass = !(Object.values(validation_state_0).includes(false) || Object.values(validation_state_1).includes(false));
+
+  assert(pass, "Oh~o! Something wrong in PARAMETER BOUNDARIES ! Please check again !")
+
+  $.ajax({
+    url: "",
+    type: "POST",
+    async: true,
+    data: {'P_LB': JSON.stringify(P_LB),
+            'P_UB': JSON.stringify(P_UB),
+            'action': 'save_bounds'},
+    success: function(){
+      hbv.c.context.bounds = {LB: P_LB, UB: P_UB};
+      $(".save_bounds_success").html('<h5 class="text-success"><strong>SUCCESS</strong><span class="text-success"><i class="glyphicon glyphicon-ok"></i></span><h5>');
+      setTimeout(function() { $("#id_bounds").modal('hide'); }, 1500);
+    }
+  });
 }
 
 function generate_par_dict (action) {
@@ -245,7 +265,14 @@ function generate_par_dict (action) {
   var par_elems = $("#id_parList input[par]");
 
   if (action == "calibrate") {
-    var validation_state = par_elems.map(check_float);
+    var validation_state = par_elems.map(function (i, element) {
+      if (element.checked==true) {
+        return true;
+      }
+      else {
+        return check_not_null_float.call(element);
+      }
+    });
     validation_state.areaValid = check_not_null_float.call(par_elems[0]);
   }
   else {
@@ -298,7 +325,7 @@ function show_calibrated_par (par) {
     par_obj[par_elems[i].id] = par_elems[i];
   }
 
-  if (client_context.id_sci_note) {
+  if (hbv.c.context.id_sci_note) {
     for (var this_par in par) {
       if (this_par!='area'&&this_par!='tfac') {
         par_obj['id_'+this_par].value = par[this_par].toExponential(2);
@@ -368,225 +395,3 @@ function deploy_plots (plots) {
   $("#id_pane_plot_perf").html(plots.div.perf);
   $(".jslocator_perf").next().replaceWith(plots.script.perf);
 }
-
-function changeContextWhenInput (e) {
-  /*
-    Function in charge of changing context of the client
-  */
-  var twins = [
-  "id_perc",
-  "id_alpha",
-  "id_k1",
-  "id_mbas",
-  "id_k",
-  "id_lz",
-  "id_uz",
-  "id_c_flux",
-  "id_beta",
-  "id_lp",
-  "id_etf",
-  "id_e_corr",
-  "id_fc",
-  "id_sm",
-  "id_cfr",
-  "id_cwh",
-  "id_cfmax",
-  "id_ttm",
-  "id_utt",
-  "id_ltt",
-  "id_sfcf",
-  "id_rfcf",
-  "id_wc",
-  "id_sp",
-  "id_tfac",
-  "id_area"];
-  var elem = e.target;
-  var id = elem.id;
-  var value = elem.value;
-
-  (elem.hasAttribute("invalid")) ? null : client_context[id] = value;
-
-  if (id == "id_RMSE" || id == "id_NSE") {
-    if(elem.checked == true) {
-      (id == "id_RMSE") ? client_context['id_residus'] = "RMSE" : client_context['id_residus'] = "NSE";
-    }
-  }
-
-  if (value=="boolean") {
-    (elem.checked==true) ? client_context[id] = true : client_context[id] = false;
-  }
-
-  if (twins.indexOf(id) >= 0) {
-    var siblings = Object.values($(`input[id=${id}]`)).slice(0,2);
-    siblings.forEach(function (element) {
-      element.value = value;
-      element.onchange();
-    });
-  }
-}
-
-function changeContextWhenLoad (context) {
-  /*
-    Change context when loading a parameter file or running the demo
-  */
-  var twins = [
-    "id_perc",
-    "id_alpha",
-    "id_k1",
-    "id_mbas",
-    "id_k",
-    "id_lz",
-    "id_uz",
-    "id_c_flux",
-    "id_beta",
-    "id_lp",
-    "id_etf",
-    "id_e_corr",
-    "id_fc",
-    "id_sm",
-    "id_cfr",
-    "id_cwh",
-    "id_cfmax",
-    "id_ttm",
-    "id_utt",
-    "id_ltt",
-    "id_sfcf",
-    "id_rfcf",
-    "id_wc",
-    "id_sp",
-    "id_tfac",
-    "id_area"];
-
-  for (var id in context) {
-    var value = context[id];
-    var elem =  $(`input[id=${id}]`);
-
-    if (typeof(value)=="boolean") {
-      (value) ? elem.prop("checked", true) : elem.prop("checked", false);
-      (elem.is("[invalid]")) ? undefined : client_context[id] = value;
-      // Trigger period_selector toggle transition
-      (id=="id_select_date_range") ? elem.trigger("change") : undefined;
-    }
-    else if ( id=="id_residus") {
-      (context[id]=="RMSE") ? $("#id_RMSE").prop("checked", true) : $("#id_NSE").prop("checked", false);
-      (elem.is("[invalid]")) ? undefined : client_context[id] = value;
-    }
-    else if (twins.indexOf(id) >= 0) {
-      Object.values(elem).slice(0,2).forEach(function (element) {
-        element.value = value;
-        element.onchange();
-        (element.hasAttribute("invalid")) ? undefined : client_context[id] = value;
-      });
-    }
-    else {
-      elem.value = value;
-      (elem.is("[invalid]")) ? undefined : client_context[id] = value;
-    }
-  }
-}
-
-function sample() {
-  context = {
-    "id_verbose":true,
-    "id_minimise":true,
-    "id_tolInput":"0.001",
-    "id_warmUpInput":"10",
-    "id_csvSeparatorInput":",",
-    "id_csvHeaderInput":"0",
-    "id_calibrate_all_par":true,
-    "id_select_date_range":false,
-    "id_sci_note":true,
-    "id_snow":true,
-    "init_guess":false,
-    "id_residus":"RMSE",
-    "id_perc":"0.1",
-    "id_alpha":"0.5",
-    "id_k1":"0.00005",
-    "id_mbas":"1",
-    "id_k":"0.01",
-    "id_lz":"0",
-    "id_uz":"0",
-    "id_c_flux":"0.05",
-    "id_beta":"3.5",
-    "id_lp":"0.35",
-    "id_etf":"2.5",
-    "id_e_corr":"1.0",
-    "id_fc":"250",
-    "id_sm":"0",
-    "id_cfr":"0.5",
-    "id_cwh":"0.02",
-    "id_cfmax":"0.1",
-    "id_ttm":"0.1",
-    "id_utt":"0.1",
-    "id_ltt":"-0.1",
-    "id_sfcf":"1.0",
-    "id_rfcf":"1.0",
-    "id_wc":"0",
-    "id_sp":"0",
-    "id_tfac":"24",
-    "id_area":"135.0"
-  };
-  changeContextWhenLoad(context);
-}
-
-// A context object to store everything
-client_context = {
-  "id_verbose":false,
-  "id_minimise":true,
-  "id_residus":"RMSE",
-  "id_tolInput":"0.001",
-  "id_warmUpInput":"10",
-  "id_csvSeparatorInput":",",
-  "id_csvHeaderInput":"0",
-  "id_select_all_par":true,
-  "id_select_date_range":false,
-  "id_sci_note":true,
-  "id_snow":true,
-  "id_init_guess":false,
-  "id_perc":"",
-  "id_alpha":"",
-  "id_k1":"",
-  "id_mbas":"",
-  "id_k":"",
-  "id_lz":"",
-  "id_uz":"",
-  "id_c_flux":"",
-  "id_beta":"",
-  "id_lp":"",
-  "id_etf":"",
-  "id_e_corr":"",
-  "id_fc":"",
-  "id_sm":"",
-  "id_cfr":"",
-  "id_cwh":"",
-  "id_cfmax":"",
-  "id_ttm":"",
-  "id_utt":"",
-  "id_ltt":"",
-  "id_sfcf":"",
-  "id_rfcf":"",
-  "id_wc":"",
-  "id_sp":"",
-  "id_tfac":"",
-  "id_area":"",
-  "par_to_calibrate": { // Parameters to calibrate
-    "id_perc":true,
-    "id_alpha":true,
-    "id_k1":true,
-    "id_k":true,
-    "id_c_flux":true,
-    "id_beta":true,
-    "id_lp":true,
-    "id_etf":true,
-    "id_e_corr":true,
-    "id_fc":true,
-    "id_cfr":true,
-    "id_cwh":true,
-    "id_cfmax":true,
-    "id_ttm":true,
-    "id_utt":true,
-    "id_ltt":true,
-    "id_sfcf":true,
-    "id_rfcf":true,
-  },
-};

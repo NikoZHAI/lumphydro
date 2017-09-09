@@ -11,15 +11,15 @@
 
 		$(document).ready(function(){
 
-			/* Initialize svg */
-			schema = create_schema();
-			/* Each tank is 2-3rd filled when initialized */
-			schema.tanks = schema.init_animation();
+			/*  */
+			window.hbv = new HBV();
+			hbv.s.init_animation();
+			/*  */
 
 			d3.select("#id_date_slider")
 				.on("input", function(){
 		    	var index = parseInt(this.value);
-		    	schema.point_to(index);
+		    	hbv.s.point_to(index);
 			  });
 
 			/* File input helper */
@@ -46,24 +46,24 @@
 					var text = e.target.result;
 					var success = false;
 					try{
-						window.init_data = initialize_data(text, client_context);
+						hbv.d.initialize(text);
 						success = true;
+			      $("#id_loadStatus").html('<span class="text-success"><i class="glyphicon glyphicon-ok"></i></span>');
+			      $("#id_summary").fadeIn(600);
 					}
 				  catch (ex) {
 				    alert(ex.message);
+				    throw ex;
 				  }
 				  finally {
-				    enable_datepickers(init_data, success);
+				    enable_datepickers(hbv.d.init_data, success);
 				  }
 					$.ajax({
 						url: "",
 						type: "POST",
 						async: true,
-						data: {'data': JSON.stringify(init_data), 'action': 'load_file'},
-						success: function(data){
-							$("#id_loadStatus").html('<span class="text-success"><i class="glyphicon glyphicon-ok"></i></span>');
-							$("#id_summary").fadeIn(600);
-						}
+						data: {'data': JSON.stringify(hbv.d.init_data), 
+							'action': 'load_file'},
 					});
 				});
 			});
@@ -77,10 +77,10 @@
 					async: true,
 					data: {'action': 'summarize'},
 					success: function(data){
-						$("#id_sizeDFTitle").text('Size of the file:');
-						$("#id_sizeDF").text(data.size + " lines");
-						$("#id_outDFHeadTitle").text("Test Output");
-						$("#id_outDFHead").text(data.res_head);
+						var str = JSON.parse(data.summary);
+						var div = $("#summary_modal_body");
+						output(str, div);
+						$("#summary_modal").modal("show");
 					}
 				});
 			});
@@ -99,6 +99,7 @@
 					data: {'config': JSON.stringify(config),
 								'par': JSON.stringify(par),
 								'st': JSON.stringify(st),
+								'data': JSON.stringify(hbv.d.init_data),
 								'action': action},
 					success: function(data){
 						show_calibrated_par(data.par);
@@ -106,10 +107,9 @@
 						$("#id_sizeDF").text(data.size + " lines");
 						$("#id_outDFHeadTitle").text("Test Output");
 						$("#id_outDFHead").text(data.res_head);
+						hbv.d.synthesize(data.data);
 						deploy_plots(data.plots);
-						schema.data = data.data;
-						schema.bounds = data.extremes;
-						init_slider();
+						hbv.s.init_slider();
 					}
 				});
 			});
@@ -128,23 +128,23 @@
 					data: {'config': JSON.stringify(config),
 								'par': JSON.stringify(par),
 								'st': JSON.stringify(st),
+								'data': JSON.stringify(hbv.d.init_data),
 								'action': action},
 					success: function(data){
 						$("#id_sizeDFTitle").text('Size of the file:');
 						$("#id_sizeDF").text(data.size + " lines");
 						$("#id_outDFHeadTitle").text("Test Output");
 						$("#id_outDFHead").text(data.res_head);
+						hbv.d.synthesize(data.data);
 						deploy_plots(data.plots);
-						schema.data = data.data;
-						schema.bounds = data.extremes;
-						init_slider();
+						hbv.s.init_slider();
 					}
 				});
 			});
 			/* Simulation jQUery END */
 
 			/* Change Context jQuery */
-			$("input").not(":input[type=range], :input[type=file], :input[type=date], :input[just_a_box]").on("change", changeContextWhenInput);
+			$(".container input").not(":input[type=range], :input[type=file], :input[type=date], :input[just_a_box]").on("change", hbv.c.changeWhenInput);
 			/* Change Context jQuery END */
 
 			/* ----- Date picker for calibration ----- */
@@ -160,12 +160,12 @@
         /* Date picker event handeler */
         $("#calibrate_from").on("dp.change", function(e){
         	var begin = e.date.format("YYYY-MM-DD");
-        	client_context.calibrate_from = {date: begin, index: indexof_date(begin)};
+        	hbv.c.context.calibrate_from = {date: begin, index: indexof_date(begin)};
           $('#calibrate_to').data("DateTimePicker").minDate(begin);
         });
         $("#calibrate_to").on("dp.change", function(e){
         	var end = e.date.format("YYYY-MM-DD");
-        	client_context.calibrate_to = {date: end, index: indexof_date(end)};
+        	hbv.c.context.calibrate_to = {date: end, index: indexof_date(end)};
           $('#calibrate_from').data("DateTimePicker").maxDate(end);
         });
         /* Date picker event handeler END*/
@@ -174,14 +174,14 @@
 			$("#id_select_date_range").on("change", function(e){
 				var div_dp = $("#datepicker_calibration");
 				if (e.target.checked == true) {
-					client_context.id_select_date_range = true;
+					hbv.c.context.id_select_date_range = true;
 					if (div_dp.attr("data-toggle")=="toggled") {
 						div_dp.toggle(600);
 						div_dp.attr("data-toggle", "extended");
 					} else {undefined;}
 				}
 				else {
-					client_context.id_select_date_range = false;
+					hbv.c.context.id_select_date_range = false;
 					if (div_dp.attr("data-toggle")=="extended") {
 						div_dp.toggle(600);
 						div_dp.attr("data-toggle", "toggled");

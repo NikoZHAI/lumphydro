@@ -65,6 +65,15 @@ input[invalid]:focus {
 #id_summary {
   display: none;
 }
+#col_par div,
+#col_LB div,
+#col_UB div {
+  height: 5vh;
+}
+#col_par h5 {
+  margin: 0px;
+  padding-top: 1vh; 
+}
 
 /********** The switch - the box around the slider **********/
 .switch {
@@ -155,7 +164,7 @@ input:checked + .btnslider:before {
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 99999;
+  z-index: 999;
 }
 
 #id_schema_overlay input {

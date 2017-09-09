@@ -14,67 +14,69 @@ class HydroModel(object):
 
 
 	# Parameter index, 18 modifiable and 2 not
-	_ind = ['ltt',
+	_ind = ['rfcf',
+			'sfcf',
+			'ltt',
 			'utt',
 			'ttm',
 			'cfmax',
+			'cwh',
+			'cfr',
 			'fc',
 			'e_corr',
 			'etf',
 			'lp',
+			'beta',
 			'k',
 			'k1',
 			'alpha',
-			'beta',
-			'cwh',
-			'cfr',
 			'c_flux',
 			'perc',
-			'rfcf',
-			'sfcf',
 			'tfac', #Non-modifiable, nm of hrs in time step
 			'area'	#Non-modifiable, catchment area
 			]
 
 	# Lower boundary parameters
-	P_LB = [-1.5, 		#ltt
+	P_LB = [0.6, 		#rfcf
+			0.4, 		#sfcf
+			-1.5, 		#ltt
 			0.001, 		#utt
 			0.001, 		#ttm
 			0.04, 		#cfmax [mm c^-1 h^-1]
+			0.001, 		#cwh
+			0.01, 		#cfr
 			50.0, 		#fc
 			0.6, 		#ecorr
 			0.001, 		#etf
 			0.2, 		#lp
+			1.0, 		#beta
 			0.00042, 	#k [h^-1] upper zone
 			0.0000042, 	#k1 lower zone
 			0.001, 		#alpha
-			1.0, 		#beta
-			0.001, 		#cwh
-			0.01, 		#cfr
 			0.0, 		#c_flux
-			0.001, 		#perc mm/h
-			0.6, 		#rfcf
-			0.4] 		#sfcf
+			0.001] 		#perc mm/h
+
 
 	# Upper boundary parameters
-	P_UB = [2.5, 		#ltt
+	P_UB = [1.4, 		#rfcf
+			1.4,		#sfcf
+			2.5, 		#ltt
 			3.0, 		#utt
 			2.0, 		#ttm
 			0.4, 		#cfmax [mm c^-1 h^-1]
+			0.1, 		#cwh
+			1.0, 		#cfr
 			500.0, 		#fc
 			1.4, 		#ecorr
 			5.0, 		#etf
 			0.5, 		#lp
+			6.0, 		#beta
 			0.0167, 	#k upper zone
 			0.00062, 	#k1 lower zone
 			1.0, 		#alpha
-			6.0, 		#beta
-			0.1, 		#cwh
-			1.0, 		#cfr
 			0.08, 		#c_flux - 2mm/day
-			0.125, 		#perc mm/hr
-			1.4, 		#rfcf
-			1.4]		#sfcf
+			0.125] 		#perc mm/hr
+
 
 	# Initial status
 	DEF_ST = {	'sp': 0.0,	#sp: Snow pack
@@ -106,17 +108,20 @@ class HydroModel(object):
 		# A np.array-like df for intermediate values
 		self.int_tab = list()
 
+	def summary(self):
+		df = pd.DataFrame(self.data)
+		head = df.head(6).to_string()
+		describe = df.describe().to_string()
+
+		summary = '<h4><strong>Data Header</strong></h4>'+head+'<h4><strong>Data Description</strong></h4>'+describe
+
+		return summary
+
 	def generate_par_to_calibrate(self):
-		# Apply the order of self_ind to self.config['par_to_calibrate']
-		par_to_calibrate = []
-		for key in self._ind[:18]:
-			if key in self.config['par_to_calibrate']:
-				par_to_calibrate.append(key)
-			else:
-				pass
 
 		# Case in which all params are to calibrate
 		if self.config['calibrate_all_par']:
+			par_to_calibrate = self._ind[:18]
 			# Boundaries
 			self.x_b = zip(self.P_LB, self.P_UB)
 			# Initial guess
@@ -127,8 +132,17 @@ class HydroModel(object):
 		
 		# Case where only selected parameters are to calibrate
 		else:
+
 			# *b for boundaries, _x0 for initial guess if appicable
-			_lb, _ub, _x0 = [], [], []
+			par_to_calibrate, _lb, _ub, _x0 = [], [], [], []
+
+			# Apply the order of self_ind to self.config['par_to_calibrate']
+			for key in self._ind[:18]:
+				if key in self.config['par_to_calibrate']:
+					par_to_calibrate.append(key)
+				else:
+					pass
+
 			for key in self._ind[:18]:
 				if key in par_to_calibrate:
 					_lb.append(self.P_LB[self._ind.index(key)])
@@ -136,6 +150,7 @@ class HydroModel(object):
 					_x0.append(self.par[key])
 				else:
 					pass
+
 			self.x_b = zip(_lb, _ub)
 
 			# Initial guess
@@ -388,8 +403,8 @@ class HBV96(HydroModel):
 		Direct runoff [mm]
 		'''
 
-		outab['lz'] = max(intab['lz'] + min(self.par['perc'], outab['uz']), 0.0)
-		outab['uz'] = max(outab['uz'] - self.par['perc'], 0.0)
+		outab['lz'] = max(intab['lz'] + min(self.par['tfac']*self.par['perc'], outab['uz']), 0.0)
+		outab['uz'] = max(outab['uz'] - self.par['tfac']*self.par['perc'], 0.0)
 
 		int_tab['q0'] = self.par['k']*outab['uz']**(1.0 + self.par['alpha'])
 		int_tab['q1'] = self.par['k1']*outab['lz']
