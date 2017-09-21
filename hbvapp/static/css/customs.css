@@ -36,6 +36,7 @@ input[invalid]:focus {
     color: orangered;
     box-shadow: 0 0 6px darkred;
 }
+
 #id_config_panel div[textual] {
   margin-bottom: 20px;
 }

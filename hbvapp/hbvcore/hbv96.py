@@ -121,14 +121,27 @@ class HydroModel(object):
 
 		# Case in which all params are to calibrate
 		if self.config['calibrate_all_par']:
-			par_to_calibrate = self._ind[:18]
-			# Boundaries
-			self.x_b = zip(self.P_LB, self.P_UB)
-			# Initial guess
-			if self.config['init_guess']==False:
-				self.x_0 = np.random.uniform(self.P_LB, self.P_UB)
+
+			# Initial guess; do not calibrate parameters in snow routine
+			if self.config['kill_snow']:
+				par_to_calibrate = self._ind[8:18]
+				# Boundaries
+				self.x_b = zip(self.P_LB[8:], self.P_UB[8:])
+				print(self.x_b)
+
+				if self.config['init_guess']==False:
+					self.x_0 = np.random.uniform(self.P_LB[8:], self.P_UB[8:])
+				else:
+					self.x_0 = [self.par[key] for key in self._ind[8:18]]
 			else:
-				self.x_0 = [self.par[key] for key in self._ind[:18]]
+				par_to_calibrate = self._ind[:18]
+				# Boundaries
+				self.x_b = zip(self.P_LB, self.P_UB)
+
+				if self.config['init_guess']==False:
+					self.x_0 = np.random.uniform(self.P_LB, self.P_UB)
+				else:
+					self.x_0 = [self.par[key] for key in self._ind[:18]]
 		
 		# Case where only selected parameters are to calibrate
 		else:
@@ -152,7 +165,6 @@ class HydroModel(object):
 					pass
 
 			self.x_b = zip(_lb, _ub)
-
 			# Initial guess
 			if self.config['init_guess']==False:
 				self.x_0 = np.random.uniform(_lb, _ub)
@@ -160,6 +172,7 @@ class HydroModel(object):
 				self.x_0 = _x0
 
 		self.config['par_to_calibrate'] = par_to_calibrate
+		print(self.config)
 		return None
 
 
@@ -529,8 +542,9 @@ class HBV96(HydroModel):
 		f : float
 		NSE value
 		'''
+		m = np.nanmean(q_rec)
 		a = np.square(np.subtract(q_rec, q_sim))
-		b = np.square(np.subtract(q_rec, np.nanmean(q_rec)))
+		b = np.square(np.subtract(q_rec, m))
 		if a.any < 0.0:
 			return(np.nan)
 		f = 1.0 - (np.nansum(a)/np.nansum(b))
@@ -655,13 +669,13 @@ class HBV96(HydroModel):
 			_begin = self.config['warm_up']+self.config['calibrate_from'].get('index')
 			_end = self.config['calibrate_to'].get('index')+1
 			
-			perf = -self.obj_fun(_q_rec[_begin:_end],
+			perf = self.obj_fun(_q_rec[_begin:_end],
 							_q_sim[_begin:_end])
 
 			if self.config['verbose']:
 				print('{0}: {1}'.format(self.config['fun_name'], perf))
 			
-			return perf
+			return -perf
 
 		# Model optimisation
 		if self.config['minimise']:

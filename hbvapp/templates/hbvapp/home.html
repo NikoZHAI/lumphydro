@@ -56,7 +56,7 @@
 				    throw ex;
 				  }
 				  finally {
-				    enable_datepickers(hbv.d.init_data, success);
+				    enable_datepickers(success);
 				  }
 					$.ajax({
 						url: "",
@@ -107,9 +107,11 @@
 						$("#id_sizeDF").text(data.size + " lines");
 						$("#id_outDFHeadTitle").text("Test Output");
 						$("#id_outDFHead").text(data.res_head);
-						hbv.d.synthesize(data.data);
-						deploy_plots(data.plots);
+						hbv.d.synthesize(data.data, data.inters);
+						hbv.p.init();
 						hbv.s.init_slider();
+						deploy_plots(data.plots);
+						enable_datepickers_for_plots(true);
 					}
 				});
 			});
@@ -135,9 +137,11 @@
 						$("#id_sizeDF").text(data.size + " lines");
 						$("#id_outDFHeadTitle").text("Test Output");
 						$("#id_outDFHead").text(data.res_head);
-						hbv.d.synthesize(data.data);
 						deploy_plots(data.plots);
+						hbv.d.synthesize(data.data, data.inters);
+						hbv.p.init();
 						hbv.s.init_slider();
+						enable_datepickers_for_plots(true);
 					}
 				});
 			});
@@ -159,11 +163,17 @@
 
         /* Date picker event handeler */
         $("#calibrate_from").on("dp.change", function(e){
+        	// Prevention of file changes
+        	if (e.date===false) {return undefined;}
+
         	var begin = e.date.format("YYYY-MM-DD");
         	hbv.c.context.calibrate_from = {date: begin, index: indexof_date(begin)};
           $('#calibrate_to').data("DateTimePicker").minDate(begin);
         });
         $("#calibrate_to").on("dp.change", function(e){
+        	// Prevention of file changes
+        	if (e.date===false) {return undefined;}
+
         	var end = e.date.format("YYYY-MM-DD");
         	hbv.c.context.calibrate_to = {date: end, index: indexof_date(end)};
           $('#calibrate_from').data("DateTimePicker").maxDate(end);
@@ -189,6 +199,36 @@
 				}
 			});
 			/* ----- Date picker for calibration END ----- */
+
+			/* ----- Date picker for Plots ----- */
+			$(function () {
+
+        $('#left').datetimepicker({
+        	format: "YYYY-MM-DD"
+        });
+        $('#right').datetimepicker({
+        	format: "YYYY-MM-DD",
+          useCurrent: false //Important! See issue #1075
+        });
+
+        /* Date picker event handeler */
+        $("#left").on("dp.change", function(e){
+        	// Prevention of file changes
+        	if (e.date===false) {return undefined;}
+
+        	var begin = e.date.format("YYYY-MM-DD");
+          $('#right').data("DateTimePicker").minDate(begin);
+        });
+        $("#right").on("dp.change", function(e){
+        	// Prevention of file changes
+        	if (e.date===false) {return undefined;}
+
+        	var end = e.date.format("YYYY-MM-DD");
+          $('#left').data("DateTimePicker").maxDate(end);
+        });
+        /* Date picker event handeler END*/
+	    });
+			/* ----- Date picker for Plots END ----- */
 
 			/* Checkboxes for calibration eventhandler */
 			$("#id_parList input[type=checkbox]").on("change", check_cali_callback);
@@ -250,15 +290,21 @@
 				<!-- Calibrate button END -->
 			</div><br>
 
+			<!-- Panel on the right -->
 			<div class="panel panel-info">
   			<div class="panel-body">
   				{% include 'hbvapp/includes/_panelRight.html' %}
   			</div>
-  		</div>
+  		</div><!-- /* Panel on the right -->
+
 			<div class="row">
-				<div>
-					
-				</div>
+				<div class="col-md-12">
+					<div class="panel panel-info">
+	  				<div class="panel-body">
+		  				{% include 'hbvapp/includes/_panelRight_infos.html' %}
+  					</div>
+  				</div>
+  			</div>
 				<p id="id_sizeDFTitle">Waiting for operation....</p>
 				<span id="id_sizeDF"></span>
 				<h3 id="id_outDFHeadTitle"></h3>

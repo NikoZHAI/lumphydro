@@ -52,45 +52,6 @@ function indexof_date (date) {
   }
 }
 
-function generate_config_dict () {
-	/*
-		Generate a json or json-like object
-		to serve as configuration input in AJAX
-	*/
-  var c = hbv.c.context;
-
-  /*
-    validators
-  */
-
-  // A Json object for AJAX POST or POST
-  var config = {};
-
-  config['header'] = parseInt(c.id_csvHeaderInput);
-  config['separator'] = c.id_csvSeparatorInput;
-  config['warm_up'] = parseInt(c.id_warmUpInput);
-  config['obj_fun'] = c.id_residus;
-  config['tol'] = parseFloat(c.id_tolInput);
-  config['minimise'] = c.id_minimise;
-  config['verbose'] = c.id_verbose;
-  config['fun_name'] = config['obj_fun'];
-  config['kill_snow'] = !c.id_snow;
-  config['calibrate_from'] = c.calibrate_from;
-  config['calibrate_to'] = c.calibrate_to;
-  config['calibrate_all_par'] = c.id_calibrate_all_par;
-  config['par_to_calibrate'] = new Array();
-  config['init_guess'] = c.id_init_guess;
-
-  Object.keys(c.par_to_calibrate).forEach(function(k){
-    if (c.par_to_calibrate[k]) {
-      config['par_to_calibrate'].push(k.slice(3));
-    }
-    else{undefined;}
-  });
-
-  return config;
-}
-
 function check_not_null_float () {
   var value = this.value;
   var name = this.name.toUpperCase();
@@ -222,39 +183,132 @@ function check_cali_callback (e) {
   }
 }
 
-function save_bounds() {
+// Reserved for Bokeh
+function deploy_plots (plots) {
+  /*
+    Deploy all generated Bokeh plots into html and JS
+  */
+  // $("#id_pane_plot_q").html(plots.div.q);
+  // $(".jslocator_q").next().replaceWith(plots.script.q);
 
-  var lb_elems = $("#col_LB input"),
-      ub_elems = $("#col_UB input"),
-      P_LB = new Array(),
-      P_UB = new Array();
+  // $("#id_pane_plot_p").html(plots.div.p);
+  // $(".jslocator_p").next().replaceWith(plots.script.p);
 
-  var validation_state_0 = lb_elems.map(function (i, element) {
-    P_LB.push(parseFloat(element.value));
-    return check_not_null_float.call(element);
-  });
-  var validation_state_1 = ub_elems.map(function (i, element) {
-    P_UB.push(parseFloat(element.value));
-    return check_not_null_float.call(element);
-  });
+  // $("#id_pane_plot_t").html(plots.div.t);
+  // $(".jslocator_t").next().replaceWith(plots.script.t);
 
-  var pass = !(Object.values(validation_state_0).includes(false) || Object.values(validation_state_1).includes(false));
+  // $("#id_pane_plot_etp").html(plots.div.etp);
+  // $(".jslocator_etp").next().replaceWith(plots.script.etp);
 
-  assert(pass, "Oh~o! Something wrong in PARAMETER BOUNDARIES ! Please check again !")
+  // /* Spared for Ground Water Plots */
 
-  $.ajax({
-    url: "",
-    type: "POST",
-    async: true,
-    data: {'P_LB': JSON.stringify(P_LB),
-            'P_UB': JSON.stringify(P_UB),
-            'action': 'save_bounds'},
-    success: function(){
-      hbv.c.context.bounds = {LB: P_LB, UB: P_UB};
-      $(".save_bounds_success").html('<h5 class="text-success"><strong>SUCCESS</strong><span class="text-success"><i class="glyphicon glyphicon-ok"></i></span><h5>');
-      setTimeout(function() { $("#id_bounds").modal('hide'); }, 1500);
+  // $("#id_pane_plot_st").html(plots.div.st);
+  // $(".jslocator_st").next().replaceWith(plots.script.st);
+
+  $("#id_pane_plot_perf").html(plots.div.perf);
+  $(".jslocator_perf").next().replaceWith(plots.script.perf);
+}
+
+function enable_datepickers (success) {
+
+  if (success) {
+    var date = hbv.d.init_data.map(function (row) {
+      return moment(row.date);
+    });
+    var begin = date[0],
+        end = date[date.length - 1];
+
+    $("#datepicker_calibration input").each(function() {
+     $( this ).prop("disabled", false);
+    });
+    $('#calibrate_from').data("DateTimePicker")
+                        .clear()
+                        .enabledDates(date);
+    $('#calibrate_to').data("DateTimePicker")
+                      .clear()
+                      .enabledDates(date);
+    $('#calibrate_from').data("DateTimePicker")
+                        .date(begin);
+    $('#calibrate_to').data("DateTimePicker")
+                      .date(end);
+  }
+  else
+  {
+    $("#datepicker_calibration input").each(function() {
+       $( this ).prop("disabled", true);
+    });
+  }
+}
+
+function enable_datepickers_for_plots(success) {
+
+  if (success) {
+    var date = hbv.d.data[0].date;
+    var begin = date[0],
+        end = date[date.length - 1];
+
+    $("#div_datepicker_for_plots input").each(function() {
+     $( this ).prop("disabled", false);
+    });
+    $('#left').data("DateTimePicker")
+              .clear()
+              .enabledDates(date);
+    $('#right').data("DateTimePicker")
+               .clear()
+               .enabledDates(date);
+    $('#left').data("DateTimePicker")
+              .defaultDate(moment(begin));
+    $('#right').data("DateTimePicker")
+               .defaultDate(moment(end));
+
+    // set current focus of the plot and schema to whole set of data
+    hbv.s.set_local_extrems(0, date.length-1);
+  }
+  else
+  {
+    $("#div_datepicker_for_plots input").each(function() {
+       $( this ).prop("disabled", true);
+    });
+  }
+}
+
+function generate_config_dict () {
+  /*
+    Generate a json or json-like object
+    to serve as configuration input in AJAX
+  */
+  var c = hbv.c.context;
+
+  /*
+    validators
+  */
+
+  // A Json object for AJAX POST or POST
+  var config = {};
+
+  config['header'] = parseInt(c.id_csvHeaderInput);
+  config['separator'] = c.id_csvSeparatorInput;
+  config['warm_up'] = parseInt(c.id_warmUpInput);
+  config['obj_fun'] = c.id_residus;
+  config['tol'] = parseFloat(c.id_tolInput);
+  config['minimise'] = c.id_minimise;
+  config['verbose'] = c.id_verbose;
+  config['fun_name'] = config['obj_fun'];
+  config['kill_snow'] = !c.id_snow;
+  config['calibrate_from'] = c.calibrate_from;
+  config['calibrate_to'] = c.calibrate_to;
+  config['calibrate_all_par'] = c.id_calibrate_all_par;
+  config['par_to_calibrate'] = new Array();
+  config['init_guess'] = c.id_init_guess;
+
+  Object.keys(c.par_to_calibrate).forEach(function(k){
+    if (c.par_to_calibrate[k]) {
+      config['par_to_calibrate'].push(k.slice(3));
     }
+    else{undefined;}
   });
+
+  return config;
 }
 
 function generate_par_dict (action) {
@@ -312,6 +366,22 @@ function generate_st_dict () {
   return st_obj;
 }
 
+function relayout_dp_for_plots(i, date) {
+  var left_bound = moment(hbv.d.init_data[0].date),
+      right_bound = moment(hbv.d.init_data.slice(-1)[0].date),
+      date = moment(date);
+  (date>right_bound) ? date=right_bound : undefined;
+  (date<left_bound) ? date=left_bound : undefined;
+
+  var update = {};
+  update[`xaxis.range[${i}]`] = date;
+  update[`xaxis.rangeslider.range[${i}]`] = date;
+
+  Object.values($("div[forplot] div.js-plotly-plot")).slice(0,-2).forEach(function(this_plot){
+    Plotly.relayout(this_plot, update);
+  });
+}
+
 function show_calibrated_par (par) {
   /*
     Show calibrated parameters on the parameter input panel
@@ -344,54 +414,37 @@ function show_calibrated_par (par) {
   par_obj['id_mbas'].value = parseInt(par_obj['id_mbas'].value);
 }
 
-function enable_datepickers (data, success) {
+function save_bounds() {
 
-  if (success) {
-    var date = data.map(function (row) {
-      return moment(row.date);
-    });
-    var begin = date[0],
-        end = date[date.length - 1];
+  var lb_elems = $("#col_LB input"),
+      ub_elems = $("#col_UB input"),
+      P_LB = new Array(),
+      P_UB = new Array();
 
-    $("#datepicker_calibration input").each(function() {
-     $( this ).prop("disabled", false);
-    });
-    $('#calibrate_from').data("DateTimePicker")
-                        .defaultDate(moment(begin))
-                        .enabledDates(date);
-    $('#calibrate_to').data("DateTimePicker")
-                      .defaultDate(moment(end))
-                      .enabledDates(date);
-  }
-  else
-  {
-    $("#datepicker_calibration input").each(function() {
-       $( this ).prop("disabled", true);
-    });
-  }
-}
+  var validation_state_0 = lb_elems.map(function (i, element) {
+    P_LB.push(parseFloat(element.value));
+    return check_not_null_float.call(element);
+  });
+  var validation_state_1 = ub_elems.map(function (i, element) {
+    P_UB.push(parseFloat(element.value));
+    return check_not_null_float.call(element);
+  });
 
-function deploy_plots (plots) {
-  /*
-    Deploy all generated Bokeh plots into html and JS
-  */
-  $("#id_pane_plot_q").html(plots.div.q);
-  $(".jslocator_q").next().replaceWith(plots.script.q);
+  var pass = !(Object.values(validation_state_0).includes(false) || Object.values(validation_state_1).includes(false));
 
-  $("#id_pane_plot_p").html(plots.div.p);
-  $(".jslocator_p").next().replaceWith(plots.script.p);
+  assert(pass, "Oh~o! Something wrong in PARAMETER BOUNDARIES ! Please check again !")
 
-  $("#id_pane_plot_t").html(plots.div.t);
-  $(".jslocator_t").next().replaceWith(plots.script.t);
-
-  $("#id_pane_plot_etp").html(plots.div.etp);
-  $(".jslocator_etp").next().replaceWith(plots.script.etp);
-
-  /* Spared for Ground Water Plots */
-
-  $("#id_pane_plot_st").html(plots.div.st);
-  $(".jslocator_st").next().replaceWith(plots.script.st);
-
-  $("#id_pane_plot_perf").html(plots.div.perf);
-  $(".jslocator_perf").next().replaceWith(plots.script.perf);
+  $.ajax({
+    url: "",
+    type: "POST",
+    async: true,
+    data: {'P_LB': JSON.stringify(P_LB),
+            'P_UB': JSON.stringify(P_UB),
+            'action': 'save_bounds'},
+    success: function(){
+      hbv.c.context.bounds = {LB: P_LB, UB: P_UB};
+      $(".save_bounds_success").html('<h5 class="text-success"><strong>SUCCESS</strong><span class="text-success"><i class="glyphicon glyphicon-ok"></i></span><h5>');
+      setTimeout(function() { $("#id_bounds").modal('hide'); }, 1500);
+    }
+  });
 }

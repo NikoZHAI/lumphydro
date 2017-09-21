@@ -11,6 +11,7 @@ import json
 import numpy as np
 import pandas as pd
 from bokeh.embed import components
+from bokeh.layouts import gridplot
 from bokeh.models import LinearAxis, Legend, BoxZoomTool, HoverTool, PanTool, RedoTool, ResetTool, SaveTool, UndoTool, WheelZoomTool
 from bokeh.models.ranges import Range1d
 from bokeh.palettes import magma, plasma, viridis
@@ -18,8 +19,6 @@ from bokeh.plotting import figure, ColumnDataSource
 
 # Create HBV object
 mcd = HBV96()
-
-mcd.config['init_guess'] = False
 
 mcd.DEF_q0 = 0.188
 
@@ -51,7 +50,7 @@ def home(request):
 			context['par'] = mcd.par
 			context['plots'] = plot_simulation(mcd.data)
 			context['data'] = mcd.data
-			context['extremes'] = mcd.extremes
+			context['inters'] = mcd.int_tab
 			return JsonResponse(context)
 
 		elif action=='calibrate':
@@ -64,7 +63,7 @@ def home(request):
 			context['par'] = mcd.par
 			context['plots'] = plot_simulation(mcd.data)
 			context['data'] = mcd.data
-			context['extremes'] = mcd.extremes
+			context['inters'] = mcd.int_tab
 			return JsonResponse(context)
 		
 		elif action=='summarize':
@@ -274,7 +273,6 @@ def plot_simu_st(source):
 	
 	return p
 
-
 def plot_simu_st_without_snow(source):
 
 	hover = HoverTool(
@@ -326,41 +324,81 @@ def plot_simu_st_without_snow(source):
 	return p
 
 def plot_simu_perf(source):
-	_range = len(source.data['cumu_sse'])-1
-	hover = HoverTool(
-		names=['cumu_sse',],
-	    tooltips=[
-	        ( 'date', '@date{%F}' ),
-	        ( 'Bias', '@bias{0.000 a}' ),
-	        ( 'Cumulative SSE', '@cumu_sse{0.000 a}' ), # use @{ } for field names with spaces
-	    ],
-	    formatters={
-	        'date' : 'datetime', # use 'datetime' formatter for 'date' field
-	    },
+	qq_plot = plot_qqplot(source)
+	roc_plot = plot_roc(source)
+	grid = gridplot(children=[[qq_plot, roc_plot]], plot_width=700, 
+		plot_height=800,responsive=True)
+	return grid
 
-	    # display a tooltip whenever the cursor is vertically in line with a glyph
-	    mode='vline',
-	)
+def plot_qqplot(source):
+	_range = len(source.data['qt_sim'])-1
 	tools = [PanTool(), WheelZoomTool(dimensions="width"),
 		BoxZoomTool(dimensions="width"), UndoTool(), RedoTool(),
-		ResetTool(),hover, SaveTool()]
+		ResetTool(), SaveTool()]
 
-	p = figure(plot_width=800, plot_height=450, tools=tools, responsive=True,
-		x_axis_type='datetime', toolbar_location='above')
-	p.y_range = Range1d( np.floor(min(source.data['bias'])), np.ceil(max(source.data['bias'])) )
-	p.extra_y_ranges = {'y_sse': Range1d(np.ceil( source.data['cumu_sse'][_range]), 0)}
-	p.title.text = "Performance Indicators"
-	p.add_layout(LinearAxis(y_range_name='y_sse'), 'right')
+	p = figure(plot_width=320, plot_height=320, tools=tools,
+			toolbar_location='above')
+	p.title.text = "Q-Q Plot"
+	p.xaxis.axis_label = "Simulated Discharge Quantile [-]"
+	p.yaxis.axis_label = "Recorded Discharge Quantile [-]"
 
-	bias = p.vbar(x='date', top='bias', bottom=0, width=1, source=source, color='#404387', 
-		alpha=0.8, name='bias')
-	rmse_cumu = p.line('date', 'cumu_sse', source=source, color='red', alpha=0.8,
-		name='cumu_sse', y_range_name='y_sse')
+	qts = p.circle(x='qt_sim', y='qt_rec', source=source, color='#404387', 
+		alpha=0.8, name='quantile', size=2)
+
+	straightline = p.line(x=[0, 1], y= [0, 1], color='red',
+		alpha=0.8, name='y=x', line_width=3)
 
 	legend = Legend(
 		items=[
-			('Bias', [bias]),
-			('Cumulative SSE', [rmse_cumu]),
+			('Q-norm', [qts]),
+			('y = x', [straightline]),
+			],
+		location="center",
+		orientation="horizontal",
+		click_policy="hide",
+		glyph_width = 40,
+		padding=10,
+		spacing=20,
+		border_line_width=1,
+		border_line_color='navy',
+		margin=20,
+		label_standoff=6
+		)
+	p.add_layout(legend, 'below')
+	
+	return p
+
+def plot_roc(source):
+	'''
+	Import sklearn locally to generate roc curve
+	'''
+	from sklearn.metrics import roc_curve, auc
+
+    # Compute ROC curve and area the curve
+	fpr, tpr, thresholds = roc_curve(source.data['qt_bin'], source.data['qt_sim'])
+	roc_auc = auc(fpr, tpr)
+
+    # Ploting
+	tools = [PanTool(), WheelZoomTool(dimensions="width"),
+		BoxZoomTool(dimensions="width"), UndoTool(), RedoTool(),
+		ResetTool(), SaveTool()]
+
+	p = figure(plot_width=320, plot_height=320, tools=tools,
+			toolbar_location='above')
+	p.title.text = "ROC Curve"
+	p.xaxis.axis_label = "FPR (False Positive Rate) [-]"
+	p.yaxis.axis_label = "TPR (True Positive Rate) [-]"
+
+	roc = p.line(x=fpr, y=tpr, color='#404387', 
+		alpha=0.8, name='roc', line_width=2)
+
+	straightline = p.line(x=[0, 1], y= [0, 1], color='red',
+		alpha=0.8, name='y=x', line_width=3)
+
+	legend = Legend(
+		items=[
+			('ROC', [roc]),
+			('y = x', [straightline]),
 			],
 		location="center",
 		orientation="horizontal",
@@ -380,33 +418,33 @@ def plot_simu_perf(source):
 def plot_simulation(simulation_result):
 	source = synthesize_data(simulation_result)
 
-	script_q, div_q = components(plot_simu_q(source))
-	script_p, div_p = components(plot_simu_p(source))
-	script_t, div_t = components(plot_simu_t(source))
-	script_etp, div_etp = components(plot_simu_etp(source))
-	if mcd.config['kill_snow']:
-		script_st, div_st = components(plot_simu_st_without_snow(source))
-	else:
-		script_st, div_st = components(plot_simu_st(source))
+	# script_q, div_q = components(plot_simu_q(source))
+	# script_p, div_p = components(plot_simu_p(source))
+	# script_t, div_t = components(plot_simu_t(source))
+	# script_etp, div_etp = components(plot_simu_etp(source))
+	# if mcd.config['kill_snow']:
+	# 	script_st, div_st = components(plot_simu_st_without_snow(source))
+	# else:
+	# 	script_st, div_st = components(plot_simu_st(source))
 	script_perf, div_perf = components(plot_simu_perf(source))
 
 	plots = dict(
 
 		script=dict(
-			q=script_q,
-			p=script_p,
-			t=script_t,
-			etp=script_etp,
-			st=script_st,
+			# q=script_q,
+			# p=script_p,
+			# t=script_t,
+			# etp=script_etp,
+			# st=script_st,
 			perf=script_perf
 			),
 
 		div=dict(
-			q=div_q,
-			p=div_p,
-			t=div_t,
-			etp=div_etp,
-			st=div_st,
+			# q=div_q,
+			# p=div_p,
+			# t=div_t,
+			# etp=div_etp,
+			# st=div_st,
 			perf=div_perf
 			)
 		)
@@ -414,102 +452,59 @@ def plot_simulation(simulation_result):
 	return plots
 
 def plot_all(source):
-
-	q = plot_simu_q(source)
-	p = plot_simu_p(source)
-	t = plot_simu_t(source)
-	etp = plot_simu_etp(source)
-	st = plot_simu_st(source)
-	perf = plot_simu_perf(source)
+	return None
 
 def synthesize_data(simulation_result):
 	data = pd.DataFrame(simulation_result)
-	if mcd.config['kill_snow']:
-		sts = ['sm', 'lz', 'uz']
-	else:
-		sts = ['sp','wc', 'sm', 'lz', 'uz']
 
-	extremes = dict()
-	for name in sts:
-		maxi = name+'_max'
-		mini = name+'_min'
-		extremes[maxi] = np.max(data[name])
-		extremes[mini] = np.min(data[name])
-
-	extremes['soil_max'] = extremes['sm_max']
-	extremes['soil_min'] = extremes['sm_min']
-	mcd.extremes = extremes
-
-	''' ------- Calculate Residus ------- '''
 	# Range for processing residus
-	_range = len(data)+1
+	_range = len(data)
 
-	# Calculate cumulative RMSE
-	def _rmse(q_rec, q_sim):
-		erro = np.square(np.subtract(q_rec,q_sim))
-		if erro.any < 0:
-			return(np.nan)
-		f = np.sqrt(np.nanmean(erro))
-		return f
+	''' ---------- Calculate Quantile ---------- '''
+	# Sort the two arrays
+	asc_qsim = np.sort(data['q_sim'])
 
-	rmse = list()
-	cumu_rmse = [0]
-	for i in xrange(1, _range):
-		this_rmse = _rmse(data['q_rec'][:i], data['q_sim'][:i])
-		rmse.append(this_rmse)
-		cumu_rmse.append( (this_rmse + cumu_rmse[i-1]) )
-	cumu_rmse.pop(0)
+	def f_q(value, vec):
+		'''
+		Function to calculate the quantile of value in vec
+		
+		Input:
+			value: 	Input value
+			vec:   	Input vector
+		
+		Output:
+			quantile: _count/float(len(vec))
+		'''
+		_count = 0
+		for v in vec:
+			if value >= v: _count+=1
+		return _count/float(len(vec))
+	
+	qt_rec = [f_q(q, data['q_rec']) for q in asc_qsim]
+	qt_sim = [i/float(_range) for i in xrange(1, _range+1)]
+	qt_bin = [1 if np.abs(rec-sim)/sim<0.1 else 0 for rec, sim in zip(data['q_rec'],data['q_sim'])]
 
-	# Calculate cumulative SSE
-	def _sse(q_rec, q_sim):		# q_rec and q_sim here are not vectors
-		erro = np.square(np.subtract(q_rec,q_sim))
-		if erro < 0:
-			return(np.nan)
-		else:
-			return erro
-
-	cumu_sse = [0]
-	for i in xrange(1, (_range-1)):
-		cumu_sse.append(_sse(data.at[i,'q_rec'], data.at[i,'q_sim']) + cumu_sse[i-1])
-	''' ---------- Calculate cumulative Residus END ---------- '''
+	''' ---------- Calculate Quantile END ---------- '''
 
 	''' ----- Convert all np.nan values into "NaN" for Javascript -----'''
 
-	if mcd.config['kill_snow']:
-		source = ColumnDataSource(data=dict(
-			date=pd.to_datetime(data['date']),	# Date
-			q_rec=data['q_rec'],				# Measured discharge
-			q_sim=data['q_sim'],				# Simulated discharge
-			bias=(data['q_sim']-data['q_rec']), # Bias of the model, difference between simulated and measured discharge
-			prec=data['prec'],					# Precipitation
-			diff_temp=data['temp']-data['tm'],	# Difference 
-			sp=data['sp'],						# Simulated snow pack
-			t=data['temp'],						# Air temperature
-			tm=data['tm'],						# Long-term averaged air temperature
-			sm=data['sm'],						# Soil moisture
-			ep=data['ep'],						# Recorded evaporation
-			uz=data['uz'],						# Upper zone value
-			lz=data['lz'],						# Lower zone value
-			cumu_rmse=cumu_rmse,				# Cumulative Root Mean Square Error
-			cumu_sse=cumu_sse,					# Cumulative Square Standard Error
-		))
-	else:
-		source = ColumnDataSource(data=dict(
-			date=pd.to_datetime(data['date']),	# Date
-			q_rec=data['q_rec'],				# Measured discharge
-			q_sim=data['q_sim'],				# Simulated discharge
-			bias=(data['q_sim']-data['q_rec']), # Bias of the model, difference between simulated and measured discharge
-			prec=data['prec'],					# Precipitation
-			sp=data['sp'],						# Simulated snow pack
-			diff_temp=data['temp']-data['tm'],	# Difference 
-			t=data['temp'],						# Air temperature
-			tm=data['tm'],						# Long-term averaged air temperature
-			sm=data['sm'],						# Soil moisture
-			ep=data['ep'],						# Recorded evaporation
-			wc=data['wc'],						# Water content
-			uz=data['uz'],						# Upper zone value
-			lz=data['lz'],						# Lower zone value
-			cumu_rmse=cumu_rmse,				# Cumulative Root Mean Square Error
-			cumu_sse=cumu_sse,					# Cumulative Square Standard Error
-		))
+	source = ColumnDataSource(data=dict(
+		date=pd.to_datetime(data['date']),	# Date
+		q_rec=data['q_rec'],				# Measured discharge
+		q_sim=data['q_sim'],				# Simulated discharge
+		bias=(data['q_sim']-data['q_rec']), # Bias of the model, difference between simulated and measured discharge
+		prec=data['prec'],					# Precipitation
+		sp=data['sp'],						# Simulated snow pack
+		diff_temp=data['temp']-data['tm'],	# Difference 
+		t=data['temp'],						# Air temperature
+		tm=data['tm'],						# Long-term averaged air temperature
+		sm=data['sm'],						# Soil moisture
+		ep=data['ep'],						# Recorded evaporation
+		wc=data['wc'],						# Water content
+		uz=data['uz'],						# Upper zone value
+		lz=data['lz'],						# Lower zone value
+		qt_rec=qt_rec,						# Quantiles for simulated values in recorded values
+		qt_sim=qt_sim,						# Quantiles for simulated values in simulated values
+		qt_bin=qt_bin,						# Binary array for roc curve
+	))
 	return source
