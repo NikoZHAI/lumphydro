@@ -24,6 +24,9 @@ You are ready to go ! I wish you good fortune, in the modellings to come !
 Niko ZHAI
 
 
+### For Python environment and package management
+
+
 If you do not want to mess up your Python environment, it is recommanded to use `pyenv` to manage your Python version and packages.
 
 
