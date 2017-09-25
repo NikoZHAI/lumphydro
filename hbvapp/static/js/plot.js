@@ -146,8 +146,41 @@ function Data () {
     }
   }
 
+  function show(i) {
+    /*
+      Show desired data with index i in the latest out put.
+    */
+    var data = hbv.d.data[hbv.d.data.length-1];
+    var d = {};
+    Object.entries(data).forEach(function(e){
+      d[e[0]] = e[1][i];
+    });
+
+    $("#tag_date").html(d.date);
+    if (hbv.c.context.id_sci_note) {
+      $("table #q_sim").html(d.q_sim.toExponential(3));
+      $("table #q_rec").html(d.q_rec.toExponential(3));
+      $("table #prec").html(d.prec.toExponential(3));
+      $("table #ep").html(d.ep.toExponential(3));
+      $("table #sm").html(d.sm.toExponential(3));
+      $("table #uz").html(d.uz.toExponential(3));
+      $("table #lz").html(d.lz.toExponential(3));
+    }
+    else{
+      $("table #q_sim").html(d.q_sim.toFixed(3));
+      $("table #q_rec").html(d.q_rec.toFixed(3));
+      $("table #prec").html(d.prec.toFixed(3));
+      $("table #ep").html(d.ep.toFixed(3));
+      $("table #sm").html(d.sm.toFixed(3));
+      $("table #uz").html(d.uz.toFixed(3));
+      $("table #lz").html(d.lz.toFixed(3));
+    }
+    return undefined;
+  }
+
   return {init_data:init_data, data:data, find_max:find_max, find_min:find_min,
-    initialize:initialize, synthesize:synthesize, info:info, inters:inters};
+    initialize:initialize, synthesize:synthesize, info:info, inters:inters,
+    show:show};
 }
 
 function Schema() {
@@ -301,17 +334,15 @@ function Schema() {
   }
 
   function trans(name, value) {
-    var left = 0;//indexOf();
-    var right = 2312;//indexOf();
     var col_name = "";
     (name=="soil") ? col_name = "sm" : col_name = name;
     var maxh = this.maxh,
         base = this.base;
 
-    var max = this.extrems[col_name][1],
-        min = this.extrems[col_name][0];
+    var min = this.extrems[col_name][0],
+        max = this.extrems[col_name][1];
 
-    var fill = base+maxh*(max-value)/(max-min);
+    var fill = base+maxh*(value-min)/(max-min);
 
     var main = this.tanks.mains[name],
         shade = this.tanks.shades[name];
@@ -1418,9 +1449,11 @@ function Context() {
     var text = JSON.stringify(hbv.c.context);
 
     var file = new Blob([text], {type : 'application/json'});
-    a.href = URL.createObjectURL(file);
+    a.href = window.URL.createObjectURL(file);
     a.download = name;
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
   }
 
   return {context:context, twins:twins, changeWhenInput:changeWhenInput,

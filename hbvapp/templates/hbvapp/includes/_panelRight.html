@@ -57,101 +57,23 @@
   <!-- Tab panes -->
 	<div class="tab-content" id="tab-right-content">
 
-	<!-- -->
+		<!-- Home Pane -->
 	  <div role="tabpanel" class="tab-pane fade in active" id="home">
-
-	  	<div class="row">
-				<div class="col-sm-3">
-					<label>Snow Routine</label>
-				</div>
-
-				<div class="col-sm-1 text-right">
-					<label class="switch">
-					  <input type="checkbox" name="snow" id="id_snow" value="boolean" checked>
-					  <span class="btnslider round"></span>
-					</label>
-				</div>
-	  	</div>
-
-	  	<div class="row">
-				<div class="col-sm-3">
-					<label>Calibrate all parameters</label>
-				</div>
-
-				<div class="col-sm-1 text-right">
-					<label class="switch">
-					  <input type="checkbox" name="calibrate_all" id="id_calibrate_all_par" value="boolean">
-					  <span class="btnslider round"></span>
-					</label>
-				</div>
+	  	<div style="width: 90%; margin: auto;">
+	  		<h1><span style="font-size: 2em;">HBV </span><small style="font-size: 1em;">Hydrology Model</small></h1>
+	  		<p style="font-size: 20px;">
+		  		This application dedicates to the HBV hydrology model (Bergström, 1976, 1992). The algorithme is a Python version implementation of HBV-96 (Lindström et al., 1997).
+	  		</p>
+	  		<hr>
+	  		<div class="text-right">
+	  			<p>
+	  				<a href="https://www.smhi.se/en/research/research-departments/hydrology/hbv-1.90007" target="_blank">Learn more about HBV model #</a>
+	  			</p>
+  		  	<p>
+  		  		<a href="https://github.com/NikoZHAI/lumphydro" target="_blank">Fork on GitHub #</a>
+  		  	</p>
+	  		</div>
 			</div>
-
-	  	<div class="row">
-				
-				<div class="col-sm-3">
-					<label>Choose Specific Period</label>
-				</div>
-
-				<div class="col-sm-1 text-right">
-					<label class="switch">
-					  <input type="checkbox" name="select_date_range" id="id_select_date_range" value="boolean">
-					  <span class="btnslider round"></span>
-					</label>
-				</div>
-	  	</div>
-			
-			<!-- Date picker for period-selectable calibration -->
-			<div id="datepicker_calibration" data-toggle="toggled" style="display: none;">
-				<div class="row">
-					<div class="col-sm-1 text-center">
-						<label style="padding-top: 0.3vw; padding-left: 0.8vw;">From: </label>
-					</div>
-					<div class="col-sm-3">
-						<div class="form-group">
-	            <div class='input-group date' id='calibrate_from'>
-	              <input type='text' class="form-control" disabled/>
-	              <span class="input-group-addon">
-	                <span class="glyphicon glyphicon-calendar"></span>
-	              </span>
-	            </div>
-	        	</div>
-					</div>
-				</div>
-
-				<div class="row">
-					<div class="col-sm-1 text-center">
-						<label style="padding-top: 0.3vw; padding-left: 0.8vw;">To: </label>
-					</div>
-					<div class='col-sm-3'>
-	        	<div class="form-group">
-	            <div class='input-group date' id='calibrate_to'>
-	              <input type='text' class="form-control" disabled/>
-	              <span class="input-group-addon">
-	                <span class="glyphicon glyphicon-calendar"></span>
-	              </span>
-	            </div>
-	        	</div>
-			    </div>
-			  </div>
-			</div>
-		  <!-- Date picker for period-selectable calibration END-->
-
-	  	<div class="row">
-
-				<div class="col-sm-2">
-					<button class="btn btn-primary" id="pop_bounds_modal" onclick="$('.save_bounds_success').html('');$('#id_bounds').modal('show');">Parameter Range</button>
-				</div>
-
-				<div class="col-sm-2">
-					<button class="btn btn-primary" id="save_context" onclick="hbv.c.save();">Download Setup</button>
-				</div>
-				
-				<div class="col-sm-2">
-					<a role="button" onclick="hbv.c.sample();">Sample Run &#8617;</a>
-				</div>
-
-			</div>
-
 	  </div>
 	
 
@@ -190,10 +112,10 @@
 	  
 	  <div role="tabpanel" class="tab-pane fade" id="id_config_panel">
 	  	<br>
-			<form id="id_form_configs" class="form-group">
+			<form id="id_form_configs" class="form-group" style="margin-bottom: 5px;">
 				<div class="row">
-					<div class="col-sm-7">
-
+					<div class="col-sm-7" style="padding-right: 30px;">
+						<h4 style="margin-top: -1.5vh; margin-bottom: 20px;"><strong>Configurations</strong></h4>
 						<div class="" textual>
 							CSV Header: <input class="form-control" type="text" name="csvHeaderInput" id="id_csvHeaderInput" value=0 onchange="check_int.call(this);">
 						</div>
@@ -211,13 +133,10 @@
 						</div>
 
 					</div>
-
-					<div class="col-sm-1" style="height: 15vw; width: min-content; margin-left: 1.3%; margin-right: 2%; border-right: 1.4px solid rgb(91,192,222);">
-					</div>
 					
-					<div class="col-sm-4 text-right">
-						<h4><strong>Configurations</strong></h4>
-						<div class="row" style="padding-top: 6%;">
+					<div class="col-sm-5 text-right" style="border-left: 1.4px solid rgb(91,192,222); padding-left: 30px; padding-right: 30px;">
+
+						<div class="row" style="padding-bottom: 15px;">
 							<div class="col-sm-4 text-left"><label>Residus: </label></div>
 							<div class="col-sm-4">
 								<label class="radio-inline"><input type="radio" name="objFunctionInput" id="id_RMSE" value="RMSE" checked> RMSE 
@@ -230,7 +149,7 @@
 							</div>
 						</div>
 
-						<div class="row" style="padding-top: 6%;">
+						<div class="row" style="padding-bottom: 15px;">
 							<div class="col-sm-8 text-left">
 								<label>Minimize Residus</label>
 							</div>
@@ -242,7 +161,7 @@
 							</div>
 						</div>
 
-						<div class="row" style="padding-top: 6%;">
+						<div class="row" style="padding-bottom: 15px;">
 							<div class="col-sm-8 text-left">
 								<label>Verbose Display</label>
 							</div>
@@ -254,7 +173,7 @@
 							</div>
 						</div>
 
-						<div class="row" style="padding-top: 6%;">
+						<div class="row" style="padding-bottom: 15px;">
 							<div class="col-sm-8 text-left">
 								<label>Scientific Notation</label>
 							</div>
@@ -266,7 +185,7 @@
 							</div>
 						</div>
 
-						<div class="row" style="padding-top: 6%;">
+						<div class="row" style="padding-bottom: 15px;">
 							<div class="col-sm-8 text-left">
 								<label>Initial Guess</label>
 							</div>
@@ -276,6 +195,80 @@
 								  <span class="btnslider round"></span>
 								</label>
 							</div>
+						</div>
+
+				  	<div class="row" style="padding-bottom: 15px;">
+							<div class="col-sm-9 text-left">
+								<label>Snow Routine</label>
+							</div>
+
+							<div class="col-sm-3 text-right">
+								<label class="switch">
+								  <input type="checkbox" name="snow" id="id_snow" value="boolean" checked>
+								  <span class="btnslider round"></span>
+								</label>
+							</div>
+				  	</div>
+
+				  	<div class="row" style="padding-bottom: 15px;">
+							<div class="col-sm-9 text-left">
+								<label>Calibrate all parameters</label>
+							</div>
+
+							<div class="col-sm-3 text-right">
+								<label class="switch">
+								  <input type="checkbox" name="calibrate_all" id="id_calibrate_all_par" value="boolean">
+								  <span class="btnslider round"></span>
+								</label>
+							</div>
+						</div>
+
+				  	<div class="row">
+							<div class="col-sm-9 text-left">
+								<label>Choose Specific Period</label>
+							</div>
+
+							<div class="col-sm-3 text-right">
+								<label class="switch">
+								  <input type="checkbox" name="select_date_range" id="id_select_date_range" value="boolean">
+								  <span class="btnslider round"></span>
+								</label>
+							</div>
+				  	</div>
+						
+						<!-- Date picker for period-selectable calibration -->
+						<div id="datepicker_calibration" data-toggle="toggled" style="display: none; padding-top: 15px;">
+							<div class="row" style="padding-bottom: 15px;">
+								<div class="col-sm-3 text-center">
+									<label style="padding-top: 0.48vh; padding-left: 1.5vh;">From: </label>
+								</div>
+								<div class="col-sm-9">
+									<div class="form-group">
+				            <div class='input-group date' id='calibrate_from'>
+				              <input type='text' class="form-control" disabled/>
+				              <span class="input-group-addon">
+				                <span class="glyphicon glyphicon-calendar"></span>
+				              </span>
+				            </div>
+				        	</div>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-sm-3 text-center">
+									<label style="padding-top: 0.48vh; padding-left: 1.5vh;">To: </label>
+								</div>
+								<div class='col-sm-9'>
+				        	<div class="form-group">
+				            <div class='input-group date' id='calibrate_to'>
+				              <input type='text' class="form-control" disabled/>
+				              <span class="input-group-addon">
+				                <span class="glyphicon glyphicon-calendar"></span>
+				              </span>
+				            </div>
+				        	</div>
+						    </div>
+						  </div>
 						</div>
 
 					</div>

@@ -52,6 +52,32 @@ function indexof_date (date) {
   }
 }
 
+// Helper for catch ajax error message
+function ajax_error (jqXHR, exception) {
+  console.log("coa");
+  var msg = '';
+  if (jqXHR.status === 0) {
+      msg = 'Not connect.\n Verify Network.';
+  } else if (jqXHR.status == 404) {
+      msg = 'Requested page not found. [404]';
+  } else if (jqXHR.status == 500) {
+      msg = 'Internal Server Error [500].';
+  } else if (exception === 'parsererror') {
+      msg = 'Requested JSON parse failed.';
+  } else if (exception === 'timeout') {
+      msg = 'Time out error.';
+  } else if (exception === 'abort') {
+      msg = 'Ajax request aborted.';
+  } else {
+      msg = 'Uncaught Error.\n' + jqXHR.responseText;
+  }
+  msg += '\nPlease open the console (Press F12) to check details.';
+  $('#ajax_error').html(`<p class="text-danger">
+      <font size="4"><strong>FATAL!: </strong></font>
+      <font size="2">${msg}</font></p>`)
+                  .parent().fadeIn(200);
+}
+
 function check_not_null_float () {
   var value = this.value;
   var name = this.name.toUpperCase();

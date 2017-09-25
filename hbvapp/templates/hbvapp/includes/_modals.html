@@ -162,7 +162,7 @@
 </div><!-- /.modal -->
 
 
-<!-- Modals -->
+<!-- Modal for summary -->
 <div class="modal fade" tabindex="9999" role="dialog" id="summary_modal" aria-labelledby="summaryTitle">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
@@ -177,5 +177,39 @@
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-
 <!-- Modals END -->
+
+<div id="fixed-pane" class="text-center">
+
+	<button class="btn btn-primary" id="pop_bounds_modal" onclick="$('.save_bounds_success').html('');$('#id_bounds').modal('show');" style="margin: 1vh 0 1vh 0; padding-left: 8px; padding-right: 8px;">Parameter Range</button>
+
+	<input type="file" name="load_setup" id="id_setup_file_input" style="display: none;">
+	<button class="btn btn-primary" id="load_setup" style="margin: 0.5vh 0 1vh 0; width: 6.6vw;">Load Setup</button>
+
+	<button class="btn btn-primary" id="save_context" onclick="hbv.c.save();" style="margin: 0.5vh 0 1vh 0; width: 6.6vw;">Save Setup</button>
+				
+	<a role="button" onclick="hbv.c.sample();" style="margin: 0.5vh 0 1vh 0;">Sample Run &#8617;</a>
+
+</div>
+
+<!-- Processing indicator (Forked from Dave McCarthy) -->
+<div class="loadercontainer">
+	<div class="loaderdiv">
+		<div class="loader">
+			<div class="loader--dot"></div>
+			<div class="loader--dot"></div>
+			<div class="loader--dot"></div>
+			<div class="loader--dot"></div>
+			<div class="loader--dot"></div>
+			<div class="loader--dot"></div>
+			<div class="loader--text"></div>
+		</div>
+	</div>
+	<div id="ajax_error_container">
+    <a type="button" style="position:relative; left: 290px; top: 14px; cursor: pointer;" onclick="$('.loadercontainer, #ajax_error_container').fadeOut(500);">
+    	<span aria-hidden="true"><font size="5">&times;</font></span>
+    </a>
+		<div id="ajax_error" style="margin:20px 20px 0 20px;"></div>
+	</div>
+</div>
+<!-- Processing indicator END -->

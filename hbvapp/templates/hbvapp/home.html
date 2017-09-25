@@ -20,6 +20,7 @@
 				.on("input", function(){
 		    	var index = parseInt(this.value);
 		    	hbv.s.point_to(index);
+		    	hbv.d.show(index);
 			  });
 
 			/* File input helper */
@@ -39,7 +40,7 @@
 			});
 			/* Collapse helper END */
 
-			/* Reading file jQuery */
+			/* Reading data file jQuery */
 			$("#id_csvFileInput").on("change", function(e){
 				$("#id_fileNamePlaceHolder").val($(this).val().replace(/C:\\fakepath\\/i, ''));
 				render_text(this.files[0], function(e){
@@ -67,7 +68,29 @@
 					});
 				});
 			});
-			/* Reading file jQuery END */
+			/* Reading data file jQuery END */
+
+			/* Load setup file (context) jQuery */
+			$("#load_setup").on("click", function(){
+				$("#id_setup_file_input").trigger("click");
+			});
+
+			$("#id_setup_file_input").on("change", function(e){
+				render_text(this.files[0], function(e){
+					var context = JSON.parse(e.target.result);
+					var success = false;
+					try{
+						hbv.c.changeWhenLoad(context);
+						success = true;
+						alert("Success !");
+					}
+				  catch (ex) {
+				    alert(ex.message);
+				    throw ex;
+				  }
+				});
+			});
+			/* Load setup file (context) jQuery END */
 
 			/* Summarizing file jQuery */
 			$("#id_summary").on("click", function(e){
@@ -92,6 +115,7 @@
 				var config = generate_config_dict();
 				var par = generate_par_dict(action);
 				var st = generate_st_dict();
+				$(".loadercontainer").fadeIn(200); //Show progressing loader
 				$.ajax({
 					url: "",
 					type: "POST",
@@ -103,18 +127,17 @@
 								'action': action},
 					success: function(data){
 						show_calibrated_par(data.par);
-						$("#id_sizeDFTitle").text('Size of the file:');
-						$("#id_sizeDF").text(data.size + " lines");
-						$("#id_outDFHeadTitle").text("Test Output");
-						$("#id_outDFHead").text(data.res_head);
 						hbv.d.synthesize(data.data, data.inters);
 						hbv.p.init();
 						hbv.s.init_slider();
 						deploy_plots(data.plots);
 						enable_datepickers_for_plots(true);
-					}
+						$(".loadercontainer").fadeOut(300);
+					},
+					error: ajax_error
 				});
 			});
+
 			/* Calibration jQuery END */
 
 			/* Simulation jQuery */
@@ -123,6 +146,7 @@
 				var config = generate_config_dict();
 				var par = generate_par_dict(action);
 				var st = generate_st_dict();
+				$(".loadercontainer").fadeIn(200); //Show progressing loader
 				$.ajax({
 					url: "",
 					type: "POST",
@@ -133,16 +157,14 @@
 								'data': JSON.stringify(hbv.d.init_data),
 								'action': action},
 					success: function(data){
-						$("#id_sizeDFTitle").text('Size of the file:');
-						$("#id_sizeDF").text(data.size + " lines");
-						$("#id_outDFHeadTitle").text("Test Output");
-						$("#id_outDFHead").text(data.res_head);
 						deploy_plots(data.plots);
 						hbv.d.synthesize(data.data, data.inters);
 						hbv.p.init();
 						hbv.s.init_slider();
 						enable_datepickers_for_plots(true);
-					}
+						$(".loadercontainer").fadeOut(300);
+					},
+					error: ajax_error
 				});
 			});
 			/* Simulation jQUery END */
@@ -288,7 +310,7 @@
 					<button class="btn btn-primary btn-sm" name="calibrate" id="id_calibrate"><strong>CALIBRATE</strong></button>
 				</div>
 				<!-- Calibrate button END -->
-			</div><br>
+			</div>
 
 			<!-- Panel on the right -->
 			<div class="panel panel-info">
@@ -305,13 +327,9 @@
   					</div>
   				</div>
   			</div>
-				<p id="id_sizeDFTitle">Waiting for operation....</p>
-				<span id="id_sizeDF"></span>
-				<h3 id="id_outDFHeadTitle"></h3>
-				<p id="id_outDFHead"></p>
 			</div>
-		</div>
-	
-	</div>
+		
+		</div><!-- /* div.panelRight -->
+	</div><!-- /* div.row.main -->
 
 {% endblock %}

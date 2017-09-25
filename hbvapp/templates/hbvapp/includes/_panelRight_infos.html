@@ -1,10 +1,40 @@
 <div>
-	<div id="div_datepicker_for_plots">
+	<div class="row">
+		<div class="col-sm-8">
+			<div>
+				<h4 style="padding-bottom: 15px;">Date: <span><strong id="tag_date"></strong></span></h4>
+				<table class="table table-responsive table-bordered table-hover text-center" style="border-width: 3px;">
+					<thead>
+						<tr>
+							<th class="text-center">Q<sub>sim</sub></th>
+							<th class="text-center">Q<sub>rec</sub></th>
+							<th class="text-center">P</th>
+							<th class="text-center">EP</th>
+							<th class="text-center">SM</th>
+							<th class="text-center">UZ</th>
+							<th class="text-center">LZ</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td id="q_sim">-</td>
+							<td id="q_rec">-</td>
+							<td id="prec">-</td>
+							<td id="ep">-</td>
+							<td id="sm">-</td>
+							<td id="uz">-</td>
+							<td id="lz">-</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		
+		<div class="col-sm-4">
+			<div id="div_datepicker_for_plots">
 
-		<div class="row">
-			<div class="col-sm-4">
 				<h4 class="text-center">Current Selection</h4>
-				<hr style="margin-top: 10px; margin-bottom: 20px">
+				<hr style="margin-top: 10px; margin-bottom: 20px;">
 
 				<div class="row">
 					<div class="col-sm-3 text-center">
@@ -38,7 +68,7 @@
 			    </div>
 			  </div><!-- /* Closest row -->
 
-			</div><!-- /* outter col-sm-4 -->
-		</div><!-- /* outter row -->
-	</div><!-- /* div_datepicker_for_plots -->
+			</div><!-- /* div_datepicker_for_plots -->
+		</div><!-- /* global col-sm-4 -->
+	</div><!-- /* Global row -->
 </div><!-- /* Global div -->

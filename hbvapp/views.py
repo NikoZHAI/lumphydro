@@ -45,8 +45,6 @@ def home(request):
 			mcd.par.update(json.loads(post.get('par')))
 			mcd.DEF_ST.update(json.loads(post.get('st')))
 			mcd._simulate_without_calibration()
-			context['res_head'] = json.dumps(mcd.data[:5])
-			context['size'] = len(mcd.data)
 			context['par'] = mcd.par
 			context['plots'] = plot_simulation(mcd.data)
 			context['data'] = mcd.data
@@ -58,8 +56,6 @@ def home(request):
 			mcd.config.update(json.loads(post.get('config')))
 			mcd.par.update(json.loads(post.get('par')))
 			mcd.calibrate()
-			context['res_head'] = json.dumps(mcd.summary())
-			context['size'] = len(mcd.data)
 			context['par'] = mcd.par
 			context['plots'] = plot_simulation(mcd.data)
 			context['data'] = mcd.data
@@ -373,6 +369,7 @@ def plot_roc(source):
 	Import sklearn locally to generate roc curve
 	'''
 	from sklearn.metrics import roc_curve, auc
+	from bokeh.models import Label
 
     # Compute ROC curve and area the curve
 	fpr, tpr, thresholds = roc_curve(source.data['qt_bin'], source.data['qt_sim'])
@@ -411,7 +408,12 @@ def plot_roc(source):
 		margin=20,
 		label_standoff=6
 		)
+
+	_auc = Label(x=0.7, y=0.25, text_font_size='1.1em',
+		text_font_style='bold', text='AUC = {0:.3f}'.format(roc_auc))
+
 	p.add_layout(legend, 'below')
+	p.add_layout(_auc)
 	
 	return p
 
