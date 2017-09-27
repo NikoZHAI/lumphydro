@@ -34,7 +34,7 @@ def home(request):
 		action = post.get('action')
 		context = {}
 
-		# Use JsonResponse just to interact with JQuery
+		# Use JsonResponse to interact with JQuery
 		if action=='load_file':
 			mcd.data = json.loads(post.get('data'))
 			return JsonResponse(context)

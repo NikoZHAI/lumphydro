@@ -1311,6 +1311,8 @@ function Context() {
           }
         }
       }
+      window.save_bounds();
+      return undefined;
     }
 
     function load_par_to_calibrate(value) {

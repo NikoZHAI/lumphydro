@@ -54,7 +54,6 @@ function indexof_date (date) {
 
 // Helper for catch ajax error message
 function ajax_error (jqXHR, exception) {
-  console.log("coa");
   var msg = '';
   if (jqXHR.status === 0) {
       msg = 'Not connect.\n Verify Network.';
@@ -468,7 +467,7 @@ function save_bounds() {
             'P_UB': JSON.stringify(P_UB),
             'action': 'save_bounds'},
     success: function(){
-      hbv.c.context.bounds = {LB: P_LB, UB: P_UB};
+      hbv.c.context.bounds = {P_LB: P_LB, P_UB: P_UB};
       $(".save_bounds_success").html('<h5 class="text-success"><strong>SUCCESS</strong><span class="text-success"><i class="glyphicon glyphicon-ok"></i></span><h5>');
       setTimeout(function() { $("#id_bounds").modal('hide'); }, 1500);
     }
