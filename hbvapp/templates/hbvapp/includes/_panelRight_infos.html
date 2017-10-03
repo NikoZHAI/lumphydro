@@ -2,7 +2,22 @@
 	<div class="row">
 		<div class="col-sm-8">
 			<div>
-				<h4 style="padding-bottom: 15px;">Date: <span><strong id="tag_date"></strong></span></h4>
+				<div class="row" id="date_slider_row">
+
+					<div class="col-sm-3">
+						<h4 style="padding-bottom: 15px;">Date: <span><strong id="tag_date"></strong></span></h4>
+					</div>
+
+					<div id="id_schema_scroll" class="form-group col-sm-9 col-md-9 col-lg-9">
+		  			<div class="input-group">
+							<span class="input-group-addon dateSliderValue" id="id_date_slider_span">Date Slider</span>
+							<input type="text" class="form-control" readonly="readonly" id="id_greybarslider" aria-discribedby="id_date_slider_span">
+							<input class="form-control" type="range" value="0" min="0" max="500" step="1" id="id_date_slider" disabled>
+		  			</div>
+		  		</div>
+
+				</div>
+
 				<table class="table table-responsive table-bordered table-hover text-center" style="border-width: 3px;">
 					<thead>
 						<tr>
@@ -72,3 +87,10 @@
 		</div><!-- /* global col-sm-4 -->
 	</div><!-- /* Global row -->
 </div><!-- /* Global div -->
+
+
+<!-- Helper Script -->
+<script type="text/javascript">
+	// Change range slider width
+	$("#id_date_slider").width($("#id_greybarslider")[0].clientWidth);
+</script>

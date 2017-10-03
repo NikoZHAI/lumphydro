@@ -14,6 +14,11 @@ String.prototype.toFloat = function() {
   return parseFloat(val);
 };
 
+// Get the last elemnt of an array
+Array.prototype.last = function(){
+  return this[this.length - 1];
+};
+
 //
 function output(inp, element) {
     element.html("<pre>"+inp+"</pre>");
@@ -56,7 +61,7 @@ function indexof_date (date) {
 function ajax_error (jqXHR, exception) {
   var msg = '';
   if (jqXHR.status === 0) {
-      msg = 'Not connect.\n Verify Network.';
+      msg = 'No connection.\n Verify Network.';
   } else if (jqXHR.status == 404) {
       msg = 'Requested page not found. [404]';
   } else if (jqXHR.status == 500) {
@@ -270,7 +275,7 @@ function enable_datepickers_for_plots(success) {
   if (success) {
     var date = hbv.d.data[0].date;
     var begin = date[0],
-        end = date[date.length - 1];
+        end = date.last();
 
     $("#div_datepicker_for_plots input").each(function() {
      $( this ).prop("disabled", false);

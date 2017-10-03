@@ -981,22 +981,18 @@ function Plot() {
     });
   }
 
-
   function onRelayoutCallBack(e){
     // Prenvent re-auto-scale button triggering error
     if (Object.keys(e).includes("xaxis.autorange")) {
-      hbv.s.init_slider();
       enable_datepickers_for_plots(true);
+      hbv.s.init_slider();
       return undefined;
     }
-    var e_l = $("#left").data("DateTimePicker").date();
-    var e_r = $("#right").data("DateTimePicker").date();
-
-    var first_step = moment(hbv.d.init_data[0].date),
-        last_step = moment(hbv.d.init_data[hbv.d.init_data.length-1].date);
+    var e_l = $("#left").data("DateTimePicker").date(),
+        e_r = $("#right").data("DateTimePicker").date();
 
     // Identify if e is triggered by rangeSlider or zoom2d
-    if (Object.values(e).length==2) {
+    if (Object.values(e).length===2) {
       if(Object.keys(e).includes("xaxis.rangeslider.range[0]")){
         e_l = Object.values(e)[0];
       }
@@ -1014,8 +1010,8 @@ function Plot() {
       e_r = Object.values(e)[0][1];
     }
 
-    e_l = momentize(e_l, first_step, last_step);
-    e_r = momentize(e_r, first_step, last_step);
+    e_l = momentize(e_l);
+    e_r = momentize(e_r);
 
     if(e_l==undefined || e_r==undefined){return undefined;}
     $("#left").data("DateTimePicker").date(e_l);
@@ -1026,8 +1022,11 @@ function Plot() {
     // Change current focus for Schema
     hbv.s.set_local_extrems(left, right);
 
-    function momentize(elem, first_step, last_step){
-      var e = moment(elem);
+    function momentize(elem){
+      var e = moment(elem),
+          first_step = hbv.d.info.last().first_step,
+          last_step = hbv.d.info.last().last_step;
+
       if(e>=last_step){
         return last_step.format("YYYY-MM-DD");
       }
@@ -1265,7 +1264,7 @@ function Context() {
 
     function load_radios(id, value) {
       var elem =  $(`input[id=${id}]`);
-      (ctxt[id]=="RMSE") ? $("#id_RMSE").prop("checked", true) : $("#id_NSE").prop("checked", false);
+      (ctxt[id]=="RMSE") ? $("#id_RMSE").prop("checked", true) : $("#id_NSE").prop("checked", true);
       (elem.is("[invalid]")) ? undefined : hbv.c.context[id] = value;
       return undefined;
     }
@@ -1468,4 +1467,6 @@ function DataInfo(maxis, minis) {
   */
   this.maxis = maxis || {}; // Object storing maximal values
   this.minis = minis || {}; // Object storing minimal values
+  this.first_step = moment(hbv.d.init_data[0].date) || null; // First time step
+  this.last_step = moment(hbv.d.init_data[hbv.d.init_data.length-1].date) || null; // Last time step
 }

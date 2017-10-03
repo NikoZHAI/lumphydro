@@ -484,7 +484,7 @@ def synthesize_data(simulation_result):
 	
 	qt_rec = [f_q(q, data['q_rec']) for q in asc_qsim]
 	qt_sim = [i/float(_range) for i in xrange(1, _range+1)]
-	qt_bin = [1 if np.abs(rec-sim)/sim<0.1 else 0 for rec, sim in zip(data['q_rec'],data['q_sim'])]
+	qt_bin = [1 if np.abs(rec-sim)/rec<0.1 else 0 for rec, sim in zip(data['q_rec'],data['q_sim'])]
 
 	''' ---------- Calculate Quantile END ---------- '''
 

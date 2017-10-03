@@ -145,15 +145,59 @@ input:checked + .btnslider:before {
 
 /********** Date slider **********/
 #id_date_slider {
+  -webkit-appearance: none;
+  -moz-appearance: none;
   position: absolute;
-  width: 75%;
-  height: auto;
-  background: #3071A9;
+  width: 100%;
+  height: 90%;
+  padding-left: 0px;
+  padding-right: 0px;
+  margin-top: 1.2px;
+  color: #bfc0c1;
+  background-color: #ffffff;
+  border: none;
+}
+#id_date_slider::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 5px;
+  cursor: pointer;
+  background: #3984ce;
+  border-radius: 1px;
+  border: 1px solid #46a2fc;
+}
+#id_date_slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid blue;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.6);
+  margin-top: -9px;
+}
+#id_date_slider::-moz-range-track {
+  width: 100%;
+  height: 5px;
+  cursor: pointer;
+  background: #3984ce;
+  border-radius: 1px;
+  border: 1px solid #46a2fc;
+}
+#id_date_slider::-moz-range-thumb {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid blue;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.6);
+  margin-top: -9px;
 }
 #id_date_slider:focus {
   outline: none;
 }
-
 /* Serve as background of the date slider*/
 #id_greybarslider {
   background: white;
