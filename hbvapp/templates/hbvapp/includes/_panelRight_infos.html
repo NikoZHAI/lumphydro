@@ -1,52 +1,8 @@
 <div>
 	<div class="row">
-		<div class="col-sm-8">
-			<div>
-				<div class="row" id="date_slider_row">
 
-					<div class="col-sm-3">
-						<h4 style="padding-bottom: 15px;">Date: <span><strong id="tag_date"></strong></span></h4>
-					</div>
-
-					<div id="id_schema_scroll" class="form-group col-sm-9 col-md-9 col-lg-9">
-		  			<div class="input-group">
-							<span class="input-group-addon dateSliderValue" id="id_date_slider_span">Date Slider</span>
-							<input type="text" class="form-control" readonly="readonly" id="id_greybarslider" aria-discribedby="id_date_slider_span">
-							<input class="form-control" type="range" value="0" min="0" max="500" step="1" id="id_date_slider" disabled>
-		  			</div>
-		  		</div>
-
-				</div>
-
-				<table class="table table-responsive table-bordered table-hover text-center" style="border-width: 3px;">
-					<thead>
-						<tr>
-							<th class="text-center">Q<sub>sim</sub></th>
-							<th class="text-center">Q<sub>rec</sub></th>
-							<th class="text-center">P</th>
-							<th class="text-center">EP</th>
-							<th class="text-center">SM</th>
-							<th class="text-center">UZ</th>
-							<th class="text-center">LZ</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td id="q_sim">-</td>
-							<td id="q_rec">-</td>
-							<td id="prec">-</td>
-							<td id="ep">-</td>
-							<td id="sm">-</td>
-							<td id="uz">-</td>
-							<td id="lz">-</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
-		
 		<div class="col-sm-4">
-			<div id="div_datepicker_for_plots">
+			<div id="div_timepicker_for_plots">
 
 				<h4 class="text-center">Current Selection</h4>
 				<hr style="margin-top: 10px; margin-bottom: 20px;">
@@ -83,8 +39,54 @@
 			    </div>
 			  </div><!-- /* Closest row -->
 
-			</div><!-- /* div_datepicker_for_plots -->
+			</div><!-- /* div_timepicker_for_plots -->
 		</div><!-- /* global col-sm-4 -->
+
+		<div class="col-sm-8">
+			<div>
+				<div class="row" id="time_slider_row">
+
+					<div class="col-sm-3">
+						<h4 style="padding-bottom: 15px;">Time: <span><strong id="tag_time"></strong></span></h4>
+					</div>
+
+					<div id="id_schema_scroll" class="form-group col-sm-9 col-md-9 col-lg-9">
+		  			<div class="input-group">
+							<span class="input-group-addon timeSliderValue" id="id_time_slider_span">Time</span>
+							<input type="text" class="form-control" readonly="readonly" id="id_greybarslider" aria-discribedby="id_time_slider_span">
+							<input class="form-control" type="range" value="0" min="0" max="500" step="1" id="id_time_slider" disabled>
+		  			</div>
+		  		</div>
+
+				</div>
+
+				<table class="table table-responsive table-bordered table-hover text-center" style="border-width: 3px;">
+					<thead>
+						<tr>
+							<th class="text-center">Q<sub>sim</sub></th>
+							<th class="text-center">Q<sub>rec</sub></th>
+							<th class="text-center">P</th>
+							<th class="text-center">EP</th>
+							<th class="text-center">SM</th>
+							<th class="text-center">UZ</th>
+							<th class="text-center">LZ</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td id="q_sim">-</td>
+							<td id="q_rec">-</td>
+							<td id="prec">-</td>
+							<td id="ep">-</td>
+							<td id="sm">-</td>
+							<td id="uz">-</td>
+							<td id="lz">-</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
 	</div><!-- /* Global row -->
 </div><!-- /* Global div -->
 
@@ -92,5 +94,5 @@
 <!-- Helper Script -->
 <script type="text/javascript">
 	// Change range slider width
-	$("#id_date_slider").width($("#id_greybarslider")[0].clientWidth);
+	$("#id_time_slider").width($("#id_greybarslider")[0].clientWidth);
 </script>

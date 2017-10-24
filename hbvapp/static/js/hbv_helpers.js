@@ -50,10 +50,37 @@ function assert (condition, message) {
   }
 }
 
-// Helper to find corresponding index of a certain date in the time series
-function indexof_date (date) {
+// Helper to find corresponding index of a certain time in the time series
+function indexof_time (time) {
   for (var i = hbv.d.init_data.length - 1; i >= 0; i--) {
-    if(hbv.d.init_data[i].date == date){return i;}
+    if(hbv.d.init_data[i].time == time){return i;}
+  }
+}
+
+// Helper to find corresponding step of time of a certain index
+function timeof_index (ind) {
+  return hbv.d.init_data[ind].time;
+}
+
+// Helper, after a time input to find nearest existing time in current dataset
+function environ_index_of(time, roundMethod){
+  roundMethod = roundMethod || Math.ceil;
+  var e = time;
+  (moment.isMoment(time)) ? undefined : e = moment.utc(e);
+  var first_step = hbv.d.info.last().first_step,
+      last_step = hbv.d.info.last().last_step,
+      time_step = hbv.d.info.last().time_step,
+      diff_e_first = e.diff(first_step, "seconds"),
+      index = roundMethod(diff_e_first/time_step);
+
+  if(index>hbv.d.info.last().len-1){
+    return hbv.d.info.last().len-1;
+  }
+  else if(index<0){
+    return 0;
+  }
+  else{
+    return index;
   }
 }
 
@@ -239,24 +266,24 @@ function deploy_plots (plots) {
   $(".jslocator_perf").next().replaceWith(plots.script.perf);
 }
 
-function enable_datepickers (success) {
+function enable_timepickers (success) {
 
   if (success) {
-    var date = hbv.d.init_data.map(function (row) {
-      return moment(row.date);
+    var time = hbv.d.init_data.map(function (row) {
+      return moment.utc(row.time);
     });
-    var begin = date[0],
-        end = date[date.length - 1];
+    var begin = time[0],
+        end = time[time.length - 1];
 
-    $("#datepicker_calibration input").each(function() {
+    $("#timepicker_calibration input").each(function() {
      $( this ).prop("disabled", false);
     });
     $('#calibrate_from').data("DateTimePicker")
                         .clear()
-                        .enabledDates(date);
+                        .enabledDates(time);
     $('#calibrate_to').data("DateTimePicker")
                       .clear()
-                      .enabledDates(date);
+                      .enabledDates(time);
     $('#calibrate_from').data("DateTimePicker")
                         .date(begin);
     $('#calibrate_to').data("DateTimePicker")
@@ -264,39 +291,39 @@ function enable_datepickers (success) {
   }
   else
   {
-    $("#datepicker_calibration input").each(function() {
+    $("#timepicker_calibration input").each(function() {
        $( this ).prop("disabled", true);
     });
   }
 }
 
-function enable_datepickers_for_plots(success) {
+function enable_timepickers_for_plots(success) {
 
   if (success) {
-    var date = hbv.d.data[0].date;
-    var begin = date[0],
-        end = date.last();
+    var time = hbv.d.data[0].time.map(function(e){return moment.utc(e);}),
+        begin = time[0],
+        end = time.last();
 
-    $("#div_datepicker_for_plots input").each(function() {
+    $("#div_timepicker_for_plots input").each(function() {
      $( this ).prop("disabled", false);
     });
     $('#left').data("DateTimePicker")
               .clear()
-              .enabledDates(date);
+              .enabledDates(time);
     $('#right').data("DateTimePicker")
                .clear()
-               .enabledDates(date);
+               .enabledDates(time);
     $('#left').data("DateTimePicker")
-              .defaultDate(moment(begin));
+              .defaultDate(begin);
     $('#right').data("DateTimePicker")
-               .defaultDate(moment(end));
+               .defaultDate(end);
 
     // set current focus of the plot and schema to whole set of data
-    hbv.s.set_local_extrems(0, date.length-1);
+    hbv.s.set_local_extrems(0, time.length-1);
   }
   else
   {
-    $("#div_datepicker_for_plots input").each(function() {
+    $("#div_timepicker_for_plots input").each(function() {
        $( this ).prop("disabled", true);
     });
   }
@@ -396,16 +423,16 @@ function generate_st_dict () {
   return st_obj;
 }
 
-function relayout_dp_for_plots(i, date) {
-  var left_bound = moment(hbv.d.init_data[0].date),
-      right_bound = moment(hbv.d.init_data.slice(-1)[0].date),
-      date = moment(date);
-  (date>right_bound) ? date=right_bound : undefined;
-  (date<left_bound) ? date=left_bound : undefined;
+function relayout_dp_for_plots(i, time) {
+  var left_bound = moment.utc(hbv.d.init_data[0].time),
+      right_bound = moment.utc(hbv.d.init_data.slice(-1)[0].time),
+      time = moment.utc(time);
+  (time>right_bound) ? time=right_bound : undefined;
+  (time<left_bound) ? time=left_bound : undefined;
 
   var update = {};
-  update[`xaxis.range[${i}]`] = date;
-  update[`xaxis.rangeslider.range[${i}]`] = date;
+  update[`xaxis.range[${i}]`] = time;
+  update[`xaxis.rangeslider.range[${i}]`] = time;
 
   Object.values($("div[forplot] div.js-plotly-plot")).slice(0,-2).forEach(function(this_plot){
     Plotly.relayout(this_plot, update);

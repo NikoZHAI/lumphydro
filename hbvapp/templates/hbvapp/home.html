@@ -16,7 +16,7 @@
 			hbv.s.init_animation();
 			/*  */
 
-			d3.select("#id_date_slider")
+			d3.select("#id_time_slider")
 				.on("input", function(){
 		    	var index = parseInt(this.value);
 		    	hbv.s.point_to(index);
@@ -57,7 +57,7 @@
 				    throw ex;
 				  }
 				  finally {
-				    enable_datepickers(success);
+				    enable_timepickers(success);
 				  }
 					$.ajax({
 						url: "",
@@ -132,7 +132,7 @@
 						hbv.p.init();
 						hbv.s.init_slider();
 						deploy_plots(data.plots);
-						enable_datepickers_for_plots(true);
+						enable_timepickers_for_plots(true);
 						$(".loadercontainer").fadeOut(300);
 					},
 					error: ajax_error
@@ -162,7 +162,7 @@
 						hbv.d.synthesize(data.data, data.inters);
 						hbv.p.init();
 						hbv.s.init_slider();
-						enable_datepickers_for_plots(true);
+						enable_timepickers_for_plots(true);
 						$(".loadercontainer").fadeOut(300);
 					},
 					error: ajax_error
@@ -177,10 +177,10 @@
 			/* ----- Date picker for calibration ----- */
 			$(function () {
         $('#calibrate_from').datetimepicker({
-        	format: "YYYY-MM-DD"
+        	format: "YYYY-MM-DD HH:mm:ss"
         });
         $('#calibrate_to').datetimepicker({
-        	format: "YYYY-MM-DD",
+        	format: "YYYY-MM-DD HH:mm:ss",
           useCurrent: false //Important! See issue #1075
         });
 
@@ -189,32 +189,36 @@
         	// Prevention of file changes
         	if (e.date===false) {return undefined;}
 
-        	var begin = e.date.format("YYYY-MM-DD");
-        	hbv.c.context.calibrate_from = {date: begin, index: indexof_date(begin)};
+        	var index = environ_index_of(e.date),
+        			begin = moment.utc(timeof_index(index));
+        	hbv.c.context.calibrate_from = {time: begin, index: index};
           $('#calibrate_to').data("DateTimePicker").minDate(begin);
+          $('#calibrate_from').data("DateTimePicker").date(begin);
         });
         $("#calibrate_to").on("dp.change", function(e){
         	// Prevention of file changes
         	if (e.date===false) {return undefined;}
 
-        	var end = e.date.format("YYYY-MM-DD");
-        	hbv.c.context.calibrate_to = {date: end, index: indexof_date(end)};
+        	var index = environ_index_of(e.date, Math.floor),
+        			end = moment.utc(timeof_index(index));
+        	hbv.c.context.calibrate_to = {time: end, index: index};
           $('#calibrate_from').data("DateTimePicker").maxDate(end);
+          $('#calibrate_to').data("DateTimePicker").date(end);
         });
         /* Date picker event handeler END*/
 	    });
 
-			$("#id_select_date_range").on("change", function(e){
-				var div_dp = $("#datepicker_calibration");
+			$("#id_select_time_range").on("change", function(e){
+				var div_dp = $("#timepicker_calibration");
 				if (e.target.checked == true) {
-					hbv.c.context.id_select_date_range = true;
+					hbv.c.context.id_select_time_range = true;
 					if (div_dp.attr("data-toggle")=="toggled") {
 						div_dp.toggle(600);
 						div_dp.attr("data-toggle", "extended");
 					} else {undefined;}
 				}
 				else {
-					hbv.c.context.id_select_date_range = false;
+					hbv.c.context.id_select_time_range = false;
 					if (div_dp.attr("data-toggle")=="extended") {
 						div_dp.toggle(600);
 						div_dp.attr("data-toggle", "toggled");
@@ -227,10 +231,10 @@
 			$(function () {
 
         $('#left').datetimepicker({
-        	format: "YYYY-MM-DD"
+        	format: "YYYY-MM-DD HH:mm:ss"
         });
         $('#right').datetimepicker({
-        	format: "YYYY-MM-DD",
+        	format: "YYYY-MM-DD HH:mm:ss",
           useCurrent: false //Important! See issue #1075
         });
 
@@ -239,14 +243,14 @@
         	// Prevention of file changes
         	if (e.date===false) {return undefined;}
 
-        	var begin = e.date.format("YYYY-MM-DD");
+        	var begin = e.date.format("YYYY-MM-DD HH:mm:ss");
           $('#right').data("DateTimePicker").minDate(begin);
         });
         $("#right").on("dp.change", function(e){
         	// Prevention of file changes
         	if (e.date===false) {return undefined;}
 
-        	var end = e.date.format("YYYY-MM-DD");
+        	var end = e.date.format("YYYY-MM-DD HH:mm:ss");
           $('#left').data("DateTimePicker").maxDate(end);
         });
         /* Date picker event handeler END*/
@@ -300,17 +304,16 @@
 				</div>
 				<!-- File load status END -->
 
-				<!-- Simulate button -->
-				<div class="col-md-2 col-md-offset-2 text-right">
-					<button class="btn btn-primary btn-sm" name="simulate" id="id_simulate"><strong>SIMULATE</strong></button>
-				</div>
-				<!-- Simulate button END -->
-				
-				<!-- Calibrate button -->
-				<div class="col-md-1 text-right">
+				<div class="col-md-6 text-right">
+					<!-- Simulate button -->
+					<button class="btn btn-primary btn-sm" name="simulate" id="id_simulate" style="margin-right: 1vw;"><strong>SIMULATE</strong></button>
+					<!-- Simulate button END -->
+					
+					<!-- Calibrate button -->
 					<button class="btn btn-primary btn-sm" name="calibrate" id="id_calibrate"><strong>CALIBRATE</strong></button>
+					<!-- Calibrate button END -->
 				</div>
-				<!-- Calibrate button END -->
+
 			</div>
 
 			<!-- Panel on the right -->

@@ -491,20 +491,20 @@ def synthesize_data(simulation_result):
 	''' ----- Convert all np.nan values into "NaN" for Javascript -----'''
 
 	source = ColumnDataSource(data=dict(
-		date=pd.to_datetime(data['date']),	# Date
-		q_rec=data['q_rec'],				# Measured discharge
-		q_sim=data['q_sim'],				# Simulated discharge
-		bias=(data['q_sim']-data['q_rec']), # Bias of the model, difference between simulated and measured discharge
-		prec=data['prec'],					# Precipitation
-		sp=data['sp'],						# Simulated snow pack
-		diff_temp=data['temp']-data['tm'],	# Difference 
-		t=data['temp'],						# Air temperature
-		tm=data['tm'],						# Long-term averaged air temperature
-		sm=data['sm'],						# Soil moisture
-		ep=data['ep'],						# Recorded evaporation
-		wc=data['wc'],						# Water content
-		uz=data['uz'],						# Upper zone value
-		lz=data['lz'],						# Lower zone value
+		# date=pd.to_datetime(data['date']),	# Date
+		# q_rec=data['q_rec'],				# Measured discharge
+		# q_sim=data['q_sim'],				# Simulated discharge
+		# bias=(data['q_sim']-data['q_rec']), # Bias of the model, difference between simulated and measured discharge
+		# prec=data['prec'],					# Precipitation
+		# sp=data['sp'],						# Simulated snow pack
+		# diff_temp=data['temp']-data['tm'],	# Difference 
+		# t=data['temp'],						# Air temperature
+		# tm=data['tm'],						# Long-term averaged air temperature
+		# sm=data['sm'],						# Soil moisture
+		# ep=data['ep'],						# Recorded evaporation
+		# wc=data['wc'],						# Water content
+		# uz=data['uz'],						# Upper zone value
+		# lz=data['lz'],						# Lower zone value
 		qt_rec=qt_rec,						# Quantiles for simulated values in recorded values
 		qt_sim=qt_sim,						# Quantiles for simulated values in simulated values
 		qt_bin=qt_bin,						# Binary array for roc curve

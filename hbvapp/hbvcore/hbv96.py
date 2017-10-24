@@ -127,7 +127,6 @@ class HydroModel(object):
 				par_to_calibrate = self._ind[8:18]
 				# Boundaries
 				self.x_b = zip(self.P_LB[8:], self.P_UB[8:])
-				print(self.x_b)
 
 				if self.config['init_guess']==False:
 					self.x_0 = np.random.uniform(self.P_LB[8:], self.P_UB[8:])
@@ -172,7 +171,6 @@ class HydroModel(object):
 				self.x_0 = _x0
 
 		self.config['par_to_calibrate'] = par_to_calibrate
-		print(self.config)
 		return None
 
 

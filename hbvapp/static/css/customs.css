@@ -144,7 +144,7 @@ input:checked + .btnslider:before {
 
 
 /********** Date slider **********/
-#id_date_slider {
+#id_time_slider {
   -webkit-appearance: none;
   -moz-appearance: none;
   position: absolute;
@@ -157,7 +157,7 @@ input:checked + .btnslider:before {
   background-color: #ffffff;
   border: none;
 }
-#id_date_slider::-webkit-slider-runnable-track {
+#id_time_slider::-webkit-slider-runnable-track {
   width: 100%;
   height: 5px;
   cursor: pointer;
@@ -165,7 +165,7 @@ input:checked + .btnslider:before {
   border-radius: 1px;
   border: 1px solid #46a2fc;
 }
-#id_date_slider::-webkit-slider-thumb {
+#id_time_slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   -moz-appearance: none;
   width: 20px;
@@ -176,7 +176,7 @@ input:checked + .btnslider:before {
   box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.6);
   margin-top: -9px;
 }
-#id_date_slider::-moz-range-track {
+#id_time_slider::-moz-range-track {
   width: 100%;
   height: 5px;
   cursor: pointer;
@@ -184,7 +184,7 @@ input:checked + .btnslider:before {
   border-radius: 1px;
   border: 1px solid #46a2fc;
 }
-#id_date_slider::-moz-range-thumb {
+#id_time_slider::-moz-range-thumb {
   -webkit-appearance: none;
   -moz-appearance: none;
   width: 20px;
@@ -195,10 +195,10 @@ input:checked + .btnslider:before {
   box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.6);
   margin-top: -9px;
 }
-#id_date_slider:focus {
+#id_time_slider:focus {
   outline: none;
 }
-/* Serve as background of the date slider*/
+/* Serve as background of the time slider*/
 #id_greybarslider {
   background: white;
 }
