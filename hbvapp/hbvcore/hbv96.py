@@ -576,6 +576,40 @@ class HBV96(HydroModel):
 		f = np.sqrt(np.nanmean(erro))
 		return f
 
+	def _kge(self, q_rec, q_sim):
+		'''
+		====
+		RMSE
+		====
+
+		Kling-Gupta Efficiency. Non-dimensional for the estimation of
+		performance of the hydrological model.
+
+		Parameters
+		----------
+		q_rec : array_like [n]
+		Measured discharge [m3/s]
+		q_sim : array_like [n] 
+		Simulated discharge [m3/s]
+		r     : float
+		Lineary correlation coefficient of Q_sim and Q_obs
+		alpha : float
+		Relative variability in the simulated and observed values
+		beta  : float
+		
+
+		Returns
+		-------
+		f : float
+		RMSE value
+		'''
+		r = np.corrcoef(q_rec, q_sim)[0][1]
+		alpha = np.std(q_sim, axis=0)/np.std(q_rec, axis=0)
+		beta = np.nanmean(q_sim)/np.nanmean(q_rec)
+		f = 1 - np.sqrt((r-1.0)**2.0 + (alpha-1.0)**2.0 + (beta-1.0)**2.0)
+		return f
+
+
 	def calibrate(self):
 		'''
 		=========
@@ -667,8 +701,7 @@ class HBV96(HydroModel):
 			_begin = self.config['warm_up']+self.config['calibrate_from'].get('index')
 			_end = self.config['calibrate_to'].get('index')+1
 			
-			perf = self.obj_fun(_q_rec[_begin:_end],
-							_q_sim[_begin:_end])
+			perf = self.obj_fun(_q_rec[_begin:_end], _q_sim[_begin:_end])
 
 			if self.config['verbose']:
 				print('{0}: {1}'.format(self.config['fun_name'], perf))
@@ -697,6 +730,7 @@ class HBV96(HydroModel):
 	def _simulate_without_calibration(self):
 		self._init_simu()
 		self._step_run()
+		
 		return None
 
 	def _init_simu(self):
@@ -707,6 +741,8 @@ class HBV96(HydroModel):
 			self.obj_fun = self._rmse
 		elif self.config['obj_fun'] == 'NSE':
 			self.obj_fun = self._nse
+		elif self.config['obj_fun'] == 'KGE':
+			self.obj_fun = self._kge
 		else:
 			pass
 		

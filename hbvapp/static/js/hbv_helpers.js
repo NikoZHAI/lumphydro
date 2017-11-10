@@ -63,10 +63,10 @@ function timeof_index (ind) {
 }
 
 // Helper, after a time input to find nearest existing time in current dataset
-function environ_index_of(time, roundMethod){
+function environ_index_of (time, roundMethod) {
   roundMethod = roundMethod || Math.ceil;
-  var e = time;
-  (moment.isMoment(time)) ? undefined : e = moment.utc(e);
+  var e;
+  (moment.isMoment(time)) ? e = moment.utc(time.format("YYYY-MM-DD HH:mm:ss")) : e = moment.utc(time);
   var first_step = hbv.d.info.last().first_step,
       last_step = hbv.d.info.last().last_step,
       time_step = hbv.d.info.last().time_step,
@@ -346,7 +346,7 @@ function generate_config_dict () {
   config['header'] = parseInt(c.id_csvHeaderInput);
   config['separator'] = c.id_csvSeparatorInput;
   config['warm_up'] = parseInt(c.id_warmUpInput);
-  config['obj_fun'] = c.id_residus;
+  config['obj_fun'] = c.id_criteria;
   config['tol'] = parseFloat(c.id_tolInput);
   config['minimise'] = c.id_minimise;
   config['verbose'] = c.id_verbose;

@@ -16,443 +16,6 @@
   as our input data here.
 */
 
-function HBV () {
-  var hbv = new Object();
-  // c stands for Context object
-  hbv.c = new Context();
-  // d stands for Data object
-  hbv.d = new Data();
-  // p stands for Plot object
-  hbv.p = new Plot();
-  // s stands for Schema object
-  hbv.s = new Schema();
-  // info stands for Information object
-  hbv.info = new Object();
-  return hbv;
-}
-
-// Data object constructors
-function Data () {
-  var init_data = new Array();
-  var data = new Array();
-  var inters = new Array();
-  var info = new Array(); // Information, array of DataInfo objects
-
-  function initialize(text) {
-  /*
-    Function to read parse local csv text and generate init_data of Data object
-  */
-    var delimiter = hbv.c.context.id_csvSeparatorInput,
-        header = parseInt(hbv.c.context.id_csvHeaderInput);
-
-    var data = d3.dsvFormat(delimiter).parse(text, function(d, i) {
-      return {
-        time: moment(d.time).format("YYYY-MM-DD HH:mm:ss"),  // Date
-        prec: +d.prec,     // Precipitation
-        q_rec: +d.q_rec,   // Recorded discharge
-        temp: +d.temp,     // Air temperature
-        tm: +d.tm,         // Monthly mean air temperature
-        ep: +d.ep,         // Evaporation
-        };
-      });
-
-    this.init_data = data;
-    var _info = new DataInfo();
-    this.info.push(_info);
-    return undefined;
-  } // <-- initialize -->
-
-  function synthesize(d, ints) {
-  /*
-    synthesize() generates a dataframe-like js object to serve as Data.data
-    element.
-    Inputs:
-    d : np.array-like data frame by POST, already has simulation results.
-    ints : np.array-like data frame by POST, intermediate values during simulation.
-  */
-    var dat = new Object(),
-        inter = new Object(),
-        maxis = new Object(),
-        minis = new Object();
-    var names = ['time', 'q_rec', 'q_sim', 'ep', 'temp', 'tm', 'prec', 'sp','wc', 'sm', 'lz', 'uz'];
-
-    for (col_name of names) {
-      var col = d.map(function(row){
-        return row[col_name];
-      });
-      dat[col_name] = col;
-      if (col_name!="time") {
-        maxis[col_name] = Math.max.apply(null, col);
-        minis[col_name] = Math.min.apply(null, col);
-      } else {undefined;}
-    }
-
-    // Intermediate values
-    names = ['r', 'cf', 'gw'];
-    for (col_name of names) {
-      var col = ints.map(function(row){
-        return row[col_name];
-      });
-      inter[col_name] = col;
-      maxis[col_name] = Math.max.apply(null, col);
-      minis[col_name] = Math.min.apply(null, col);
-    }
-
-    if (hbv.c.context.push) {
-      /* Push into Data.data in push mode */
-      undefined;
-    }
-    else { // Reset/Clear existing data and info
-      this.data.length = 0;
-      this.inters.length = 0;
-      this.info.length = 0;
-    }
-    this.data.push(dat);
-    this.inters.push(inter);
-    if (this.data.length > this.info.length) {
-      this.info.push(new DataInfo(maxis, minis));
-    } else {
-      this.info.last().get_m_values(maxis, minis);
-    }
-
-    return undefined;
-  } // <-- synthesize -->
-
-  function find_max(name, i, begin, end) {
-  /*
-    Function to find maxi in the given array
-  */
-    var max = Math.max.apply(Math, this.data[i][name].slice(begin, end+1));
-    if (max == NaN) {
-      var ex = new Error(`Gap presents in the ${name} data !`);
-      throw ex;
-    }
-    else {
-      return max;
-    }
-  }
-
-  function find_min(name, i, begin, end) {
-  /*
-    Function to find mini in the given array
-  */
-    var min = Math.min.apply(Math, this.data[i][name].slice(begin, end+1));
-    if (min == NaN) {
-      var ex = new Error(`Gap presents in the ${name} data !`);
-      throw ex;
-    }
-    else {
-      return min;
-    }
-  }
-
-  function show(i) {
-    /*
-      Show desired data with index i in the latest out put.
-    */
-    var data = hbv.d.data.last();
-    var d = {};
-    Object.entries(data).forEach(function(e){
-      d[e[0]] = e[1][i];
-    });
-    console.log(i,d);
-
-    $("#tag_time").html(d.time);
-    if (hbv.c.context.id_sci_note) {
-      $("table #q_sim").html(d.q_sim.toExponential(3));
-      $("table #q_rec").html(d.q_rec.toExponential(3));
-      $("table #prec").html(d.prec.toExponential(3));
-      $("table #ep").html(d.ep.toExponential(3));
-      $("table #sm").html(d.sm.toExponential(3));
-      $("table #uz").html(d.uz.toExponential(3));
-      $("table #lz").html(d.lz.toExponential(3));
-    }
-    else{
-      $("table #q_sim").html(d.q_sim.toFixed(3));
-      $("table #q_rec").html(d.q_rec.toFixed(3));
-      $("table #prec").html(d.prec.toFixed(3));
-      $("table #ep").html(d.ep.toFixed(3));
-      $("table #sm").html(d.sm.toFixed(3));
-      $("table #uz").html(d.uz.toFixed(3));
-      $("table #lz").html(d.lz.toFixed(3));
-    }
-    return undefined;
-  }
-
-  return {init_data:init_data, data:data, find_max:find_max, find_min:find_min,
-    initialize:initialize, synthesize:synthesize, info:info, inters:inters,
-    show:show};
-}
-
-function Schema() {
-  var svg = d3.select(".schemaSvg"),
-      p_width = [0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1, 1.125, 1.25];
-      tanks = new Object(),
-      extrems = new Object();
-
-  // Value, a factor to multiple with tanks' heights
-  var value = 2.0/3.0;
-
-  // Minimum depth, to prevent zero or negative value
-  var base = 0.05;
-
-  // Maximal height of water levels
-  var maxh = 0.85;
-
-  function generate_key_cords(){
-    var x = parseInt(this.svg.select("#main_soil").attr("x"));
-    var y = parseInt(this.svg.select("#main_soil").attr("y"));
-    var w_soil = parseInt(this.svg.select("#main_soil").attr("width"));
-    var h_soil = parseInt(this.svg.select("#main_soil").attr("height"));
-
-    var soil = {
-      x: x,
-      y: y,
-      width: w_soil,
-      height: h_soil,
-      stroke: 4,
-      };
-
-    var uz = {
-      x: 2,
-      y: 438,
-      x1: 242,
-      y1: 546,
-      stroke: 4,
-      get width() {
-        return (this.x1-this.x);
-      },
-      get height() {
-        return (this.y1-this.y);
-      },
-    };
-
-    var lz = {
-      x: 2,
-      y: 621,
-      x1: 242,
-      y1: 729,
-      stroke: 4,
-      get width() {
-        return (this.x1-this.x);
-      },
-      get height() {
-        return (this.y1-this.y);
-      },
-    };
-
-    var int_cords = {soil: soil, uz: uz, lz: lz};
-    this.cords = int_cords;
-  }
-
-  function generate_main(name, cords) {
-    var cord = cords[name];
-    var value = this.value;
-    var tank = this.svg.append("rect")
-                      .attr("x", function(){
-                        return (cord.x+0.6*cord.stroke);
-                       })
-                      .attr("y", function(){
-                        return (cord.height*(1-value)+cord.y);
-                       })
-                      .attr("width", function(){
-                        return cord.width-0.9*cord.stroke;
-                       })
-                      .attr("height", function(){
-                        return parseInt(cord.height*value);
-                       })
-                      .attr("fill", "#3333cc")
-                      .attr("fill-opacity", 0.4)
-                      .attr("id", name);
-    return tank;
-  }
-
-  function generate_shade(tank) {
-    var name = tank.attr("id");
-    var stroke = 4;
-
-    var surf = this.svg.append("path")
-                        .attr("stroke", "#0f0f3e")
-                        .attr("stroke-width", 3)
-                        .attr("stroke-opacity", 0.7)
-                        .attr("class", "surf")
-                        .attr("d", function(){
-                          var x = tank.attr("x").toFloat();
-                          var y = tank.attr("y").toFloat();
-                          var length = tank.attr("width").toFloat() + 1.5*stroke;
-                          return `M ${x} ${y} H ${length}`;
-                        });
-
-    var shade_clip = this.svg.append("clipPath")
-                              .attr("id", `${name}_shade_container`)
-                              .append("rect")
-                              .attr("x", function(){return tank.attr('x').toFloat()+1;})
-                              .attr("y", function(){return tank.attr('y').toFloat();})
-                              .attr("width", function(){
-                                var w = tank.attr('width').toFloat() - 2;
-                                return w;
-                              })
-                              .attr("height", function(){
-                                var h = tank.attr('height').toFloat() - 1;
-                                return h;
-                              })
-                              .attr("fill", "#ccffff")
-                              .attr("class", "shade_clip");
-
-    var shade = this.svg.selectAll("#shade")
-                        .data(this.p_width)
-                        .enter()
-                        .append("path")
-                        .attr("d", function(d){
-                          var x0 = tank.attr('x').toFloat() + tank.attr('width').toFloat() * d;
-                          var y0 = tank.attr('y').toFloat();
-                          var x1 = x0-tank.attr('height').toFloat();
-                          var y1 = tank.attr('y').toFloat()+tank.attr('height').toFloat();
-                          return `M ${x0} ${y0} L ${x1} ${y1}`;
-                        })
-                        .attr("stroke", "#3366ff")
-                        .attr("stroke-width", 2)
-                        .attr("stroke-opacity", 0.5)
-                        .attr("clip-path", `url(#${name}_shade_container)`)
-                        .attr("class", "shade");
-
-    return {surf: surf, shade_clip: shade_clip, shade: shade, name: name};
-  }
-
-  function init_animation() {
-    var value = this.value;
-    var int_tanks = { mains: {}, shades: {} };
-    this.generate_key_cords();
-
-    int_tanks.mains.soil = this.generate_main('soil', this.cords);
-    int_tanks.shades.soil = this.generate_shade(int_tanks.mains.soil);
-    int_tanks.mains.uz = this.generate_main('uz', this.cords);
-    int_tanks.shades.uz = this.generate_shade(int_tanks.mains.uz);
-    int_tanks.mains.lz = this.generate_main('lz', this.cords);
-    int_tanks.shades.lz = this.generate_shade(int_tanks.mains.lz);
-    this.tanks = int_tanks;
-    return undefined;
-  }
-
-  function trans(name, value) {
-    var col_name = "";
-    (name=="soil") ? col_name = "sm" : col_name = name;
-    var maxh = this.maxh,
-        base = this.base;
-
-    var min = this.extrems[col_name][0],
-        max = this.extrems[col_name][1];
-
-    var fill = base+maxh*(value-min)/(max-min);
-
-    var main = this.tanks.mains[name],
-        shade = this.tanks.shades[name];
-
-    var cords = this.cords[name];
-    var ys = (cords.height*(1-fill)+cords.y).toFixed(2);
-    var heights = (cords.height*fill).toFixed(2);
-
-    main.transition()
-        .attr("y", ys)
-        .attr("height", heights);
-
-    shade.surf.transition()
-              .attr("d", function(){
-                var x = main.attr("x").toFloat();
-                var y = ys;
-                var length = main.attr("width").toFloat() + 1.5*cords.stroke;
-                return `M ${x} ${y} H ${length}`;
-              });
-
-    shade.shade_clip.transition()
-                    .attr("y", ys)
-                    .attr("height", heights);
-
-    shade.shade.transition()
-               .attr("d", function(d){
-                  var x0 = main.attr('x').toFloat() + main.attr('width').toFloat() * d;
-                  var y0 = ys.toFloat();
-                  var x1 = x0 - heights.toFloat();
-                  var y1 = ys.toFloat() + heights.toFloat();
-                  return `M ${x0} ${y0} L ${x1} ${y1}`;
-                });
-  }
-
-  function point_to(index) {
-    // df an object-like dataframe
-    var df = hbv.d.data[this.latest];
-    var time = df.time,
-        sm = df.sm,
-        uz = df.uz,
-        lz = df.lz,
-        wc = df.wc,
-        sp = df.sp;
-
-    this.trans("soil", sm[index]);
-    this.trans("uz", uz[index]);
-    this.trans("lz", lz[index]);
-  }
-
-  function init_slider() {
-    var terminus = hbv.d.init_data.length-1;
-
-    if (isEmpty(hbv.d.data)) {
-      $("#id_time_slider").prop("disabled", true);
-      alert("It seems that we have no data ! ");
-    }
-    else {
-      if ($("#id_time_slider").prop("disabled")) {
-        $("#id_time_slider").prop("disabled", false)
-                            .prop("max", terminus)
-                            .prop("this.value", 0);
-      } else {
-        $("#id_time_slider").prop("max", terminus)
-                            .prop("value", 0);
-      }
-    }
-  }
-
-  function set_local_extrems(left, right) {
-    for (col_name of ["sm", "uz", "lz"]){
-      var max = hbv.d.find_max(col_name, this.latest, left, right),
-          min = hbv.d.find_min(col_name, this.latest, left, right);
-
-      this.extrems[col_name] = [min, max];
-    }
-
-    // Issue#1 : Compare the desired min/max with current ones
-    if (left > $("#id_time_slider").attr("max")) {
-      $("#id_time_slider").prop("max", right)
-                          .prop("value", left)
-                          .prop("min", left);
-    } else if (right < $("#id_time_slider").attr("min")) {
-      $("#id_time_slider").prop("min", left)
-                          .prop("value", left)
-                          .prop("max", right);
-    } else {
-      $("#id_time_slider").prop("min", left)
-                          .prop("value", left)
-                          .prop("max", right);
-    }
-
-    return undefined;
-  }
-
-  // Prototype constructor interface
-  var schema = {
-    get latest() {  // Latest set of data
-      var latest = hbv.d.data.length-1;
-      return latest;
-    },
-    svg:svg, p_width:p_width, tanks:tanks, base:base, maxh:maxh, value:value,
-    generate_key_cords:generate_key_cords, init_slider:init_slider,
-    generate_main:generate_main, generate_shade:generate_shade,
-    init_animation:init_animation, trans:trans, point_to:point_to,
-    set_local_extrems:set_local_extrems, extrems:extrems,
-  };
-  return schema;
-}
-
 function Plot() {
   /*
     Plot object integrates data and several plotting functionalities
@@ -461,11 +24,59 @@ function Plot() {
       div_q = $('#id_pane_plot_q div')[0],
       div_p = $('#id_pane_plot_p div')[0],
       div_t = $('#id_pane_plot_t div')[0],
-      div_etp = $('#id_pane_plot_etp div')[0],
       div_gw = $('#id_pane_plot_gw div')[0],
+      div_etp = $('#id_pane_plot_etp div')[0],
+      div_reg = $('#id_pane_plot_reg div')[0],
       div_perf = $('#id_pane_plot_perf div')[0],
-      width = $('#tab-right-content')[0].clientWidth - 35,
-      relayout_counter = 0;
+      width = $('#id_mainTabs')[0].clientWidth - 35,
+      relayout_counter = 0,
+      X_AXIS = {
+        title: `Time (${time_step_type})`,
+        showgrid: false, type: 'date', linewidth: 2.0,
+        tickfont: {size: 11}, ticklen: 4,
+        rangeselector: {
+          visible: true,
+          buttons: [
+            {step: "all"},
+            {
+              count: 1,
+              label: "yearly",
+              step: "year",
+              stepmode: "backward",
+            },
+            {
+              count: 6,
+              label: "6m",
+              step: "month",
+              stepmode: "backward",
+            },
+            {
+              count: 1,
+              label: "monthly",
+              step: "month",
+              stepmode: "backward",
+            },
+            {
+              count: 7,
+              label: "weekly",
+              step: "day",
+              stepmode: "backward",
+            },
+            {
+              count: 1,
+              label: "daily",
+              step: "day",
+              stepmode: "backward",
+            },
+          ],
+          x: 0,
+          xanchor: "left",
+          y: 1,
+          yanchor: "bottom",
+        },
+        rangeslider: {bgcolor: '#fdf2ff', bordercolor: 'rgb(91,192,222)',
+                      borderwidth: 2, thickness: 0.12},
+      };
 
   function init_q_plot () {
     var trace_qrec = {
@@ -501,15 +112,11 @@ function Plot() {
       title: "<b>Simulated Discharge</b>",
       yaxis: {title: "Discharge [m<sup>3</sup>/s]", hoverformat: '.3f',
         linewidth: 2.0, zeroline: false, range: [0, ymax*1.05],
-        fixedrange: true
+        fixedrange: true,
       },
-      xaxis: {title: `Time (${time_step_type})`,
-        showgrid: false, type: 'date', linewidth: 2.0,
-        rangeslider: {bgcolor: '#fdf2ff', bordercolor: 'rgb(91,192,222)',
-                      borderwidth: 2, thickness: 0.12},
-      },
+      xaxis: this.X_AXIS,
       legend: {font:{size:14}, orientation: "h", x: 0.25, y: 1,
-                tracegroupgap: 20,
+                tracegroupgap: 20, bgcolor: 'rgba(0,0,0,0)',
       },
       margin: {
         l: 50, b: 50, r: 10, t: 30, pad: 10
@@ -573,13 +180,9 @@ function Plot() {
         fixedrange: true, overlaying: 'y', side: 'right', showgrid:false,
         linecolor: '#0de55c', tickfont: {color: '#0de55c'},
       },
-      xaxis: {title: `Time (${time_step_type})`,
-        showgrid: false, type: 'date', linewidth: 2.0,
-        rangeslider: {bgcolor: '#fdf2ff', bordercolor: 'rgb(91,192,222)',
-                      borderwidth: 2, thickness: 0.12},
-      },
+      xaxis: this.X_AXIS,
       legend: {font:{size:14}, orientation: "h", x: 0.25, y: 1,
-                tracegroupgap: 20,
+                tracegroupgap: 20, bgcolor: 'rgba(0,0,0,0)',
       },
       margin: {
         l: 50, b: 50, r: 50, t: 30, pad: 10
@@ -642,13 +245,9 @@ function Plot() {
         linewidth: 2.0, zeroline: false, range: [ymin, ymax],
         fixedrange: true
       },
-      xaxis: {title: `Time (${time_step_type})`,
-        showgrid: false, type: 'date', linewidth: 2.0,
-        rangeslider: {bgcolor: '#fdf2ff', bordercolor: 'rgb(91,192,222)',
-                      borderwidth: 2, thickness: 0.12},
-      },
+      xaxis: this.X_AXIS,
       legend: {font:{size:14}, orientation: "h", x: 0.30, y: 1,
-                tracegroupgap: 20,
+                tracegroupgap: 20, bgcolor: 'rgba(0,0,0,0)',
       },
       margin: {
         l: 50, b: 50, r: 10, t: 30, pad: 10
@@ -672,54 +271,145 @@ function Plot() {
   }
 
   function init_etp_plot () {
-    var trace_etp = {
+    var trace_t = {
       type: 'scatter',
       mode: 'lines',
       name: 'Air Temperature [°C]',
       x: hbv.d.data[0].time,
       y: hbv.d.data[0].temp,
+      xaxis: 'x3', yaxis: 'y1',
       line: {
-        width: 0.8
+        width: 2,
+        color: "#8417ea", // Purple blue
       },
       hoverlabel: {font: {size: 12}, namelength: -1},
     };
-    var trace_tm = {
+    var trace_etp = {
       type: 'scatter',
       mode: 'lines',
       x: hbv.d.data[0].time,
-      y: hbv.d.data[0].tm,
-      name: 'Monthly Average [°C]',
+      y: hbv.d.data[0].ep,
+      xaxis: 'x3', yaxis: 'y2',
+      name: 'Evapotranspiration [mm]',
       line: {
-        width: 2,
-        color: '#ea129f' // Green like jade
+        width: 2.0,
+        color: "#52d883",
+      },
+      hoverlabel: {font: {size: 12}, namelength: -1},
+    };
+    var trace_sm = {
+      type: 'scatter',
+      mode: 'lines',
+      x: hbv.d.data[0].time,
+      y: hbv.d.data[0].sm,
+      xaxis:'x3', yaxis: 'y3',
+      name: "Soil Moisture [mm]",
+      line: {
+        width: 2, // Default color
+        color: '#4286f4', // Green like jade
       },
       hoverlabel: {font: {size: 12}, namelength: -1},
     };
 
-    var data = [trace_temp, trace_tm],
-        ymin = hbv.d.info[0].minis['temp'],
-        ymax = hbv.d.info[0].maxis['temp'];
-    ymin = ymin - Math.abs(ymin)*0.1;
-    ymax = ymax + Math.abs(ymax)*0.1;
+    var data = [trace_t, trace_etp, trace_sm],
+        ymax_t = hbv.d.info[0].maxis.temp,
+        ymax_ep = hbv.d.info[0].maxis.ep,
+        ymax_sm = hbv.d.info[0].maxis.sm;
+
+    var axis = {
+      showline: true,
+      zeroline: false,
+      showgrid: true,
+      mirror:true,
+      ticklen: 4.0,
+      gridcolor: '#ffffff',
+      tickfont: {size: 11},
+      linewidth: 1.0,
+    };
+
+    var xaxis1 = {type: 'date', anchor: 'y1',
+        showticklabels: false,
+    };
+    var xaxis2 = {
+        type: 'date', anchor: 'y2',
+        showticklabels: false,
+    };
+    var xaxis3 = {title: `Time (${time_step_type})`,
+        type: 'date', anchor: 'y3',
+        rangeselector: {
+          visible: true,
+          buttons: [
+            {step: "all"},
+            {
+              count: 1,
+              label: "yearly",
+              step: "year",
+              stepmode: "backward",
+            },
+            {
+              count: 6,
+              label: "6m",
+              step: "month",
+              stepmode: "backward",
+            },
+            {
+              count: 1,
+              label: "monthly",
+              step: "month",
+              stepmode: "backward",
+            },
+            {
+              count: 7,
+              label: "weekly",
+              step: "day",
+              stepmode: "backward",
+            },
+            {
+              count: 1,
+              label: "daily",
+              step: "day",
+              stepmode: "backward",
+            },
+          ],
+          x: 1,
+          xanchor: "right",
+          y: -0.06,
+          yanchor: "top",
+        },
+    };
+
+    var yaxis1 = {title: "Air Temperature [°C]",
+        range: [0, ymax_t], domain: [0.68, 0.98],
+        anchor: 'x1', hoverformat: '.3f',
+        fixedrange: true,
+    };
+    var yaxis2 = {title: "Evapotranspiration [mm]",
+        range: [0, ymax_ep], domain: [0.34, 0.64],
+        side: 'right', anchor: 'x2', hoverformat: '.3f',
+        fixedrange: true,
+    };
+    var yaxis3 = {title: "Simulated Soil Moisture [mm]",
+        range: [0, ymax_sm], domain: [0, 0.30],
+        anchor: 'x3', hoverformat: '.3f',
+        fixedrange: true,
+    };
 
     var layout = {
       width: this.width,
-      height: 0.68*this.width,
-      title: "<b>Air Temperature</b>",
-      yaxis: {title: "Air Temperature[°C]", hoverformat: '.3f',
-        linewidth: 2.0, zeroline: false, range: [ymin, ymax],
-        fixedrange: true
-      },
-      xaxis: {title: `Time (${time_step_type})`,
-        showgrid: false, type: 'date', linewidth: 2.0,
-        rangeslider: {bgcolor: '#fdf2ff', bordercolor: 'rgb(91,192,222)',
-                      borderwidth: 2, thickness: 0.12},
-      },
-      legend: {font:{size:14}, orientation: "h", x: 0.25, y: 1,
-                tracegroupgap: 20,
+      height: 0.75*this.width,
+      title: "<b>Evapotranspiration, Simulated Soil Moisture and Air Temperature</b>",
+      plot_bgcolor: 'rgba(228, 222, 249, 0.65)',
+      yaxis1: Object.assign(yaxis1, axis),
+      yaxis2: Object.assign(yaxis2, axis),
+      yaxis3: Object.assign(yaxis3, axis),
+      xaxis1: Object.assign(xaxis1, axis),
+      xaxis2: Object.assign(xaxis2, axis),
+      xaxis3: Object.assign(xaxis3, axis),
+      legend: {font:{size:14}, orientation: "h", x: 0.18, y: 1.0,
+                tracegroupgap: 20, bgcolor: 'rgba(0,0,0,0)',
       },
       margin: {
-        l: 50, b: 50, r: 10, t: 30, pad: 10
+        l: 50, b: 50, r: 50, t: 30, pad: 10
       },
     };
 
@@ -730,12 +420,12 @@ function Plot() {
       ], displaylogo: false,
     };
 
-    $(this.div_t).html('');
-    Plotly.newPlot(this.div_t, data, layout, config);
+    $(this.div_etp).html('');
+    Plotly.newPlot(this.div_etp, data, layout, config);
 
-    this.div_t.on('plotly_relayout', function(e){
+    this.div_etp.on('plotly_relayout', function(e){
       console.log(e);
-      onRelayoutCallBack(e);
+      onRelayoutCallBack(e, 'xaxis3');
     });
   }
 
@@ -746,7 +436,7 @@ function Plot() {
       name: "Upper Zone Response Box [mm]",
       x: hbv.d.data[0].time,
       y: hbv.d.data[0].uz,
-      yaxis: 'y',
+      xaxis: 'x3', yaxis: 'y1',
       line: {
         width: 1.5,
         color: "#8417ea", // Purple blue
@@ -758,7 +448,7 @@ function Plot() {
       mode: 'lines',
       x: hbv.d.data[0].time,
       y: hbv.d.data[0].lz,
-      yaxis: 'y2',
+      xaxis: 'x3', yaxis: 'y2',
       name: "Lower Zone Response Box [mm]",
       line: {
         width: 2.0,
@@ -771,7 +461,7 @@ function Plot() {
       mode: 'lines',
       x: hbv.d.data[0].time,
       y: hbv.d.inters[0].gw,
-      yaxis: 'y3',
+      xaxis:'x3', yaxis: 'y3',
       name: "Groundwater Discharged (Q<sub>0</sub>+Q<sub>1</sub>) [mm]",
       line: {
         width: 1.6, // Default color
@@ -785,32 +475,97 @@ function Plot() {
         ymax_lz = hbv.d.info[0].maxis.lz,
         ymax_gw = hbv.d.info[0].maxis.gw;
 
+    var axis = {
+      showline: true,
+      zeroline: false,
+      showgrid: true,
+      mirror:true,
+      ticklen: 4.0,
+      gridcolor: '#ffffff',
+      tickfont: {size: 11},
+      linewidth: 1.0,
+    };
+
+    var xaxis1 = {type: 'date', anchor: 'y1',
+        showticklabels: false,
+    };
+    var xaxis2 = {
+        type: 'date', anchor: 'y2',
+        showticklabels: false,
+    };
+    var xaxis3 = {title: `Time (${time_step_type})`,
+        type: 'date', anchor: 'y3',
+        rangeselector: {
+          visible: true,
+          buttons: [
+            {step: "all"},
+            {
+              count: 1,
+              label: "yearly",
+              step: "year",
+              stepmode: "backward",
+            },
+            {
+              count: 6,
+              label: "6m",
+              step: "month",
+              stepmode: "backward",
+            },
+            {
+              count: 1,
+              label: "monthly",
+              step: "month",
+              stepmode: "backward",
+            },
+            {
+              count: 7,
+              label: "weekly",
+              step: "day",
+              stepmode: "backward",
+            },
+            {
+              count: 1,
+              label: "daily",
+              step: "day",
+              stepmode: "backward",
+            },
+          ],
+          x: 1.0,
+          xanchor: "right",
+          y: -0.06,
+          yanchor: "top",
+        },
+    };
+
+    var yaxis1 = {title: "Upper Response Box [mm]",
+        range: [0, ymax_uz], domain: [0.68, 0.98],
+        anchor: 'x1', hoverformat: '.3f',
+        fixedrange: true,
+    };
+    var yaxis2 = {title: "Lower Response Box [mm]",
+        range: [0, ymax_lz], domain: [0.34, 0.64],
+        side: 'right', anchor: 'x2', hoverformat: '.3f',
+        fixedrange: true,
+    };
+    var yaxis3 = {title: "Q<sub>0</sub>+Q<sub>1</sub> [mm]",
+        range: [0, ymax_gw], domain: [0, 0.30],
+        anchor: 'x3', hoverformat: '.3f',
+        fixedrange: true,
+    };
+
     var layout = {
       width: this.width,
       height: 0.75*this.width,
       title: "<b>Simulated Groundwater</b>",
-      yaxis: {title: "Upper Response Box [mm]", hoverformat: '.3f',
-        linewidth: 2.0, zeroline: false, range: [0, ymax_uz],
-        fixedrange: true, domain: [0.67, 0.97],
-      },
-      yaxis2: {title: "Lower Response Box [mm]", hoverformat: '.3f',
-        linewidth: 2.0, zeroline: false, range: [0, ymax_lz],
-        fixedrange: true, domain: [0.34, 0.64],
-        side: 'right',
-      },
-      yaxis3: {title: "Q<sub>0</sub>+Q<sub>1</sub> [mm]",
-        hoverformat: '.3f', fixedrange: true, domain: [0.1, 0.31],
-        linewidth: 2.0, zeroline: false, range: [0, ymax_gw],
-      },
-      xaxis: {title: `Time (${time_step_type})`,
-        showgrid: false, type: 'date', linewidth: 2.0,
-        rangeslider: {bgcolor: '#fdf2ff', bordercolor: 'rgb(91,192,222)',
-                      borderwidth: 2, thickness: 0.10},
-        anchor: 'y3',
-      },
-
+      plot_bgcolor: 'rgba(228, 222, 249, 0.65)',
+      yaxis1: Object.assign(yaxis1, axis),
+      yaxis2: Object.assign(yaxis2, axis),
+      yaxis3: Object.assign(yaxis3, axis),
+      xaxis1: Object.assign(xaxis1, axis),
+      xaxis2: Object.assign(xaxis2, axis),
+      xaxis3: Object.assign(xaxis3, axis),
       legend: {font:{size:14}, orientation: "h", x: 0.18, y: 1.0,
-                tracegroupgap: 20,
+                tracegroupgap: 20, bgcolor: 'rgba(0,0,0,0)',
       },
       margin: {
         l: 50, b: 50, r: 50, t: 30, pad: 10
@@ -829,164 +584,105 @@ function Plot() {
 
     this.div_gw.on('plotly_relayout', function(e){
       console.log(e);
-      onRelayoutCallBack(e);
+      onRelayoutCallBack(e, 'xaxis3');
     });
   }
 
-  function init_cf_r_plot () {
-    var trace_uz = {
-      type: 'scatter',
-      mode: 'lines',
-      name: "Upper Zone Response Box [mm]",
-      x: hbv.d.data[0].time,
-      y: hbv.d.data[0].uz,
-      yaxis: 'y',
-      line: {
-        width: 1,
-        color: "#8417ea", // Purple blue
-      },
+  function init_regime_plot () {
+    if (hbv.d.info.time_range != "y") {
+      return undefined;
+    }
+    var trace_qrec = {
+      type: 'bar',
+      name: 'Average Observed Discharge [m<sup>3</sup>/s]',
+      x: hbv.d.regime[0].month,
+      y: hbv.d.regime[0].q_rec,
       hoverlabel: {font: {size: 12}, namelength: -1},
+      opacity: 0.85,
+      color: "#39afef",
     };
-    var trace_lz = {
-      type: 'scatter',
-      mode: 'lines',
-      x: hbv.d.data[0].time,
-      y: hbv.d.data[0].lz,
-      yaxis: 'y2',
-      name: "Lower Zone Response Box [mm]",
-      line: {
-        width: 1,
-        color: '#2e3d68' // Green like jade
-      },
-      hoverlabel: {font: {size: 12}, namelength: -1},
-    };
-    var trace_gw = {
-      type: 'scatter',
-      mode: 'lines',
-      x: hbv.d.data[0].time,
-      y: hbv.d.inters[0].gw,
-      yaxis: 'y3',
-      name: "Q<sub>0</sub> + Q<sub>1</sub> [mm]",
-      line: {
-        width: 1, // Default color
-      },
-      hoverlabel: {font: {size: 12}, namelength: -1},
-    };
-    var trace_r = {
-      type: 'scatter',
-      mode: 'lines',
-      x: hbv.d.data[0].time,
-      y: hbv.d.inters[0].r,
-      yaxis: 'y4',
-      name: "Recharge Aquifer [mm]",
-      line: {
-        width: 1,
-        color: '#0de55c' // Green like jade
-      },
-      hoverlabel: {font: {size: 12}, namelength: -1},
-    };
-    var trace_cf = {
-      type: 'scatter',
-      mode: 'lines',
-      x: hbv.d.data[0].time,
-      y: hbv.d.inters[0].cf,
-      yaxis: 'y5',
-      name: "Capilary Flux [mm]",
-      line: {
-        width: 1,
-        color: '#fc501b' // Red like orange
-      },
+    var trace_qsim = {
+      type: 'bar',
+      x: hbv.d.regime[0].month,
+      y: hbv.d.regime[0].q_sim,
+      name: 'Average Simulated Discharge [m<sup>3</sup>/s]',
       hoverlabel: {font: {size: 12}, namelength: -1},
     };
 
-    var data = [trace_uz, trace_lz, trace_gw, trace_r, trace_cf],
-        ymax_uz = hbv.d.info[0].maxis.uz,
-        ymax_lz = hbv.d.info[0].maxis.lz,
-        ymax_r = hbv.d.info[0].maxis.r,
-        ymax_cf = hbv.d.info[0].maxis.cf,
-        ymax_gw = hbv.d.info[0].maxis.gw;
+    var data = [trace_qrec, trace_qsim],
+        max_qsim = d3.max(hbv.d.regime[0].q_sim),
+        max_qrec = d3.max(hbv.d.regime[0].q_rec),
+        ymax = ((max_qrec > max_qsim) ? max_qrec : max_qsim);
 
     var layout = {
       width: this.width,
-      height: 0.75*this.width,
-      title: "<b>Simulated Discharge</b>",
-      yaxis: {title: "Upper Zone Water Column [mm]", hoverformat: '.3f',
-        linewidth: 2.0, zeroline: false, range: [0, ymax_uz],
-        fixedrange: true, domain: [0.82, 1.0],
+      height: 0.68*this.width,
+      title: "<b>Hydrological Regime</b>",
+      yaxis: {title: "Average Discharge [m<sup>3</sup>/s]",
+        hoverformat: '.3f', linewidth: 2.0, zeroline: false,
+        range: [0, ymax*1.05], fixedrange: true,
       },
-      yaxis2: {title: "Lower Zone Water Column [mm]", hoverformat: '.3f',
-        linewidth: 2.0, zeroline: false, range: [0, ymax_lz],
-        fixedrange: true, domain: [0.62, 0.80],
+      xaxis: {
+        title: "Month", showgrid: false, type: '-', linewidth: 2.0,
       },
-      yaxis3: {title: "GroundWater Discharged (Q<sub>0</sub>+Q<sub>1</sub>) [mm]",
-        hoverformat: '.3f', fixedrange: true, domain: [0.42, 0.60],
-        linewidth: 2.0, zeroline: false, range: [0, ymax_gw],
-      },
-      yaxis4: {title: "Groundwater Recharge [mm]", hoverformat: '.3f',
-        linewidth: 2.0, zeroline: false, range: [0, ymax_r],
-        fixedrange: true, domain: [0.22, 0.40],
-      },
-      yaxis5: {title: "Capilary Flux [mm]", hoverformat: '.3f',
-        linewidth: 2.0, zeroline: false, range: [0, ymax_cf],
-        fixedrange: true, domain: [0, 0.20],
-      },
-      xaxis: {title: `Time (${time_step_type})`,
-        showgrid: false, type: 'date', linewidth: 2.0,
-        // rangeslider: {bgcolor: '#fdf2ff', bordercolor: 'rgb(91,192,222)',
-        //               borderwidth: 2, thickness: 0.12},
-        anchor: 'y5',
-      },
-
-      legend: {font:{size:14}, orientation: "h", x: 0.25, y: 1.1,
-                tracegroupgap: 20,
+      legend: {font:{size:14}, orientation: "h", x: 0.25, y: 1,
+                tracegroupgap: 20, bgcolor: 'rgba(0,0,0,0)',
       },
       margin: {
-        l: 50, b: 50, r: 10, t: 30, pad: 10
+        l: 50, b: 50, r: 50, t: 30, pad: 10
       },
+      bargap: 0.35,
     };
 
     var config = {modeBarButtons:[
-        ['select2d'], ['pan2d'], ['zoom2d'], ['autoScale2d'],
-        ['resetScale2d'], ['hoverCompareCartesian'], ['toImage'],
+        ['hoverCompareCartesian'], ['toImage'],
         ['sendDataToCloud'],
       ], displaylogo: false,
     };
 
-    $(this.div_gw).html('');
-    Plotly.newPlot(this.div_gw, data, layout, config);
-
-    this.div_gw.on('plotly_relayout', function(e){
-      console.log(e);
-      onRelayoutCallBack(e);
-    });
+    $(this.div_reg).html('');
+    Plotly.newPlot(this.div_reg, data, layout, config);
   }
 
-  function onRelayoutCallBack(e){
-    if (Object.keys(e).includes("xaxis.autorange")) {
+  function onRelayoutCallBack(e, kwd){
+    var keys = Object.keys(e),
+        values = Object.values(e);
+
+    if (keys.includes("xaxis.autorange")) {
       enable_timepickers_for_plots(true);
       hbv.d.show(0);
       return undefined;
     }
+    else if (keys.includes("dragmode")) {
+      return undefined;
+    }
+    else if (keys.includes("hovermode")) {
+      return undefined;
+    }
+
     var e_l = $("#left").data("DateTimePicker").date(),
-        e_r = $("#right").data("DateTimePicker").date();
+        e_r = $("#right").data("DateTimePicker").date(),
+        kwd = kwd || "xaxis",
+        kwd0 = kwd + ".range[0]",
+        kwd1 = kwd + ".range[1]";
 
     // Identify if e is triggered by rangeSlider or zoom2d
-    if (Object.values(e).length===2) {
-      if(Object.keys(e).includes("xaxis.rangeslider.range[0]")){
-        e_l = Object.values(e)[0];
+    if (values.length===2) {
+      if(keys.includes("xaxis.rangeslider.range[0]")){
+        e_l = values[0];
       }
-      else if (Object.keys(e).includes("xaxis.rangeslider.range[1]")){
-        e_r = Object.values(e)[0];
+      else if (keys.includes("xaxis.rangeslider.range[1]")){
+        e_r = values[0];
       }
       else
       {
-        e_l = e['xaxis.range[0]'];
-        e_r = e['xaxis.range[1]'];
+        e_l = e[kwd0];
+        e_r = e[kwd1];
       }
     }
     else {
-      e_l = Object.values(e)[0][0];
-      e_r = Object.values(e)[0][1];
+      e_l = values[0][0];
+      e_r = values[0][1];
     }
 
     if(e_l==undefined || e_r==undefined){return undefined;}
@@ -1009,437 +705,14 @@ function Plot() {
     this.init_p_plot();
     this.init_t_plot();
     this.init_gw_plot();
+    this.init_etp_plot();
+    this.init_regime_plot();
   }
 
   return {width:width, time_step_type:time_step_type, div_q:div_q,
-    init_q_plot:init_q_plot, div_p:div_p, init_p_plot:init_p_plot,
+    init_q_plot:init_q_plot, div_p:div_p, div_reg:div_reg, div_etp:div_etp,
+    init_p_plot:init_p_plot, init_etp_plot:init_etp_plot,
     div_t:div_t, init_t_plot:init_t_plot, init_gw_plot:init_gw_plot,
-    div_gw:div_gw,
+    div_gw:div_gw, X_AXIS:X_AXIS, init_regime_plot:init_regime_plot,
     relayout_counter:relayout_counter, init:init};
-}
-
-function Context() {
-  var context = {
-    "id_verbose":false,
-    "id_minimise":true,
-    "id_residus":"RMSE",
-    "id_tolInput":"0.001",
-    "id_warmUpInput":"10",
-    "id_csvSeparatorInput":",",
-    "id_csvHeaderInput":"0",
-    "id_select_all_par":true,
-    "id_select_time_range":false,
-    "id_sci_note":true,
-    "id_snow":true,
-    "id_init_guess":false,
-    "push":false,
-    "id_perc":"",
-    "id_alpha":"",
-    "id_k1":"",
-    "id_mbas":"",
-    "id_k":"",
-    "id_lz":"",
-    "id_uz":"",
-    "id_c_flux":"",
-    "id_beta":"",
-    "id_lp":"",
-    "id_etf":"",
-    "id_e_corr":"",
-    "id_fc":"",
-    "id_sm":"",
-    "id_cfr":"",
-    "id_cwh":"",
-    "id_cfmax":"",
-    "id_ttm":"",
-    "id_utt":"",
-    "id_ltt":"",
-    "id_sfcf":"",
-    "id_rfcf":"",
-    "id_wc":"",
-    "id_sp":"",
-    "id_tfac":"",
-    "id_area":"",
-    "par_to_calibrate": { // Parameters to calibrate
-      "id_perc":true,
-      "id_alpha":true,
-      "id_k1":true,
-      "id_k":true,
-      "id_c_flux":true,
-      "id_beta":true,
-      "id_lp":true,
-      "id_etf":true,
-      "id_e_corr":true,
-      "id_fc":true,
-      "id_cfr":true,
-      "id_cwh":true,
-      "id_cfmax":true,
-      "id_ttm":true,
-      "id_utt":true,
-      "id_ltt":true,
-      "id_sfcf":true,
-      "id_rfcf":true,
-    },
-    "bounds":{
-      P_LB:[],
-      P_UB:[]
-    },
-  };
-  var twins = [
-    "id_perc",
-    "id_alpha",
-    "id_k1",
-    "id_mbas",
-    "id_k",
-    "id_lz",
-    "id_uz",
-    "id_c_flux",
-    "id_beta",
-    "id_lp",
-    "id_etf",
-    "id_e_corr",
-    "id_fc",
-    "id_sm",
-    "id_cfr",
-    "id_cwh",
-    "id_cfmax",
-    "id_ttm",
-    "id_utt",
-    "id_ltt",
-    "id_sfcf",
-    "id_rfcf",
-    "id_wc",
-    "id_sp",
-    "id_tfac",
-    "id_area"
-  ];
-
-  function changeWhenInput(e){
-  /*
-    Function in charge of changing context of the client
-  */
-    var elem = e.target;
-    var id = elem.id;
-    var value = elem.value;
-
-    (elem.hasAttribute("invalid")) ? null : hbv.c.context[id] = value;
-
-    if (id == "id_RMSE" || id == "id_NSE") {
-      if(elem.checked == true) {
-        (id == "id_RMSE") ? hbv.c.context['id_residus'] = "RMSE" : hbv.c.context['id_residus'] = "NSE";
-      }
-    }
-    else if (value=="boolean") {
-      if(elem.checked) {
-        hbv.c.context[id] = true;
-        if (id=="id_snow") {$("#id_parList input[type=checkbox]").trigger("change");}
-      }
-      else {
-        hbv.c.context[id] = false;
-        if (id=="id_snow") {
-          var snow_pars = {id_rfcf:false, id_sfcf:false, id_ltt:false,
-                            id_utt:false, id_ttm:false, id_cfmax:false,
-                            id_cwh:false, id_cfr:false};
-          Object.assign(hbv.c.context.par_to_calibrate, snow_pars);
-          return undefined;
-        }
-      }
-    }
-    else if (hbv.c.twins.indexOf(id) >= 0) {
-      var siblings = Object.values($(`input[id=${id}]`)).slice(0,2);
-      siblings.forEach(function (element) {
-        element.value = value;
-        element.onchange();
-      });
-    }
-    else {}
-  }
-
-  function changeWhenLoad(ctxt){
-  /*
-    Change context when loading a parameter file or running the demo
-  */
-    for (var id in ctxt) {
-      var value = ctxt[id];
-
-      if (typeof(value)=="boolean") {
-        try {
-          load_checkboxes(id, value);
-        }
-        catch(ex) {
-          alert('Something is wrong in your SET UP FILE ! Check again ! (Press F12 to see the error !)')
-          console.log(ex);
-          throw(ex);
-        }
-      }
-      else if (id=="id_residus") {
-        try {
-          load_radios(id, value);
-        }
-        catch (ex) {
-          alert('Something is wrong in your SET UP FILE ! Check again ! (Press F12 to see the error !)')
-          console.log(ex);
-          throw(ex);
-        }
-      }
-      else if (hbv.c.twins.indexOf(id)>=0) {
-        try {
-          load_pars(id, value);
-        }
-        catch (ex) {
-          alert('Something is wrong in your SET UP FILE ! Check again ! (Press F12 to see the error !)')
-          console.log(ex);
-          throw(ex);
-        }
-      }
-      else if (id=="bounds") {
-        try {
-          load_bounds(value);
-        }
-        catch (ex) {
-          alert('Something is wrong in your SET UP FILE ! Check again ! (Press F12 to see the error !)')
-          console.log(ex);
-          throw(ex);
-        }
-      }
-      else if (id=="par_to_calibrate") {
-        try {
-          load_par_to_calibrate(value);
-        }
-        catch (ex) {
-          alert('Something is wrong in your SET UP FILE ! Check again ! (Press F12 to see the error !)')
-          console.log(ex);
-          throw(ex);
-        }
-      }
-      else {
-        var elem =  $(`input[id=${id}]`);
-        elem.value = value;
-        (elem.is("[invalid]")) ? undefined : hbv.c.context[id] = value;
-      }
-    }
-
-    function load_checkboxes(id, value) {
-      var elem =  $(`input[id=${id}]`);
-      (value) ? elem.prop("checked", true) : elem.prop("checked", false);
-      (elem.is("[invalid]")) ? undefined : hbv.c.context[id] = value;
-      // Trigger period_selector toggle transition
-      (id=="id_select_time_range") ? elem.trigger("change") : undefined;
-      return undefined;
-    }
-
-    function load_radios(id, value) {
-      var elem =  $(`input[id=${id}]`);
-      (ctxt[id]=="RMSE") ? $("#id_RMSE").prop("checked", true) : $("#id_NSE").prop("checked", true);
-      (elem.is("[invalid]")) ? undefined : hbv.c.context[id] = value;
-      return undefined;
-    }
-
-    function load_pars(id, value) {
-      var elem =  $(`input[id=${id}]`);
-      Object.values(elem).slice(0,2).forEach(function (element) {
-        element.value = value;
-        element.onchange();
-        (element.hasAttribute("invalid")) ? undefined : hbv.c.context[id] = value;
-      });
-    }
-
-    function load_bounds(value) {
-      var lbs = Object.values($("#col_LB input"));
-      var ubs = Object.values($("#col_UB input"));
-
-      for (var i = value.P_LB.length - 1; i >= 0; i--) {
-        var v = value.P_LB[i],
-            vv = value.P_UB[i];
-
-        if (typeof(v)=="number") {
-          lbs[i].value = v;
-        }
-        else {
-          if (isFloat(v)) {
-            lbs[i].value = parseFloat(v);
-          }
-          else {
-            throw new Error(`The ${i}th P_LB is ${v}, not a number !`);
-          }
-        }
-
-        if (typeof(vv)=="number") {
-          ubs[i].value = vv;
-        }
-        else {
-          if (isFloat(vv)){
-            ubs[i].value = parseFloat(vv);
-          }
-          else{
-            throw new Error(`The ${i}th P_UB ${vv}, not a number !`);
-          }
-        }
-      }
-      window.save_bounds();
-      return undefined;
-    }
-
-    function load_par_to_calibrate(value) {
-      Object.keys(value).map(function(id){
-        var box = $(`input[par][id=${id}]`).parent().find("input[type=checkbox]"),
-            bol = value[id];
-        if (typeof(bol)=="boolean") {
-          box.prop("checked", bol);
-        }
-        else if (bol.toLowerCase()=="true") {
-          box.prop("checked", true);
-        }
-        else if (bol.toLowerCase()=="false") {
-          box.prop("checked", false);
-        }
-        else {
-          throw new Error(`Something wrong in deciding wether to calibrate ${id}, Please check your setup file again !`);
-        }
-      });
-    }
-  }
-
-  function sample() {
-    var context = {
-      "id_verbose":true,
-      "id_minimise":true,
-      "id_tolInput":"0.001",
-      "id_warmUpInput":"10",
-      "id_csvSeparatorInput":",",
-      "id_csvHeaderInput":"0",
-      "id_calibrate_all_par":true,
-      "id_select_time_range":false,
-      "id_sci_note":true,
-      "id_snow":true,
-      "init_guess":false,
-      "id_residus":"RMSE",
-      "id_perc":"0.1",
-      "id_alpha":"0.5",
-      "id_k1":"0.01",
-      "id_mbas":"1",
-      "id_k":"0.01",
-      "id_lz":"0",
-      "id_uz":"0",
-      "id_c_flux":"0.05",
-      "id_beta":"3.5",
-      "id_lp":"0.35",
-      "id_etf":"2.5",
-      "id_e_corr":"1.0",
-      "id_fc":"250",
-      "id_sm":"0",
-      "id_cfr":"0.5",
-      "id_cwh":"0.02",
-      "id_cfmax":"0.1",
-      "id_ttm":"0.1",
-      "id_utt":"0.1",
-      "id_ltt":"-0.1",
-      "id_sfcf":"1.0",
-      "id_rfcf":"1.0",
-      "id_wc":"0",
-      "id_sp":"0",
-      "id_tfac":"24",
-      "id_area":"135.0",
-      "par_to_calibrate": { // Parameters to calibrate
-        "id_perc":true,
-        "id_alpha":true,
-        "id_k1":true,
-        "id_k":true,
-        "id_c_flux":true,
-        "id_beta":true,
-        "id_lp":true,
-        "id_etf":true,
-        "id_e_corr":true,
-        "id_fc":true,
-        "id_cfr":true,
-        "id_cwh":true,
-        "id_cfmax":true,
-        "id_ttm":true,
-        "id_utt":true,
-        "id_ltt":true,
-        "id_sfcf":true,
-        "id_rfcf":true,
-      },
-      "bounds":{
-        P_LB:["0.6",      //rfcf
-              "0.4",      //sfcf
-              "-1.5",     //ltt
-              "0.001",    //utt
-              "0.001",    //ttm
-              "0.04",     //cfmax [mm c^-1 h^-1]
-              "0.001",    //cwh
-              "0.01",     //cfr
-              "50.0",     //fc
-              "0.6",      //ecorr
-              "0.001",    //etf
-              "0.2",      //lp
-              "1.0",      //beta
-              "0.00042",  //k [h^-1] upper zone
-              "0.0000042",//k1 lower zone
-              "0.001",    //alpha
-              "0.0",      //c_flux
-              "0.001"],   //perc mm/h
-        P_UB:["1.4",      //rfcf
-              "1.4",      //sfcf
-              "2.5",      //ltt
-              "3.0",      //utt
-              "2.0",      //ttm
-              "0.4",      //cfmax [mm c^-1 h^-1]
-              "0.1",      //cwh
-              "1.0",      //cfr
-              "500.0",    //fc
-              "1.4",      //ecorr
-              "5.0",      //etf
-              "0.5",      //lp
-              "6.0",      //beta
-              "0.0167",   //k upper zone
-              "0.00062",  //k1 lower zone
-              "1.0",      //alpha
-              "0.08",     //c_flux - 2mm/day
-              "0.125"]    //perc mm/hr
-      },
-    };
-    hbv.c.changeWhenLoad(context);
-  }
-
-  function load(jsn){
-    // load function is currently realized in home.html
-    return undefined;
-  }
-
-  function save(){
-    var a = document.createElement("a");
-    var now = moment();
-    var name = `HBV96 setup ${now.format('YYYY-MM-DD')} at (${now.hour()}h${now.minute()}m${now.second()}s).json`;
-
-    hbv.c.context.info = `This model configuration is genrated on: ${now._d}.`;
-
-    var text = JSON.stringify(hbv.c.context, null, "\t");
-
-    var file = new Blob([text], {type : 'application/json'});
-    a.href = window.URL.createObjectURL(file);
-    a.download = name;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  }
-
-  return {context:context, twins:twins, changeWhenInput:changeWhenInput,
-    changeWhenLoad:changeWhenLoad, sample:sample, save:save, load:load};
-}
-
-function DataInfo(maxis, minis) {
-  /*
-    A prototype to serve as data infomation records
-  */
-  this.maxis = maxis || {}; // Object storing maximal values
-  this.minis = minis || {}; // Object storing minimal values
-  this.first_step = moment.utc(hbv.d.init_data[0].time) || null; // First time step
-  this.last_step = moment.utc(hbv.d.init_data[hbv.d.init_data.length-1].time) || null; // Last time step
-  this.time_step = moment.utc(hbv.d.init_data[1].time).diff(this.first_step, "seconds");
-  this.len = hbv.d.init_data.length;
-  this.get_m_values = function(maxs, mins) {
-    this.maxis = maxs;
-    this.minis = mins;
-    return undefined;
-  }
 }

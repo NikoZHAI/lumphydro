@@ -11,7 +11,6 @@ import json
 import numpy as np
 import pandas as pd
 from bokeh.embed import components
-from bokeh.layouts import gridplot
 from bokeh.models import LinearAxis, Legend, BoxZoomTool, HoverTool, PanTool, RedoTool, ResetTool, SaveTool, UndoTool, WheelZoomTool
 from bokeh.models.ranges import Range1d
 from bokeh.palettes import magma, plasma, viridis
@@ -320,10 +319,13 @@ def plot_simu_st_without_snow(source):
 	return p
 
 def plot_simu_perf(source):
+	from bokeh.layouts import gridplot, layout
+
 	qq_plot = plot_qqplot(source)
 	roc_plot = plot_roc(source)
-	grid = gridplot(children=[[qq_plot, roc_plot]], plot_width=700, 
-		plot_height=800,responsive=True)
+	diff_plot = plot_diff(source)
+	grid = gridplot(children=[[diff_plot], [qq_plot, roc_plot]],
+		sizing_mode="scale_width")
 	return grid
 
 def plot_qqplot(source):
@@ -349,7 +351,7 @@ def plot_qqplot(source):
 			('Q-norm', [qts]),
 			('y = x', [straightline]),
 			],
-		location="center",
+		location=(170,0),
 		orientation="horizontal",
 		click_policy="hide",
 		glyph_width = 40,
@@ -397,7 +399,7 @@ def plot_roc(source):
 			('ROC', [roc]),
 			('y = x', [straightline]),
 			],
-		location="center",
+		location=(180, 0),
 		orientation="horizontal",
 		click_policy="hide",
 		glyph_width = 40,
@@ -414,6 +416,59 @@ def plot_roc(source):
 
 	p.add_layout(legend, 'below')
 	p.add_layout(_auc)
+	
+	return p
+
+def plot_diff(source):
+	import time
+
+	_range = len(source.data['diff'])-1
+	begin = source.data['time'][0]
+	end = source.data['time'][_range]
+	x_for_lines = [begin, end]
+	x_range = [time.mktime(begin.timetuple())*1000, 
+		time.mktime(end.timetuple())*1000]
+	tools = [PanTool(), WheelZoomTool(dimensions="width"),
+		BoxZoomTool(dimensions="width"), UndoTool(), RedoTool(),
+		ResetTool(), SaveTool()]
+
+	p = figure(plot_width=480, plot_height=200, tools=tools,
+			toolbar_location='above', x_axis_type="datetime",
+			x_range=x_range)
+	p.title.text = "Model Error"
+	p.xaxis.axis_label = "Time [-]"
+	p.yaxis.axis_label = "Qsim - Qobs [m³/s]"
+
+	diff = p.circle(x='time', y='diff', source=source, color='#404387', 
+		alpha=0.8, name='difference', size=2)
+
+	u = np.nanmean(source.data['diff'])
+	d = np.std(source.data['diff'])
+	u_3d = p.line(x= x_for_lines, y= [u+3*d, u+3*d], color='orangered',
+		alpha=1, name="u+3σ", line_width=2, line_dash="dotted")
+	_u_3d = p.line(x= x_for_lines, y= [u-3*d, u-3*d], color='orangered',
+		alpha=1, name="u+3σ", line_width=2, line_dash="dotted")
+	mean = p.line(x= x_for_lines, y= [u, u], color='orangered',
+		alpha=1, name='u', line_width=3)
+
+	legend = Legend(
+		items=[
+			("Qsim - Qobs [m³/s]", [diff]),
+			("mean", [mean]),
+			("u±3σ", [u_3d, _u_3d]),
+			],
+		location="top_center",
+		orientation="horizontal",
+		click_policy="hide",
+		glyph_width = 40,
+		padding=10,
+		spacing=20,
+		border_line_width=1,
+		border_line_color='navy',
+		margin=20,
+		label_standoff=6
+		)
+	p.add_layout(legend)
 	
 	return p
 
@@ -491,10 +546,10 @@ def synthesize_data(simulation_result):
 	''' ----- Convert all np.nan values into "NaN" for Javascript -----'''
 
 	source = ColumnDataSource(data=dict(
-		# date=pd.to_datetime(data['date']),	# Date
+		time=pd.to_datetime(data['time']),	# Date
 		# q_rec=data['q_rec'],				# Measured discharge
 		# q_sim=data['q_sim'],				# Simulated discharge
-		# bias=(data['q_sim']-data['q_rec']), # Bias of the model, difference between simulated and measured discharge
+		diff=(data['q_sim']-data['q_rec']), # Bias of the model, difference between simulated and measured discharge
 		# prec=data['prec'],					# Precipitation
 		# sp=data['sp'],						# Simulated snow pack
 		# diff_temp=data['temp']-data['tm'],	# Difference 

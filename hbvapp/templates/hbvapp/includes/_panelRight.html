@@ -13,7 +13,7 @@
 				<span class="caret"></span>
 			</a>
 
-			<ul class="dropdown-menu" role="menu" aria-labelledby="plotsDropDown" id="plotsDropDownContent">
+			<ul class="dropdown-menu" role="menu" aria-labelledby="plotsDropDown" id="plotsDropDownContent" style="z-index: 1999;"><!-- Prevent plotly modebar hovering over dropdown menu -->
 				<li>
 					<a href="#id_pane_plot_q" tabindex="-1" role="tab" id="id_dropdown_plot_q" data-toggle="tab" aria-controls="id_pane_plot_q">DISCHARGE</a>
 				</li>
@@ -24,13 +24,15 @@
 					<a href="#id_pane_plot_t" tabindex="-1" role="tab" id="id_dropdown_plot_t" data-toggle="tab" aria-controls="id_pane_plot_t">AIR TEMPERATURE</a>
 				</li>
 				<li>
-					<a href="#id_pane_plot_etp" tabindex="-1" role="tab" id="id_dropdown_plot_etp" data-toggle="tab" aria-controls="id_pane_plot_etp">EVAPORATION</a>
-				</li>
-				<li>
 					<a href="#id_pane_plot_gw" tabindex="-1" role="tab" id="id_dropdown_plot_gw" data-toggle="tab" aria-controls="id_pane_plot_gw">GROUNDWATER</a>
 				</li>
+
 				<li>
-					<a href="#id_pane_plot_st" tabindex="-1" role="tab" id="id_dropdown_plot_st" data-toggle="tab" aria-controls="id_pane_plot_st">STATES</a>
+					<a href="#id_pane_plot_etp" tabindex="-1" role="tab" id="id_dropdown_plot_etp" data-toggle="tab" aria-controls="id_pane_plot_etp">T + ETP + SOIL</a>
+				</li>
+
+				<li>
+					<a href="#id_pane_plot_reg" tabindex="-1" role="tab" id="id_dropdown_plot_reg" data-toggle="tab" aria-controls="id_pane_plot_reg">HYDRO REGIME</a>
 				</li>
 				<li>
 					<a href="#id_pane_plot_perf" tabindex="-1" role="tab" id="id_dropdown_plot_perf" data-toggle="tab" aria-controls="id_pane_plot_perf">PERFORMANCE</a>
@@ -90,15 +92,15 @@
 	  	<div><h3><small>No plot generated yet...</small></h3></div>
 	  </div>
 
+	  <div role="tabpanel" class="tab-pane fade" id="id_pane_plot_gw" aria-labelledby="id_dropdown_plot_gw" forplot>
+	  	<div><h3><small>No plot generated yet...</small></h3></div>
+	  </div>
+	  
 	  <div role="tabpanel" class="tab-pane fade" id="id_pane_plot_etp" aria-labelledby="id_dropdown_plot_etp" forplot>
 	  	<div><h3><small>No plot generated yet...</small></h3></div>
 	  </div>
 
-	  <div role="tabpanel" class="tab-pane fade" id="id_pane_plot_gw" aria-labelledby="id_dropdown_plot_gw" forplot>
-	  	<div><h3><small>No plot generated yet...</small></h3></div>
-	  </div>
-
-	  <div role="tabpanel" class="tab-pane fade" id="id_pane_plot_st" aria-labelledby="id_dropdown_plot_st" forplot>
+	  <div role="tabpanel" class="tab-pane fade" id="id_pane_plot_reg" aria-labelledby="id_dropdown_plot_reg" forplot>
 	  	<div><h3><small>No plot generated yet...</small></h3></div>
 	  </div>
 
@@ -137,14 +139,19 @@
 					<div class="col-sm-5 text-right" style="border-left: 1.4px solid rgb(91,192,222); padding-left: 30px; padding-right: 30px;">
 
 						<div class="row" style="padding-bottom: 15px;">
-							<div class="col-sm-4 text-left"><label>Residus: </label></div>
-							<div class="col-sm-4">
+							<div class="col-sm-3 text-left"><label>Criteria: </label></div>
+							<div class="col-sm-3">
 								<label class="radio-inline"><input type="radio" name="objFunctionInput" id="id_RMSE" value="RMSE" checked> RMSE 
 								</label>
 							</div>
 
-							<div class="col-sm-4">
+							<div class="col-sm-3">
 								<label class="radio-inline"><input type="radio" name="objFunctionInput" value="NSE" id="id_NSE"> NSE 
+								</label>
+							</div>
+
+							<div class="col-sm-3">
+								<label class="radio-inline"><input type="radio" name="objFunctionInput" value="KGE" id="id_KGE"> KGE 
 								</label>
 							</div>
 						</div>
@@ -245,7 +252,7 @@
 								<div class="col-sm-9">
 									<div class="form-group">
 				            <div class='input-group date' id='calibrate_from'>
-				              <input type='text' class="form-control" disabled/>
+				              <input type='text' class="form-control" disabled dont-listen/>
 				              <span class="input-group-addon">
 				                <span class="glyphicon glyphicon-calendar"></span>
 				              </span>
@@ -261,7 +268,7 @@
 								<div class='col-sm-9'>
 				        	<div class="form-group">
 				            <div class='input-group date' id='calibrate_to'>
-				              <input type='text' class="form-control" disabled/>
+				              <input type='text' class="form-control" disabled dont-listen/>
 				              <span class="input-group-addon">
 				                <span class="glyphicon glyphicon-calendar"></span>
 				              </span>
