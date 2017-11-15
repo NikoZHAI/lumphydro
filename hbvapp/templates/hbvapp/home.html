@@ -12,8 +12,10 @@
 		$(document).ready(function(){
 
 			/*  */
+			markupInputWidgets();
 			window.hbv = new HBV();
 			hbv.s.init_animation();
+			$("rect[name='wid']").hover(toggleHover);
 			/*  */
 
 			d3.select("#id_time_slider")

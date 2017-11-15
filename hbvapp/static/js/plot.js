@@ -589,7 +589,7 @@ function Plot() {
   }
 
   function init_regime_plot () {
-    if (hbv.d.info.time_range != "y") {
+    if (hbv.d.info.last().time_range != "y") {
       return undefined;
     }
     var trace_qrec = {

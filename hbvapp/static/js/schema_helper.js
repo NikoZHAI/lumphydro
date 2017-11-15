@@ -6,7 +6,7 @@ jQuery('img.svg').each(function() {
   var imgClass = $img.attr('class');
   var imgURL = $img.attr('src');
   var clientImg = document.getElementById('id_schema');
-  var width = clientImg.clientWidth;
+  var width = clientImg.clientWidth+2;
   var height = clientImg.clientHeight;
 
   jQuery.get(imgURL, function(data) {

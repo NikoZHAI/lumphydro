@@ -505,3 +505,34 @@ function save_bounds() {
     }
   });
 }
+
+/* Parameter Input Markup on the schematisation */
+function markupInputWidgets() {
+  var divs = $("#id_schema_innerdiv div"),
+      inputs = $("#id_schema_innerdiv input"),
+      outter_div = $("#id_schema_innerdiv")[0].getBoundingClientRect();
+
+  divs.map(function(i, e){
+    var id = e.id.substring(6),
+        rect = $("#wid"+id)[0].getBoundingClientRect(),
+        style_div = {
+          "left": `${rect.left+rect.width-outter_div.left}px`,
+          "top": `${rect.top-outter_div.top-1}px`,
+          "height": `${rect.height+2}px`,
+          "width": "0%",
+        },
+        style_input = {
+          "height": `${rect.height+2}px`,
+        };
+    $(inputs[i]).css(style_input);
+    $(e).css(style_div);
+  });
+}
+
+function toggleHover() {
+  var id_input = "#id_schema_innerdiv #id_" + this.id.substring(4),
+      id_div = "#id_div_" + this.id.substring(4);
+  $(id_div).toggleClass("hovered");
+  $(id_input).toggleClass("hovered");
+}
+
