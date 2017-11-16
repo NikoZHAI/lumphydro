@@ -6,7 +6,7 @@ The project was lauched by the IWSG department, Hydroinformatics Chair Group of 
 
 ## Overview
 
-<img src="https://github.com/NikoZHAI/lumphydro/tree/plotlyversion/hbvapp/static/img/ScreenShots/main.png" align="left" hspace="10" vspace="6">
+<img src="https://drive.google.com/file/d/1XWA71o77bt49KgYbGAlrPGKnA1ZuLqWd/view?usp=sharing" align="center">
 
 ### Prerequisites
 
@@ -67,7 +67,7 @@ HBV-Web is not yet released or deployed. No license available.
 
 ## Acknowledgments
 
-The project was lauched by the IWSG department, Hydroinformatics Chair Group of [UNESCO-IHE](https://www.un-ihe.org/chair-groups/hydroinformatics), under direction of **Prof. Dimitri Solomatine**, **Dr. Juan Carlos Chacon-Hurtado**, and **Dr. Maurizio Mozzaleni**. I deeply appreciate your instructions, advises and help during my internship.
+The project was lauched by the IWSG department, Hydroinformatics Chair Group of [UNESCO-IHE](https://www.un-ihe.org/chair-groups/hydroinformatics), under direction of **Prof. Dimitri Solomatine**, **Dr. Juan Carlos Chacon-Hurtado**, and **Dr. Maurizio Mozzaleni**. I deeply appreciate your instructions, advises and kind help during my internship.
 
 I would also like to thank **Prof. Pierre Brigode** for his advises after I came back to France.
 
