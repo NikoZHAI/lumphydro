@@ -6,7 +6,7 @@ The project was lauched by the IWSG department, Hydroinformatics Chair Group of 
 
 ## Overview
 
-<img src="https://github.com/NikoZHAI/lumphydro/tree/plotlyversion/hbvapp/static/img/ScreenShots/main.png" align="left" hspace="10" vspace="6">
+<img src="https://github.com/NikoZHAI/lumphydro/tree/plotlyversion/hbvapp/static/img/ScreenShots/main.png" align="center">
 
 ### Prerequisites
 
