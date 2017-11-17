@@ -23,7 +23,7 @@ We presume here that you have already [Python(>=2.7.9)](https://www.python.org/d
 
 ### Installing
 
-HBV-Web is developed using [Django](https://www.djangoproject.com/). Once you have successfully installed all required packages in the **`dependency`** file, you are already to go !
+HBV-Web is developed using [Django](https://www.djangoproject.com/). All you have to do is to install all the packages indicated in the **Prerequisites**. Once you have successfully installed all required packages in the **`dependency`** file, you are already to go !
 
 <sub>We are currently working on making MS and Linux installers to facilitate installing.</sub>
 
@@ -35,7 +35,7 @@ To run the application, open a terminal, change directory to the **`<HBV-Web_roo
 python manage.py runserver
 ```
 
-Then open the link (**http://127.0.0.1:8000/hbv96/**) in the console with the latest **_Google Chrome_** or **_FireFox_**.
+Then open the link (**http://127.0.0.1:8000/hbv96/**) with the latest **_Google Chrome_** or **_FireFox_**.
 
 ## Built With
 
