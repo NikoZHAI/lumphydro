@@ -39,9 +39,9 @@ Then open the link (**http://127.0.0.1:8000/hbv96/**) with the latest **_Google 
 
 ## Built With
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+* [Django](https://www.djangoproject.com/)     - The web framework used
+* [PyPI](https://wiki.python.org/moin/CheeseShopTutorial)       - Dependency Management
+* [PostgreSQL](https://www.postgresql.org/) - Relational Database
 
 ## Contributing and Bug Reporting
 
