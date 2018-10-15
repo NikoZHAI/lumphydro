@@ -51,23 +51,28 @@
 					try{
 						hbv.d.initialize(text);
 						success = true;
-			      $("#id_loadStatus").html('<span class="text-success"><i class="glyphicon glyphicon-ok"></i></span>');
-			      $("#id_summary").fadeIn(600);
 					}
-				  catch (ex) {
-				    alert(ex.message);
-				    throw ex;
-				  }
-				  finally {
-				    enable_timepickers(success);
-				  }
-					$.ajax({
+				  	catch (ex) {
+				    	alert(ex.message);
+				    	throw ex;
+				  	}
+				  	
+				  	if (success) {
+				  		enable_timepickers(success)
+
+				  		// Send data to backend
+				  		$.ajax({
 						url: "",
 						type: "POST",
 						async: true,
-						data: {'data': JSON.stringify(hbv.d.init_data), 
+						data: {
+							'data': JSON.stringify(hbv.d.init_data), 
 							'action': 'load_file'},
-					});
+						});
+
+						$("#id_loadStatus").html('<span class="text-success"><i class="glyphicon glyphicon-ok"></i></span>');
+			      		$("#id_summary").fadeIn(600);
+				  	} else if (hbv.d.init_data) {}
 				});
 			});
 			/* Reading data file jQuery END */
@@ -87,10 +92,10 @@
 						success = true;
 						alert("Success !");
 					}
-				  catch (ex) {
-				    alert(ex.message);
-				    throw ex;
-				  }
+				  	catch (ex) {
+				    	alert(ex.message);
+				    	throw ex;
+				  	}
 				});
 			});
 			/* Load setup file (context) jQuery END */
@@ -192,7 +197,7 @@
         	if (e.date===false) {return undefined;}
 
         	var index = environ_index_of(e.date),
-        			begin = moment.utc(timeof_index(index));
+        		begin = moment.utc(timeof_index(index));
         	hbv.c.context.calibrate_from = {time: begin, index: index};
           $('#calibrate_to').data("DateTimePicker").minDate(begin);
           $('#calibrate_from').data("DateTimePicker").date(begin);
@@ -202,7 +207,7 @@
         	if (e.date===false) {return undefined;}
 
         	var index = environ_index_of(e.date, Math.floor),
-        			end = moment.utc(timeof_index(index));
+        		end = moment.utc(timeof_index(index));
         	hbv.c.context.calibrate_to = {time: end, index: index};
           $('#calibrate_from').data("DateTimePicker").maxDate(end);
           $('#calibrate_to').data("DateTimePicker").date(end);

@@ -32,8 +32,16 @@ function Data () {
         header = parseInt(hbv.c.context.id_csvHeaderInput);
 
     var data = d3.dsvFormat(delimiter).parse(text, function(d, i) {
+      var time = undefined;
+
+      if (d.hasOwnProperty('time')) {
+        time = d.time;
+      } else if (d.hasOwnProperty('date')) {
+        time = d.date;
+      }
+
       return {
-        time: moment(d.time).format("YYYY-MM-DD HH:mm:ss"),  // Date
+        time: moment(time).format("YYYY-MM-DD HH:mm:ss"),  // Date
         prec: +d.prec,     // Precipitation
         q_rec: +d.q_rec,   // Recorded discharge
         temp: +d.temp,     // Air temperature
