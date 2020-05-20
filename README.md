@@ -6,7 +6,9 @@ The project was lauched by the IWSG department, Hydroinformatics Chair Group of 
 
 ## Overview
 
-<img src="https://gdurl.com/dfEE" align="center">
+![main](/hbvapp/static/img/ScreenShots/main.png)
+
+![sim](/hbvapp/static/img/ScreenShots/results.png)
 
 ### Prerequisites
 
@@ -39,17 +41,17 @@ Then open the link (**http://127.0.0.1:8000/hbv96/**) with the latest **_Google 
 
 ## Built With
 
-* [Django](https://www.djangoproject.com/)     - The web framework used
-* [PyPI](https://wiki.python.org/moin/CheeseShopTutorial)       - Dependency Management
+* [Django](https://www.djangoproject.com/) - The web framework used
+* [PyPI](https://wiki.python.org/moin/CheeseShopTutorial) - Dependency Management
 * [PostgreSQL](https://www.postgresql.org/) - Relational Database
 
 ## Contributing and Bug Reporting
 
 Please leave your message in [Issues](https://github.com/NikoZHAI/lumphydro/issues) or contact:
 
-Huanyu **ZHAI** hy.zhai.wyn@gmail.com
+**Huanyu Zhai** huanyu.zhai@outlook.com
 
-[Dr. Juan **Carlos**](https://www.un-ihe.org/juan-carlos-chacon-hurtado)
+[**Dr. Juan Carlos**](https://www.un-ihe.org/juan-carlos-chacon-hurtado)
 
 ## Versioning
 
